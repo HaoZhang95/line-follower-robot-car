@@ -1,0 +1,1373 @@
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"I2C_made.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text.I2C_write,"ax",%progbits
+  19              		.align	2
+  20              		.global	I2C_write
+  21              		.thumb
+  22              		.thumb_func
+  23              		.type	I2C_write, %function
+  24              	I2C_write:
+  25              	.LFB63:
+  26              		.file 1 "ZumoLibrary\\I2C_made.c"
+   1:ZumoLibrary/I2C_made.c **** /**
+   2:ZumoLibrary/I2C_made.c ****  * @file    I2C_made.c
+   3:ZumoLibrary/I2C_made.c ****  * @brief   Basic methods for I2C communication. For more details, please refer to I2C_made.h file.
+   4:ZumoLibrary/I2C_made.c ****  * @details 
+   5:ZumoLibrary/I2C_made.c **** */
+   6:ZumoLibrary/I2C_made.c **** #include "I2C_made.h"
+   7:ZumoLibrary/I2C_made.c **** 
+   8:ZumoLibrary/I2C_made.c **** 
+   9:ZumoLibrary/I2C_made.c **** /**
+  10:ZumoLibrary/I2C_made.c **** * @brief    Write function of I2C communication
+  11:ZumoLibrary/I2C_made.c **** * @details  writing value to slave register by I2C communication
+  12:ZumoLibrary/I2C_made.c **** * @param    uint8 device_addr : Slave Device address
+  13:ZumoLibrary/I2C_made.c **** * @param    uint8 Reg : register address
+  14:ZumoLibrary/I2C_made.c **** * @param    uint8 value : value to write
+  15:ZumoLibrary/I2C_made.c **** */
+  16:ZumoLibrary/I2C_made.c **** void I2C_write(uint8 device_addr, uint8 Reg, uint8 value)             // Gyroscope: you need to cha
+  17:ZumoLibrary/I2C_made.c **** {
+  27              		.loc 1 17 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 8
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              	.LVL0:
+  32 0000 10B5     		push	{r4, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 4, -8
+  35              		.cfi_offset 14, -4
+  36 0002 82B0     		sub	sp, sp, #8
+  37              		.cfi_def_cfa_offset 16
+  38 0004 0446     		mov	r4, r0
+  18:ZumoLibrary/I2C_made.c ****     uint8 write_buf[2] = {};
+  19:ZumoLibrary/I2C_made.c ****     write_buf[0] = Reg;                //register address that you want to write
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 2
+
+
+  39              		.loc 1 19 0
+  40 0006 8DF80410 		strb	r1, [sp, #4]
+  20:ZumoLibrary/I2C_made.c ****     write_buf[1] = value;                //value that you want to write to register
+  41              		.loc 1 20 0
+  42 000a 8DF80520 		strb	r2, [sp, #5]
+  21:ZumoLibrary/I2C_made.c ****     
+  22:ZumoLibrary/I2C_made.c ****     I2C_MasterClearStatus();
+  43              		.loc 1 22 0
+  44 000e FFF7FEFF 		bl	I2C_MasterClearStatus
+  45              	.LVL1:
+  23:ZumoLibrary/I2C_made.c ****     I2C_MasterWriteBuf(device_addr, write_buf, 2, I2C_MODE_COMPLETE_XFER);
+  46              		.loc 1 23 0
+  47 0012 2046     		mov	r0, r4
+  48 0014 01A9     		add	r1, sp, #4
+  49 0016 0222     		movs	r2, #2
+  50 0018 0023     		movs	r3, #0
+  51 001a FFF7FEFF 		bl	I2C_MasterWriteBuf
+  52              	.LVL2:
+  53              	.L2:
+  24:ZumoLibrary/I2C_made.c ****     while(((I2C_MasterStatus()) & I2C_MSTAT_WR_CMPLT) == 0);
+  54              		.loc 1 24 0 discriminator 1
+  55 001e FFF7FEFF 		bl	I2C_MasterStatus
+  56              	.LVL3:
+  57 0022 10F0020F 		tst	r0, #2
+  58 0026 FAD0     		beq	.L2
+  25:ZumoLibrary/I2C_made.c ****     
+  26:ZumoLibrary/I2C_made.c ****     return;
+  27:ZumoLibrary/I2C_made.c **** }
+  59              		.loc 1 27 0
+  60 0028 02B0     		add	sp, sp, #8
+  61              		.cfi_def_cfa_offset 8
+  62              		@ sp needed
+  63 002a 10BD     		pop	{r4, pc}
+  64              		.cfi_endproc
+  65              	.LFE63:
+  66              		.size	I2C_write, .-I2C_write
+  67              		.section	.text.I2C_read,"ax",%progbits
+  68              		.align	2
+  69              		.global	I2C_read
+  70              		.thumb
+  71              		.thumb_func
+  72              		.type	I2C_read, %function
+  73              	I2C_read:
+  74              	.LFB64:
+  28:ZumoLibrary/I2C_made.c **** 
+  29:ZumoLibrary/I2C_made.c **** 
+  30:ZumoLibrary/I2C_made.c **** /**
+  31:ZumoLibrary/I2C_made.c **** * @brief    Read function of I2C communication
+  32:ZumoLibrary/I2C_made.c **** * @details  read value from slave register by I2C communication
+  33:ZumoLibrary/I2C_made.c **** * @param    uint8 device_addr : Slave Device address
+  34:ZumoLibrary/I2C_made.c **** * @param    uint8 Reg : register address
+  35:ZumoLibrary/I2C_made.c **** */
+  36:ZumoLibrary/I2C_made.c **** uint8 I2C_read(uint8 device_addr, uint8 Reg) 
+  37:ZumoLibrary/I2C_made.c **** {
+  75              		.loc 1 37 0
+  76              		.cfi_startproc
+  77              		@ args = 0, pretend = 0, frame = 8
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 3
+
+
+  78              		@ frame_needed = 0, uses_anonymous_args = 0
+  79              	.LVL4:
+  80 0000 30B5     		push	{r4, r5, lr}
+  81              		.cfi_def_cfa_offset 12
+  82              		.cfi_offset 4, -12
+  83              		.cfi_offset 5, -8
+  84              		.cfi_offset 14, -4
+  85 0002 83B0     		sub	sp, sp, #12
+  86              		.cfi_def_cfa_offset 24
+  87 0004 0446     		mov	r4, r0
+  38:ZumoLibrary/I2C_made.c ****    
+  39:ZumoLibrary/I2C_made.c ****     uint8 write_buf[1] = {};
+  88              		.loc 1 39 0
+  89 0006 0025     		movs	r5, #0
+  40:ZumoLibrary/I2C_made.c ****     write_buf[0] = Reg;
+  90              		.loc 1 40 0
+  91 0008 8DF80410 		strb	r1, [sp, #4]
+  41:ZumoLibrary/I2C_made.c ****     
+  42:ZumoLibrary/I2C_made.c ****     uint8 read_buf[1] = {};
+  92              		.loc 1 42 0
+  93 000c 8DF80050 		strb	r5, [sp]
+  43:ZumoLibrary/I2C_made.c ****     
+  44:ZumoLibrary/I2C_made.c ****     I2C_MasterClearStatus();
+  94              		.loc 1 44 0
+  95 0010 FFF7FEFF 		bl	I2C_MasterClearStatus
+  96              	.LVL5:
+  45:ZumoLibrary/I2C_made.c ****     CyDelay(100);
+  97              		.loc 1 45 0
+  98 0014 6420     		movs	r0, #100
+  99 0016 FFF7FEFF 		bl	CyDelay
+ 100              	.LVL6:
+  46:ZumoLibrary/I2C_made.c ****     I2C_MasterWriteBuf(device_addr, write_buf, 1, I2C_MODE_COMPLETE_XFER);
+ 101              		.loc 1 46 0
+ 102 001a 2046     		mov	r0, r4
+ 103 001c 01A9     		add	r1, sp, #4
+ 104 001e 0122     		movs	r2, #1
+ 105 0020 2B46     		mov	r3, r5
+ 106 0022 FFF7FEFF 		bl	I2C_MasterWriteBuf
+ 107              	.LVL7:
+ 108              	.L5:
+  47:ZumoLibrary/I2C_made.c ****     while((I2C_MasterStatus() & I2C_MSTAT_WR_CMPLT) == 0);
+ 109              		.loc 1 47 0 discriminator 1
+ 110 0026 FFF7FEFF 		bl	I2C_MasterStatus
+ 111              	.LVL8:
+ 112 002a 10F0020F 		tst	r0, #2
+ 113 002e FAD0     		beq	.L5
+  48:ZumoLibrary/I2C_made.c ****     CyDelay(50);
+ 114              		.loc 1 48 0
+ 115 0030 3220     		movs	r0, #50
+ 116 0032 FFF7FEFF 		bl	CyDelay
+ 117              	.LVL9:
+  49:ZumoLibrary/I2C_made.c ****     I2C_MasterClearStatus();
+ 118              		.loc 1 49 0
+ 119 0036 FFF7FEFF 		bl	I2C_MasterClearStatus
+ 120              	.LVL10:
+  50:ZumoLibrary/I2C_made.c ****     I2C_MasterReadBuf(device_addr, read_buf, 1, I2C_MODE_COMPLETE_XFER);
+ 121              		.loc 1 50 0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 4
+
+
+ 122 003a 2046     		mov	r0, r4
+ 123 003c 6946     		mov	r1, sp
+ 124 003e 0122     		movs	r2, #1
+ 125 0040 0023     		movs	r3, #0
+ 126 0042 FFF7FEFF 		bl	I2C_MasterReadBuf
+ 127              	.LVL11:
+ 128              	.L6:
+  51:ZumoLibrary/I2C_made.c ****     while((I2C_MasterStatus() & I2C_MSTAT_RD_CMPLT) == 0);
+ 129              		.loc 1 51 0 discriminator 1
+ 130 0046 FFF7FEFF 		bl	I2C_MasterStatus
+ 131              	.LVL12:
+ 132 004a 10F0010F 		tst	r0, #1
+ 133 004e FAD0     		beq	.L6
+  52:ZumoLibrary/I2C_made.c ****    
+  53:ZumoLibrary/I2C_made.c ****     return read_buf[0];
+  54:ZumoLibrary/I2C_made.c **** }
+ 134              		.loc 1 54 0
+ 135 0050 9DF80000 		ldrb	r0, [sp]	@ zero_extendqisi2
+ 136 0054 03B0     		add	sp, sp, #12
+ 137              		.cfi_def_cfa_offset 12
+ 138              		@ sp needed
+ 139 0056 30BD     		pop	{r4, r5, pc}
+ 140              		.cfi_endproc
+ 141              	.LFE64:
+ 142              		.size	I2C_read, .-I2C_read
+ 143              		.section	.text.convert_raw,"ax",%progbits
+ 144              		.align	2
+ 145              		.global	convert_raw
+ 146              		.thumb
+ 147              		.thumb_func
+ 148              		.type	convert_raw, %function
+ 149              	convert_raw:
+ 150              	.LFB65:
+  55:ZumoLibrary/I2C_made.c **** 
+  56:ZumoLibrary/I2C_made.c **** 
+  57:ZumoLibrary/I2C_made.c **** /**
+  58:ZumoLibrary/I2C_made.c **** * @brief    Combining 8 bits of low and high outputs to 16 bits used for sensor value
+  59:ZumoLibrary/I2C_made.c **** * @details  writing value to slave register by I2C communication
+  60:ZumoLibrary/I2C_made.c **** * @param    uint8 L : lower 8bits out of 16 bits output
+  61:ZumoLibrary/I2C_made.c **** * @param    uint8 H : higher 8bits out of 16 bits output
+  62:ZumoLibrary/I2C_made.c **** */
+  63:ZumoLibrary/I2C_made.c **** uint16 convert_raw(uint8 L, uint8 H)
+  64:ZumoLibrary/I2C_made.c **** {
+ 151              		.loc 1 64 0
+ 152              		.cfi_startproc
+ 153              		@ args = 0, pretend = 0, frame = 0
+ 154              		@ frame_needed = 0, uses_anonymous_args = 0
+ 155              		@ link register save eliminated.
+ 156              	.LVL13:
+  65:ZumoLibrary/I2C_made.c ****     uint16 raw;
+  66:ZumoLibrary/I2C_made.c ****     raw = (int16)(L | H << 8);      //shift High bits and combine with Low bits to make 16 bits val
+  67:ZumoLibrary/I2C_made.c ****     
+  68:ZumoLibrary/I2C_made.c ****     return raw;
+  69:ZumoLibrary/I2C_made.c **** }
+ 157              		.loc 1 69 0
+ 158 0000 40EA0120 		orr	r0, r0, r1, lsl #8
+ 159              	.LVL14:
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 5
+
+
+ 160 0004 7047     		bx	lr
+ 161              		.cfi_endproc
+ 162              	.LFE65:
+ 163              		.size	convert_raw, .-convert_raw
+ 164 0006 00BF     		.text
+ 165              	.Letext0:
+ 166              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 167              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 168              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 169              		.file 5 "Generated_Source\\PSoC5/I2C.h"
+ 170              		.file 6 "Generated_Source\\PSoC5/CyLib.h"
+ 171              		.file 7 "Generated_Source\\PSoC5/core_cm3.h"
+ 172              		.section	.debug_info,"",%progbits
+ 173              	.Ldebug_info0:
+ 174 0000 1E030000 		.4byte	0x31e
+ 175 0004 0400     		.2byte	0x4
+ 176 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 177 000a 04       		.byte	0x4
+ 178 000b 01       		.uleb128 0x1
+ 179 000c 1D010000 		.4byte	.LASF29
+ 180 0010 01       		.byte	0x1
+ 181 0011 0D020000 		.4byte	.LASF30
+ 182 0015 0C000000 		.4byte	.LASF31
+ 183 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 184 001d 00000000 		.4byte	0
+ 185 0021 00000000 		.4byte	.Ldebug_line0
+ 186 0025 02       		.uleb128 0x2
+ 187 0026 01       		.byte	0x1
+ 188 0027 06       		.byte	0x6
+ 189 0028 3C020000 		.4byte	.LASF0
+ 190 002c 02       		.uleb128 0x2
+ 191 002d 01       		.byte	0x1
+ 192 002e 08       		.byte	0x8
+ 193 002f 9B000000 		.4byte	.LASF1
+ 194 0033 02       		.uleb128 0x2
+ 195 0034 02       		.byte	0x2
+ 196 0035 05       		.byte	0x5
+ 197 0036 FB000000 		.4byte	.LASF2
+ 198 003a 02       		.uleb128 0x2
+ 199 003b 02       		.byte	0x2
+ 200 003c 07       		.byte	0x7
+ 201 003d D4000000 		.4byte	.LASF3
+ 202 0041 03       		.uleb128 0x3
+ 203 0042 4D000000 		.4byte	.LASF9
+ 204 0046 02       		.byte	0x2
+ 205 0047 3F       		.byte	0x3f
+ 206 0048 4C000000 		.4byte	0x4c
+ 207 004c 02       		.uleb128 0x2
+ 208 004d 04       		.byte	0x4
+ 209 004e 05       		.byte	0x5
+ 210 004f 33020000 		.4byte	.LASF4
+ 211 0053 02       		.uleb128 0x2
+ 212 0054 04       		.byte	0x4
+ 213 0055 07       		.byte	0x7
+ 214 0056 C2000000 		.4byte	.LASF5
+ 215 005a 02       		.uleb128 0x2
+ 216 005b 08       		.byte	0x8
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 6
+
+
+ 217 005c 05       		.byte	0x5
+ 218 005d E9010000 		.4byte	.LASF6
+ 219 0061 02       		.uleb128 0x2
+ 220 0062 08       		.byte	0x8
+ 221 0063 07       		.byte	0x7
+ 222 0064 B8010000 		.4byte	.LASF7
+ 223 0068 04       		.uleb128 0x4
+ 224 0069 04       		.byte	0x4
+ 225 006a 05       		.byte	0x5
+ 226 006b 696E7400 		.ascii	"int\000"
+ 227 006f 02       		.uleb128 0x2
+ 228 0070 04       		.byte	0x4
+ 229 0071 07       		.byte	0x7
+ 230 0072 AB010000 		.4byte	.LASF8
+ 231 0076 03       		.uleb128 0x3
+ 232 0077 D8010000 		.4byte	.LASF10
+ 233 007b 03       		.byte	0x3
+ 234 007c 2C       		.byte	0x2c
+ 235 007d 41000000 		.4byte	0x41
+ 236 0081 05       		.uleb128 0x5
+ 237 0082 2D020000 		.4byte	.LASF11
+ 238 0086 04       		.byte	0x4
+ 239 0087 9201     		.2byte	0x192
+ 240 0089 2C000000 		.4byte	0x2c
+ 241 008d 05       		.uleb128 0x5
+ 242 008e 05010000 		.4byte	.LASF12
+ 243 0092 04       		.byte	0x4
+ 244 0093 9301     		.2byte	0x193
+ 245 0095 3A000000 		.4byte	0x3a
+ 246 0099 05       		.uleb128 0x5
+ 247 009a 16010000 		.4byte	.LASF13
+ 248 009e 04       		.byte	0x4
+ 249 009f 9401     		.2byte	0x194
+ 250 00a1 53000000 		.4byte	0x53
+ 251 00a5 05       		.uleb128 0x5
+ 252 00a6 BC000000 		.4byte	.LASF14
+ 253 00aa 04       		.byte	0x4
+ 254 00ab 9601     		.2byte	0x196
+ 255 00ad 33000000 		.4byte	0x33
+ 256 00b1 02       		.uleb128 0x2
+ 257 00b2 04       		.byte	0x4
+ 258 00b3 04       		.byte	0x4
+ 259 00b4 89000000 		.4byte	.LASF15
+ 260 00b8 02       		.uleb128 0x2
+ 261 00b9 08       		.byte	0x8
+ 262 00ba 04       		.byte	0x4
+ 263 00bb F4000000 		.4byte	.LASF16
+ 264 00bf 02       		.uleb128 0x2
+ 265 00c0 01       		.byte	0x1
+ 266 00c1 08       		.byte	0x8
+ 267 00c2 F7010000 		.4byte	.LASF17
+ 268 00c6 02       		.uleb128 0x2
+ 269 00c7 04       		.byte	0x4
+ 270 00c8 07       		.byte	0x7
+ 271 00c9 E0010000 		.4byte	.LASF18
+ 272 00cd 06       		.uleb128 0x6
+ 273 00ce 57000000 		.4byte	.LASF32
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 7
+
+
+ 274 00d2 01       		.byte	0x1
+ 275 00d3 10       		.byte	0x10
+ 276 00d4 00000000 		.4byte	.LFB63
+ 277 00d8 2C000000 		.4byte	.LFE63-.LFB63
+ 278 00dc 01       		.uleb128 0x1
+ 279 00dd 9C       		.byte	0x9c
+ 280 00de 54010000 		.4byte	0x154
+ 281 00e2 07       		.uleb128 0x7
+ 282 00e3 00000000 		.4byte	.LASF19
+ 283 00e7 01       		.byte	0x1
+ 284 00e8 10       		.byte	0x10
+ 285 00e9 81000000 		.4byte	0x81
+ 286 00ed 00000000 		.4byte	.LLST0
+ 287 00f1 08       		.uleb128 0x8
+ 288 00f2 52656700 		.ascii	"Reg\000"
+ 289 00f6 01       		.byte	0x1
+ 290 00f7 10       		.byte	0x10
+ 291 00f8 81000000 		.4byte	0x81
+ 292 00fc 21000000 		.4byte	.LLST1
+ 293 0100 07       		.uleb128 0x7
+ 294 0101 47000000 		.4byte	.LASF20
+ 295 0105 01       		.byte	0x1
+ 296 0106 10       		.byte	0x10
+ 297 0107 81000000 		.4byte	0x81
+ 298 010b 42000000 		.4byte	.LLST2
+ 299 010f 09       		.uleb128 0x9
+ 300 0110 0C010000 		.4byte	.LASF21
+ 301 0114 01       		.byte	0x1
+ 302 0115 12       		.byte	0x12
+ 303 0116 54010000 		.4byte	0x154
+ 304 011a 02       		.uleb128 0x2
+ 305 011b 91       		.byte	0x91
+ 306 011c 74       		.sleb128 -12
+ 307 011d 0A       		.uleb128 0xa
+ 308 011e 12000000 		.4byte	.LVL1
+ 309 0122 B0020000 		.4byte	0x2b0
+ 310 0126 0B       		.uleb128 0xb
+ 311 0127 1E000000 		.4byte	.LVL2
+ 312 012b BB020000 		.4byte	0x2bb
+ 313 012f 4A010000 		.4byte	0x14a
+ 314 0133 0C       		.uleb128 0xc
+ 315 0134 01       		.uleb128 0x1
+ 316 0135 53       		.byte	0x53
+ 317 0136 01       		.uleb128 0x1
+ 318 0137 30       		.byte	0x30
+ 319 0138 0C       		.uleb128 0xc
+ 320 0139 01       		.uleb128 0x1
+ 321 013a 52       		.byte	0x52
+ 322 013b 01       		.uleb128 0x1
+ 323 013c 32       		.byte	0x32
+ 324 013d 0C       		.uleb128 0xc
+ 325 013e 01       		.uleb128 0x1
+ 326 013f 51       		.byte	0x51
+ 327 0140 02       		.uleb128 0x2
+ 328 0141 91       		.byte	0x91
+ 329 0142 74       		.sleb128 -12
+ 330 0143 0C       		.uleb128 0xc
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 8
+
+
+ 331 0144 01       		.uleb128 0x1
+ 332 0145 50       		.byte	0x50
+ 333 0146 02       		.uleb128 0x2
+ 334 0147 74       		.byte	0x74
+ 335 0148 00       		.sleb128 0
+ 336 0149 00       		.byte	0
+ 337 014a 0A       		.uleb128 0xa
+ 338 014b 22000000 		.4byte	.LVL3
+ 339 014f E5020000 		.4byte	0x2e5
+ 340 0153 00       		.byte	0
+ 341 0154 0D       		.uleb128 0xd
+ 342 0155 81000000 		.4byte	0x81
+ 343 0159 64010000 		.4byte	0x164
+ 344 015d 0E       		.uleb128 0xe
+ 345 015e C6000000 		.4byte	0xc6
+ 346 0162 01       		.byte	0x1
+ 347 0163 00       		.byte	0
+ 348 0164 0F       		.uleb128 0xf
+ 349 0165 24020000 		.4byte	.LASF23
+ 350 0169 01       		.byte	0x1
+ 351 016a 24       		.byte	0x24
+ 352 016b 81000000 		.4byte	0x81
+ 353 016f 00000000 		.4byte	.LFB64
+ 354 0173 58000000 		.4byte	.LFE64-.LFB64
+ 355 0177 01       		.uleb128 0x1
+ 356 0178 9C       		.byte	0x9c
+ 357 0179 4E020000 		.4byte	0x24e
+ 358 017d 07       		.uleb128 0x7
+ 359 017e 00000000 		.4byte	.LASF19
+ 360 0182 01       		.byte	0x1
+ 361 0183 24       		.byte	0x24
+ 362 0184 81000000 		.4byte	0x81
+ 363 0188 63000000 		.4byte	.LLST3
+ 364 018c 08       		.uleb128 0x8
+ 365 018d 52656700 		.ascii	"Reg\000"
+ 366 0191 01       		.byte	0x1
+ 367 0192 24       		.byte	0x24
+ 368 0193 81000000 		.4byte	0x81
+ 369 0197 84000000 		.4byte	.LLST4
+ 370 019b 09       		.uleb128 0x9
+ 371 019c 0C010000 		.4byte	.LASF21
+ 372 01a0 01       		.byte	0x1
+ 373 01a1 27       		.byte	0x27
+ 374 01a2 4E020000 		.4byte	0x24e
+ 375 01a6 02       		.uleb128 0x2
+ 376 01a7 91       		.byte	0x91
+ 377 01a8 6C       		.sleb128 -20
+ 378 01a9 09       		.uleb128 0x9
+ 379 01aa CF010000 		.4byte	.LASF22
+ 380 01ae 01       		.byte	0x1
+ 381 01af 2A       		.byte	0x2a
+ 382 01b0 4E020000 		.4byte	0x24e
+ 383 01b4 02       		.uleb128 0x2
+ 384 01b5 91       		.byte	0x91
+ 385 01b6 68       		.sleb128 -24
+ 386 01b7 0A       		.uleb128 0xa
+ 387 01b8 14000000 		.4byte	.LVL5
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 9
+
+
+ 388 01bc B0020000 		.4byte	0x2b0
+ 389 01c0 0B       		.uleb128 0xb
+ 390 01c1 1A000000 		.4byte	.LVL6
+ 391 01c5 F0020000 		.4byte	0x2f0
+ 392 01c9 D4010000 		.4byte	0x1d4
+ 393 01cd 0C       		.uleb128 0xc
+ 394 01ce 01       		.uleb128 0x1
+ 395 01cf 50       		.byte	0x50
+ 396 01d0 02       		.uleb128 0x2
+ 397 01d1 08       		.byte	0x8
+ 398 01d2 64       		.byte	0x64
+ 399 01d3 00       		.byte	0
+ 400 01d4 0B       		.uleb128 0xb
+ 401 01d5 26000000 		.4byte	.LVL7
+ 402 01d9 BB020000 		.4byte	0x2bb
+ 403 01dd F9010000 		.4byte	0x1f9
+ 404 01e1 0C       		.uleb128 0xc
+ 405 01e2 01       		.uleb128 0x1
+ 406 01e3 53       		.byte	0x53
+ 407 01e4 02       		.uleb128 0x2
+ 408 01e5 75       		.byte	0x75
+ 409 01e6 00       		.sleb128 0
+ 410 01e7 0C       		.uleb128 0xc
+ 411 01e8 01       		.uleb128 0x1
+ 412 01e9 52       		.byte	0x52
+ 413 01ea 01       		.uleb128 0x1
+ 414 01eb 31       		.byte	0x31
+ 415 01ec 0C       		.uleb128 0xc
+ 416 01ed 01       		.uleb128 0x1
+ 417 01ee 51       		.byte	0x51
+ 418 01ef 02       		.uleb128 0x2
+ 419 01f0 91       		.byte	0x91
+ 420 01f1 6C       		.sleb128 -20
+ 421 01f2 0C       		.uleb128 0xc
+ 422 01f3 01       		.uleb128 0x1
+ 423 01f4 50       		.byte	0x50
+ 424 01f5 02       		.uleb128 0x2
+ 425 01f6 74       		.byte	0x74
+ 426 01f7 00       		.sleb128 0
+ 427 01f8 00       		.byte	0
+ 428 01f9 0A       		.uleb128 0xa
+ 429 01fa 2A000000 		.4byte	.LVL8
+ 430 01fe E5020000 		.4byte	0x2e5
+ 431 0202 0B       		.uleb128 0xb
+ 432 0203 36000000 		.4byte	.LVL9
+ 433 0207 F0020000 		.4byte	0x2f0
+ 434 020b 16020000 		.4byte	0x216
+ 435 020f 0C       		.uleb128 0xc
+ 436 0210 01       		.uleb128 0x1
+ 437 0211 50       		.byte	0x50
+ 438 0212 02       		.uleb128 0x2
+ 439 0213 08       		.byte	0x8
+ 440 0214 32       		.byte	0x32
+ 441 0215 00       		.byte	0
+ 442 0216 0A       		.uleb128 0xa
+ 443 0217 3A000000 		.4byte	.LVL10
+ 444 021b B0020000 		.4byte	0x2b0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 10
+
+
+ 445 021f 0B       		.uleb128 0xb
+ 446 0220 46000000 		.4byte	.LVL11
+ 447 0224 01030000 		.4byte	0x301
+ 448 0228 44020000 		.4byte	0x244
+ 449 022c 0C       		.uleb128 0xc
+ 450 022d 01       		.uleb128 0x1
+ 451 022e 53       		.byte	0x53
+ 452 022f 02       		.uleb128 0x2
+ 453 0230 75       		.byte	0x75
+ 454 0231 00       		.sleb128 0
+ 455 0232 0C       		.uleb128 0xc
+ 456 0233 01       		.uleb128 0x1
+ 457 0234 52       		.byte	0x52
+ 458 0235 01       		.uleb128 0x1
+ 459 0236 31       		.byte	0x31
+ 460 0237 0C       		.uleb128 0xc
+ 461 0238 01       		.uleb128 0x1
+ 462 0239 51       		.byte	0x51
+ 463 023a 02       		.uleb128 0x2
+ 464 023b 7D       		.byte	0x7d
+ 465 023c 00       		.sleb128 0
+ 466 023d 0C       		.uleb128 0xc
+ 467 023e 01       		.uleb128 0x1
+ 468 023f 50       		.byte	0x50
+ 469 0240 02       		.uleb128 0x2
+ 470 0241 74       		.byte	0x74
+ 471 0242 00       		.sleb128 0
+ 472 0243 00       		.byte	0
+ 473 0244 0A       		.uleb128 0xa
+ 474 0245 4A000000 		.4byte	.LVL12
+ 475 0249 E5020000 		.4byte	0x2e5
+ 476 024d 00       		.byte	0
+ 477 024e 0D       		.uleb128 0xd
+ 478 024f 81000000 		.4byte	0x81
+ 479 0253 5E020000 		.4byte	0x25e
+ 480 0257 0E       		.uleb128 0xe
+ 481 0258 C6000000 		.4byte	0xc6
+ 482 025c 00       		.byte	0
+ 483 025d 00       		.byte	0
+ 484 025e 0F       		.uleb128 0xf
+ 485 025f 8F000000 		.4byte	.LASF24
+ 486 0263 01       		.byte	0x1
+ 487 0264 3F       		.byte	0x3f
+ 488 0265 8D000000 		.4byte	0x8d
+ 489 0269 00000000 		.4byte	.LFB65
+ 490 026d 06000000 		.4byte	.LFE65-.LFB65
+ 491 0271 01       		.uleb128 0x1
+ 492 0272 9C       		.byte	0x9c
+ 493 0273 9F020000 		.4byte	0x29f
+ 494 0277 08       		.uleb128 0x8
+ 495 0278 4C00     		.ascii	"L\000"
+ 496 027a 01       		.byte	0x1
+ 497 027b 3F       		.byte	0x3f
+ 498 027c 81000000 		.4byte	0x81
+ 499 0280 A5000000 		.4byte	.LLST5
+ 500 0284 10       		.uleb128 0x10
+ 501 0285 4800     		.ascii	"H\000"
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 11
+
+
+ 502 0287 01       		.byte	0x1
+ 503 0288 3F       		.byte	0x3f
+ 504 0289 81000000 		.4byte	0x81
+ 505 028d 01       		.uleb128 0x1
+ 506 028e 51       		.byte	0x51
+ 507 028f 11       		.uleb128 0x11
+ 508 0290 72617700 		.ascii	"raw\000"
+ 509 0294 01       		.byte	0x1
+ 510 0295 41       		.byte	0x41
+ 511 0296 8D000000 		.4byte	0x8d
+ 512 029a C6000000 		.4byte	.LLST6
+ 513 029e 00       		.byte	0
+ 514 029f 12       		.uleb128 0x12
+ 515 02a0 E7000000 		.4byte	.LASF33
+ 516 02a4 07       		.byte	0x7
+ 517 02a5 9606     		.2byte	0x696
+ 518 02a7 AB020000 		.4byte	0x2ab
+ 519 02ab 13       		.uleb128 0x13
+ 520 02ac 76000000 		.4byte	0x76
+ 521 02b0 14       		.uleb128 0x14
+ 522 02b1 61000000 		.4byte	.LASF25
+ 523 02b5 05       		.byte	0x5
+ 524 02b6 A4       		.byte	0xa4
+ 525 02b7 81000000 		.4byte	0x81
+ 526 02bb 15       		.uleb128 0x15
+ 527 02bc A9000000 		.4byte	.LASF34
+ 528 02c0 05       		.byte	0x5
+ 529 02c1 A7       		.byte	0xa7
+ 530 02c2 81000000 		.4byte	0x81
+ 531 02c6 DF020000 		.4byte	0x2df
+ 532 02ca 16       		.uleb128 0x16
+ 533 02cb 81000000 		.4byte	0x81
+ 534 02cf 16       		.uleb128 0x16
+ 535 02d0 DF020000 		.4byte	0x2df
+ 536 02d4 16       		.uleb128 0x16
+ 537 02d5 81000000 		.4byte	0x81
+ 538 02d9 16       		.uleb128 0x16
+ 539 02da 81000000 		.4byte	0x81
+ 540 02de 00       		.byte	0
+ 541 02df 17       		.uleb128 0x17
+ 542 02e0 04       		.byte	0x4
+ 543 02e1 81000000 		.4byte	0x81
+ 544 02e5 14       		.uleb128 0x14
+ 545 02e6 FC010000 		.4byte	.LASF26
+ 546 02ea 05       		.byte	0x5
+ 547 02eb A3       		.byte	0xa3
+ 548 02ec 81000000 		.4byte	0x81
+ 549 02f0 18       		.uleb128 0x18
+ 550 02f1 48020000 		.4byte	.LASF27
+ 551 02f5 06       		.byte	0x6
+ 552 02f6 76       		.byte	0x76
+ 553 02f7 01030000 		.4byte	0x301
+ 554 02fb 16       		.uleb128 0x16
+ 555 02fc 99000000 		.4byte	0x99
+ 556 0300 00       		.byte	0
+ 557 0301 19       		.uleb128 0x19
+ 558 0302 77000000 		.4byte	.LASF28
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 12
+
+
+ 559 0306 05       		.byte	0x5
+ 560 0307 A9       		.byte	0xa9
+ 561 0308 81000000 		.4byte	0x81
+ 562 030c 16       		.uleb128 0x16
+ 563 030d 81000000 		.4byte	0x81
+ 564 0311 16       		.uleb128 0x16
+ 565 0312 DF020000 		.4byte	0x2df
+ 566 0316 16       		.uleb128 0x16
+ 567 0317 81000000 		.4byte	0x81
+ 568 031b 16       		.uleb128 0x16
+ 569 031c 81000000 		.4byte	0x81
+ 570 0320 00       		.byte	0
+ 571 0321 00       		.byte	0
+ 572              		.section	.debug_abbrev,"",%progbits
+ 573              	.Ldebug_abbrev0:
+ 574 0000 01       		.uleb128 0x1
+ 575 0001 11       		.uleb128 0x11
+ 576 0002 01       		.byte	0x1
+ 577 0003 25       		.uleb128 0x25
+ 578 0004 0E       		.uleb128 0xe
+ 579 0005 13       		.uleb128 0x13
+ 580 0006 0B       		.uleb128 0xb
+ 581 0007 03       		.uleb128 0x3
+ 582 0008 0E       		.uleb128 0xe
+ 583 0009 1B       		.uleb128 0x1b
+ 584 000a 0E       		.uleb128 0xe
+ 585 000b 55       		.uleb128 0x55
+ 586 000c 17       		.uleb128 0x17
+ 587 000d 11       		.uleb128 0x11
+ 588 000e 01       		.uleb128 0x1
+ 589 000f 10       		.uleb128 0x10
+ 590 0010 17       		.uleb128 0x17
+ 591 0011 00       		.byte	0
+ 592 0012 00       		.byte	0
+ 593 0013 02       		.uleb128 0x2
+ 594 0014 24       		.uleb128 0x24
+ 595 0015 00       		.byte	0
+ 596 0016 0B       		.uleb128 0xb
+ 597 0017 0B       		.uleb128 0xb
+ 598 0018 3E       		.uleb128 0x3e
+ 599 0019 0B       		.uleb128 0xb
+ 600 001a 03       		.uleb128 0x3
+ 601 001b 0E       		.uleb128 0xe
+ 602 001c 00       		.byte	0
+ 603 001d 00       		.byte	0
+ 604 001e 03       		.uleb128 0x3
+ 605 001f 16       		.uleb128 0x16
+ 606 0020 00       		.byte	0
+ 607 0021 03       		.uleb128 0x3
+ 608 0022 0E       		.uleb128 0xe
+ 609 0023 3A       		.uleb128 0x3a
+ 610 0024 0B       		.uleb128 0xb
+ 611 0025 3B       		.uleb128 0x3b
+ 612 0026 0B       		.uleb128 0xb
+ 613 0027 49       		.uleb128 0x49
+ 614 0028 13       		.uleb128 0x13
+ 615 0029 00       		.byte	0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 13
+
+
+ 616 002a 00       		.byte	0
+ 617 002b 04       		.uleb128 0x4
+ 618 002c 24       		.uleb128 0x24
+ 619 002d 00       		.byte	0
+ 620 002e 0B       		.uleb128 0xb
+ 621 002f 0B       		.uleb128 0xb
+ 622 0030 3E       		.uleb128 0x3e
+ 623 0031 0B       		.uleb128 0xb
+ 624 0032 03       		.uleb128 0x3
+ 625 0033 08       		.uleb128 0x8
+ 626 0034 00       		.byte	0
+ 627 0035 00       		.byte	0
+ 628 0036 05       		.uleb128 0x5
+ 629 0037 16       		.uleb128 0x16
+ 630 0038 00       		.byte	0
+ 631 0039 03       		.uleb128 0x3
+ 632 003a 0E       		.uleb128 0xe
+ 633 003b 3A       		.uleb128 0x3a
+ 634 003c 0B       		.uleb128 0xb
+ 635 003d 3B       		.uleb128 0x3b
+ 636 003e 05       		.uleb128 0x5
+ 637 003f 49       		.uleb128 0x49
+ 638 0040 13       		.uleb128 0x13
+ 639 0041 00       		.byte	0
+ 640 0042 00       		.byte	0
+ 641 0043 06       		.uleb128 0x6
+ 642 0044 2E       		.uleb128 0x2e
+ 643 0045 01       		.byte	0x1
+ 644 0046 3F       		.uleb128 0x3f
+ 645 0047 19       		.uleb128 0x19
+ 646 0048 03       		.uleb128 0x3
+ 647 0049 0E       		.uleb128 0xe
+ 648 004a 3A       		.uleb128 0x3a
+ 649 004b 0B       		.uleb128 0xb
+ 650 004c 3B       		.uleb128 0x3b
+ 651 004d 0B       		.uleb128 0xb
+ 652 004e 27       		.uleb128 0x27
+ 653 004f 19       		.uleb128 0x19
+ 654 0050 11       		.uleb128 0x11
+ 655 0051 01       		.uleb128 0x1
+ 656 0052 12       		.uleb128 0x12
+ 657 0053 06       		.uleb128 0x6
+ 658 0054 40       		.uleb128 0x40
+ 659 0055 18       		.uleb128 0x18
+ 660 0056 9742     		.uleb128 0x2117
+ 661 0058 19       		.uleb128 0x19
+ 662 0059 01       		.uleb128 0x1
+ 663 005a 13       		.uleb128 0x13
+ 664 005b 00       		.byte	0
+ 665 005c 00       		.byte	0
+ 666 005d 07       		.uleb128 0x7
+ 667 005e 05       		.uleb128 0x5
+ 668 005f 00       		.byte	0
+ 669 0060 03       		.uleb128 0x3
+ 670 0061 0E       		.uleb128 0xe
+ 671 0062 3A       		.uleb128 0x3a
+ 672 0063 0B       		.uleb128 0xb
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 14
+
+
+ 673 0064 3B       		.uleb128 0x3b
+ 674 0065 0B       		.uleb128 0xb
+ 675 0066 49       		.uleb128 0x49
+ 676 0067 13       		.uleb128 0x13
+ 677 0068 02       		.uleb128 0x2
+ 678 0069 17       		.uleb128 0x17
+ 679 006a 00       		.byte	0
+ 680 006b 00       		.byte	0
+ 681 006c 08       		.uleb128 0x8
+ 682 006d 05       		.uleb128 0x5
+ 683 006e 00       		.byte	0
+ 684 006f 03       		.uleb128 0x3
+ 685 0070 08       		.uleb128 0x8
+ 686 0071 3A       		.uleb128 0x3a
+ 687 0072 0B       		.uleb128 0xb
+ 688 0073 3B       		.uleb128 0x3b
+ 689 0074 0B       		.uleb128 0xb
+ 690 0075 49       		.uleb128 0x49
+ 691 0076 13       		.uleb128 0x13
+ 692 0077 02       		.uleb128 0x2
+ 693 0078 17       		.uleb128 0x17
+ 694 0079 00       		.byte	0
+ 695 007a 00       		.byte	0
+ 696 007b 09       		.uleb128 0x9
+ 697 007c 34       		.uleb128 0x34
+ 698 007d 00       		.byte	0
+ 699 007e 03       		.uleb128 0x3
+ 700 007f 0E       		.uleb128 0xe
+ 701 0080 3A       		.uleb128 0x3a
+ 702 0081 0B       		.uleb128 0xb
+ 703 0082 3B       		.uleb128 0x3b
+ 704 0083 0B       		.uleb128 0xb
+ 705 0084 49       		.uleb128 0x49
+ 706 0085 13       		.uleb128 0x13
+ 707 0086 02       		.uleb128 0x2
+ 708 0087 18       		.uleb128 0x18
+ 709 0088 00       		.byte	0
+ 710 0089 00       		.byte	0
+ 711 008a 0A       		.uleb128 0xa
+ 712 008b 898201   		.uleb128 0x4109
+ 713 008e 00       		.byte	0
+ 714 008f 11       		.uleb128 0x11
+ 715 0090 01       		.uleb128 0x1
+ 716 0091 31       		.uleb128 0x31
+ 717 0092 13       		.uleb128 0x13
+ 718 0093 00       		.byte	0
+ 719 0094 00       		.byte	0
+ 720 0095 0B       		.uleb128 0xb
+ 721 0096 898201   		.uleb128 0x4109
+ 722 0099 01       		.byte	0x1
+ 723 009a 11       		.uleb128 0x11
+ 724 009b 01       		.uleb128 0x1
+ 725 009c 31       		.uleb128 0x31
+ 726 009d 13       		.uleb128 0x13
+ 727 009e 01       		.uleb128 0x1
+ 728 009f 13       		.uleb128 0x13
+ 729 00a0 00       		.byte	0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 15
+
+
+ 730 00a1 00       		.byte	0
+ 731 00a2 0C       		.uleb128 0xc
+ 732 00a3 8A8201   		.uleb128 0x410a
+ 733 00a6 00       		.byte	0
+ 734 00a7 02       		.uleb128 0x2
+ 735 00a8 18       		.uleb128 0x18
+ 736 00a9 9142     		.uleb128 0x2111
+ 737 00ab 18       		.uleb128 0x18
+ 738 00ac 00       		.byte	0
+ 739 00ad 00       		.byte	0
+ 740 00ae 0D       		.uleb128 0xd
+ 741 00af 01       		.uleb128 0x1
+ 742 00b0 01       		.byte	0x1
+ 743 00b1 49       		.uleb128 0x49
+ 744 00b2 13       		.uleb128 0x13
+ 745 00b3 01       		.uleb128 0x1
+ 746 00b4 13       		.uleb128 0x13
+ 747 00b5 00       		.byte	0
+ 748 00b6 00       		.byte	0
+ 749 00b7 0E       		.uleb128 0xe
+ 750 00b8 21       		.uleb128 0x21
+ 751 00b9 00       		.byte	0
+ 752 00ba 49       		.uleb128 0x49
+ 753 00bb 13       		.uleb128 0x13
+ 754 00bc 2F       		.uleb128 0x2f
+ 755 00bd 0B       		.uleb128 0xb
+ 756 00be 00       		.byte	0
+ 757 00bf 00       		.byte	0
+ 758 00c0 0F       		.uleb128 0xf
+ 759 00c1 2E       		.uleb128 0x2e
+ 760 00c2 01       		.byte	0x1
+ 761 00c3 3F       		.uleb128 0x3f
+ 762 00c4 19       		.uleb128 0x19
+ 763 00c5 03       		.uleb128 0x3
+ 764 00c6 0E       		.uleb128 0xe
+ 765 00c7 3A       		.uleb128 0x3a
+ 766 00c8 0B       		.uleb128 0xb
+ 767 00c9 3B       		.uleb128 0x3b
+ 768 00ca 0B       		.uleb128 0xb
+ 769 00cb 27       		.uleb128 0x27
+ 770 00cc 19       		.uleb128 0x19
+ 771 00cd 49       		.uleb128 0x49
+ 772 00ce 13       		.uleb128 0x13
+ 773 00cf 11       		.uleb128 0x11
+ 774 00d0 01       		.uleb128 0x1
+ 775 00d1 12       		.uleb128 0x12
+ 776 00d2 06       		.uleb128 0x6
+ 777 00d3 40       		.uleb128 0x40
+ 778 00d4 18       		.uleb128 0x18
+ 779 00d5 9742     		.uleb128 0x2117
+ 780 00d7 19       		.uleb128 0x19
+ 781 00d8 01       		.uleb128 0x1
+ 782 00d9 13       		.uleb128 0x13
+ 783 00da 00       		.byte	0
+ 784 00db 00       		.byte	0
+ 785 00dc 10       		.uleb128 0x10
+ 786 00dd 05       		.uleb128 0x5
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 16
+
+
+ 787 00de 00       		.byte	0
+ 788 00df 03       		.uleb128 0x3
+ 789 00e0 08       		.uleb128 0x8
+ 790 00e1 3A       		.uleb128 0x3a
+ 791 00e2 0B       		.uleb128 0xb
+ 792 00e3 3B       		.uleb128 0x3b
+ 793 00e4 0B       		.uleb128 0xb
+ 794 00e5 49       		.uleb128 0x49
+ 795 00e6 13       		.uleb128 0x13
+ 796 00e7 02       		.uleb128 0x2
+ 797 00e8 18       		.uleb128 0x18
+ 798 00e9 00       		.byte	0
+ 799 00ea 00       		.byte	0
+ 800 00eb 11       		.uleb128 0x11
+ 801 00ec 34       		.uleb128 0x34
+ 802 00ed 00       		.byte	0
+ 803 00ee 03       		.uleb128 0x3
+ 804 00ef 08       		.uleb128 0x8
+ 805 00f0 3A       		.uleb128 0x3a
+ 806 00f1 0B       		.uleb128 0xb
+ 807 00f2 3B       		.uleb128 0x3b
+ 808 00f3 0B       		.uleb128 0xb
+ 809 00f4 49       		.uleb128 0x49
+ 810 00f5 13       		.uleb128 0x13
+ 811 00f6 02       		.uleb128 0x2
+ 812 00f7 17       		.uleb128 0x17
+ 813 00f8 00       		.byte	0
+ 814 00f9 00       		.byte	0
+ 815 00fa 12       		.uleb128 0x12
+ 816 00fb 34       		.uleb128 0x34
+ 817 00fc 00       		.byte	0
+ 818 00fd 03       		.uleb128 0x3
+ 819 00fe 0E       		.uleb128 0xe
+ 820 00ff 3A       		.uleb128 0x3a
+ 821 0100 0B       		.uleb128 0xb
+ 822 0101 3B       		.uleb128 0x3b
+ 823 0102 05       		.uleb128 0x5
+ 824 0103 49       		.uleb128 0x49
+ 825 0104 13       		.uleb128 0x13
+ 826 0105 3F       		.uleb128 0x3f
+ 827 0106 19       		.uleb128 0x19
+ 828 0107 3C       		.uleb128 0x3c
+ 829 0108 19       		.uleb128 0x19
+ 830 0109 00       		.byte	0
+ 831 010a 00       		.byte	0
+ 832 010b 13       		.uleb128 0x13
+ 833 010c 35       		.uleb128 0x35
+ 834 010d 00       		.byte	0
+ 835 010e 49       		.uleb128 0x49
+ 836 010f 13       		.uleb128 0x13
+ 837 0110 00       		.byte	0
+ 838 0111 00       		.byte	0
+ 839 0112 14       		.uleb128 0x14
+ 840 0113 2E       		.uleb128 0x2e
+ 841 0114 00       		.byte	0
+ 842 0115 3F       		.uleb128 0x3f
+ 843 0116 19       		.uleb128 0x19
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 17
+
+
+ 844 0117 03       		.uleb128 0x3
+ 845 0118 0E       		.uleb128 0xe
+ 846 0119 3A       		.uleb128 0x3a
+ 847 011a 0B       		.uleb128 0xb
+ 848 011b 3B       		.uleb128 0x3b
+ 849 011c 0B       		.uleb128 0xb
+ 850 011d 27       		.uleb128 0x27
+ 851 011e 19       		.uleb128 0x19
+ 852 011f 49       		.uleb128 0x49
+ 853 0120 13       		.uleb128 0x13
+ 854 0121 3C       		.uleb128 0x3c
+ 855 0122 19       		.uleb128 0x19
+ 856 0123 00       		.byte	0
+ 857 0124 00       		.byte	0
+ 858 0125 15       		.uleb128 0x15
+ 859 0126 2E       		.uleb128 0x2e
+ 860 0127 01       		.byte	0x1
+ 861 0128 3F       		.uleb128 0x3f
+ 862 0129 19       		.uleb128 0x19
+ 863 012a 03       		.uleb128 0x3
+ 864 012b 0E       		.uleb128 0xe
+ 865 012c 3A       		.uleb128 0x3a
+ 866 012d 0B       		.uleb128 0xb
+ 867 012e 3B       		.uleb128 0x3b
+ 868 012f 0B       		.uleb128 0xb
+ 869 0130 27       		.uleb128 0x27
+ 870 0131 19       		.uleb128 0x19
+ 871 0132 49       		.uleb128 0x49
+ 872 0133 13       		.uleb128 0x13
+ 873 0134 3C       		.uleb128 0x3c
+ 874 0135 19       		.uleb128 0x19
+ 875 0136 01       		.uleb128 0x1
+ 876 0137 13       		.uleb128 0x13
+ 877 0138 00       		.byte	0
+ 878 0139 00       		.byte	0
+ 879 013a 16       		.uleb128 0x16
+ 880 013b 05       		.uleb128 0x5
+ 881 013c 00       		.byte	0
+ 882 013d 49       		.uleb128 0x49
+ 883 013e 13       		.uleb128 0x13
+ 884 013f 00       		.byte	0
+ 885 0140 00       		.byte	0
+ 886 0141 17       		.uleb128 0x17
+ 887 0142 0F       		.uleb128 0xf
+ 888 0143 00       		.byte	0
+ 889 0144 0B       		.uleb128 0xb
+ 890 0145 0B       		.uleb128 0xb
+ 891 0146 49       		.uleb128 0x49
+ 892 0147 13       		.uleb128 0x13
+ 893 0148 00       		.byte	0
+ 894 0149 00       		.byte	0
+ 895 014a 18       		.uleb128 0x18
+ 896 014b 2E       		.uleb128 0x2e
+ 897 014c 01       		.byte	0x1
+ 898 014d 3F       		.uleb128 0x3f
+ 899 014e 19       		.uleb128 0x19
+ 900 014f 03       		.uleb128 0x3
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 18
+
+
+ 901 0150 0E       		.uleb128 0xe
+ 902 0151 3A       		.uleb128 0x3a
+ 903 0152 0B       		.uleb128 0xb
+ 904 0153 3B       		.uleb128 0x3b
+ 905 0154 0B       		.uleb128 0xb
+ 906 0155 27       		.uleb128 0x27
+ 907 0156 19       		.uleb128 0x19
+ 908 0157 3C       		.uleb128 0x3c
+ 909 0158 19       		.uleb128 0x19
+ 910 0159 01       		.uleb128 0x1
+ 911 015a 13       		.uleb128 0x13
+ 912 015b 00       		.byte	0
+ 913 015c 00       		.byte	0
+ 914 015d 19       		.uleb128 0x19
+ 915 015e 2E       		.uleb128 0x2e
+ 916 015f 01       		.byte	0x1
+ 917 0160 3F       		.uleb128 0x3f
+ 918 0161 19       		.uleb128 0x19
+ 919 0162 03       		.uleb128 0x3
+ 920 0163 0E       		.uleb128 0xe
+ 921 0164 3A       		.uleb128 0x3a
+ 922 0165 0B       		.uleb128 0xb
+ 923 0166 3B       		.uleb128 0x3b
+ 924 0167 0B       		.uleb128 0xb
+ 925 0168 27       		.uleb128 0x27
+ 926 0169 19       		.uleb128 0x19
+ 927 016a 49       		.uleb128 0x49
+ 928 016b 13       		.uleb128 0x13
+ 929 016c 3C       		.uleb128 0x3c
+ 930 016d 19       		.uleb128 0x19
+ 931 016e 00       		.byte	0
+ 932 016f 00       		.byte	0
+ 933 0170 00       		.byte	0
+ 934              		.section	.debug_loc,"",%progbits
+ 935              	.Ldebug_loc0:
+ 936              	.LLST0:
+ 937 0000 00000000 		.4byte	.LVL0
+ 938 0004 11000000 		.4byte	.LVL1-1
+ 939 0008 0100     		.2byte	0x1
+ 940 000a 50       		.byte	0x50
+ 941 000b 11000000 		.4byte	.LVL1-1
+ 942 000f 2C000000 		.4byte	.LFE63
+ 943 0013 0400     		.2byte	0x4
+ 944 0015 F3       		.byte	0xf3
+ 945 0016 01       		.uleb128 0x1
+ 946 0017 50       		.byte	0x50
+ 947 0018 9F       		.byte	0x9f
+ 948 0019 00000000 		.4byte	0
+ 949 001d 00000000 		.4byte	0
+ 950              	.LLST1:
+ 951 0021 00000000 		.4byte	.LVL0
+ 952 0025 11000000 		.4byte	.LVL1-1
+ 953 0029 0100     		.2byte	0x1
+ 954 002b 51       		.byte	0x51
+ 955 002c 11000000 		.4byte	.LVL1-1
+ 956 0030 2C000000 		.4byte	.LFE63
+ 957 0034 0400     		.2byte	0x4
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 19
+
+
+ 958 0036 F3       		.byte	0xf3
+ 959 0037 01       		.uleb128 0x1
+ 960 0038 51       		.byte	0x51
+ 961 0039 9F       		.byte	0x9f
+ 962 003a 00000000 		.4byte	0
+ 963 003e 00000000 		.4byte	0
+ 964              	.LLST2:
+ 965 0042 00000000 		.4byte	.LVL0
+ 966 0046 11000000 		.4byte	.LVL1-1
+ 967 004a 0100     		.2byte	0x1
+ 968 004c 52       		.byte	0x52
+ 969 004d 11000000 		.4byte	.LVL1-1
+ 970 0051 2C000000 		.4byte	.LFE63
+ 971 0055 0400     		.2byte	0x4
+ 972 0057 F3       		.byte	0xf3
+ 973 0058 01       		.uleb128 0x1
+ 974 0059 52       		.byte	0x52
+ 975 005a 9F       		.byte	0x9f
+ 976 005b 00000000 		.4byte	0
+ 977 005f 00000000 		.4byte	0
+ 978              	.LLST3:
+ 979 0063 00000000 		.4byte	.LVL4
+ 980 0067 13000000 		.4byte	.LVL5-1
+ 981 006b 0100     		.2byte	0x1
+ 982 006d 50       		.byte	0x50
+ 983 006e 13000000 		.4byte	.LVL5-1
+ 984 0072 58000000 		.4byte	.LFE64
+ 985 0076 0400     		.2byte	0x4
+ 986 0078 F3       		.byte	0xf3
+ 987 0079 01       		.uleb128 0x1
+ 988 007a 50       		.byte	0x50
+ 989 007b 9F       		.byte	0x9f
+ 990 007c 00000000 		.4byte	0
+ 991 0080 00000000 		.4byte	0
+ 992              	.LLST4:
+ 993 0084 00000000 		.4byte	.LVL4
+ 994 0088 13000000 		.4byte	.LVL5-1
+ 995 008c 0100     		.2byte	0x1
+ 996 008e 51       		.byte	0x51
+ 997 008f 13000000 		.4byte	.LVL5-1
+ 998 0093 58000000 		.4byte	.LFE64
+ 999 0097 0400     		.2byte	0x4
+ 1000 0099 F3       		.byte	0xf3
+ 1001 009a 01       		.uleb128 0x1
+ 1002 009b 51       		.byte	0x51
+ 1003 009c 9F       		.byte	0x9f
+ 1004 009d 00000000 		.4byte	0
+ 1005 00a1 00000000 		.4byte	0
+ 1006              	.LLST5:
+ 1007 00a5 00000000 		.4byte	.LVL13
+ 1008 00a9 04000000 		.4byte	.LVL14
+ 1009 00ad 0100     		.2byte	0x1
+ 1010 00af 50       		.byte	0x50
+ 1011 00b0 04000000 		.4byte	.LVL14
+ 1012 00b4 06000000 		.4byte	.LFE65
+ 1013 00b8 0400     		.2byte	0x4
+ 1014 00ba F3       		.byte	0xf3
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 20
+
+
+ 1015 00bb 01       		.uleb128 0x1
+ 1016 00bc 50       		.byte	0x50
+ 1017 00bd 9F       		.byte	0x9f
+ 1018 00be 00000000 		.4byte	0
+ 1019 00c2 00000000 		.4byte	0
+ 1020              	.LLST6:
+ 1021 00c6 00000000 		.4byte	.LVL13
+ 1022 00ca 04000000 		.4byte	.LVL14
+ 1023 00ce 0800     		.2byte	0x8
+ 1024 00d0 71       		.byte	0x71
+ 1025 00d1 00       		.sleb128 0
+ 1026 00d2 38       		.byte	0x38
+ 1027 00d3 24       		.byte	0x24
+ 1028 00d4 70       		.byte	0x70
+ 1029 00d5 00       		.sleb128 0
+ 1030 00d6 21       		.byte	0x21
+ 1031 00d7 9F       		.byte	0x9f
+ 1032 00d8 00000000 		.4byte	0
+ 1033 00dc 00000000 		.4byte	0
+ 1034              		.section	.debug_aranges,"",%progbits
+ 1035 0000 2C000000 		.4byte	0x2c
+ 1036 0004 0200     		.2byte	0x2
+ 1037 0006 00000000 		.4byte	.Ldebug_info0
+ 1038 000a 04       		.byte	0x4
+ 1039 000b 00       		.byte	0
+ 1040 000c 0000     		.2byte	0
+ 1041 000e 0000     		.2byte	0
+ 1042 0010 00000000 		.4byte	.LFB63
+ 1043 0014 2C000000 		.4byte	.LFE63-.LFB63
+ 1044 0018 00000000 		.4byte	.LFB64
+ 1045 001c 58000000 		.4byte	.LFE64-.LFB64
+ 1046 0020 00000000 		.4byte	.LFB65
+ 1047 0024 06000000 		.4byte	.LFE65-.LFB65
+ 1048 0028 00000000 		.4byte	0
+ 1049 002c 00000000 		.4byte	0
+ 1050              		.section	.debug_ranges,"",%progbits
+ 1051              	.Ldebug_ranges0:
+ 1052 0000 00000000 		.4byte	.LFB63
+ 1053 0004 2C000000 		.4byte	.LFE63
+ 1054 0008 00000000 		.4byte	.LFB64
+ 1055 000c 58000000 		.4byte	.LFE64
+ 1056 0010 00000000 		.4byte	.LFB65
+ 1057 0014 06000000 		.4byte	.LFE65
+ 1058 0018 00000000 		.4byte	0
+ 1059 001c 00000000 		.4byte	0
+ 1060              		.section	.debug_line,"",%progbits
+ 1061              	.Ldebug_line0:
+ 1062 0000 BD010000 		.section	.debug_str,"MS",%progbits,1
+ 1062      02006B01 
+ 1062      00000201 
+ 1062      FB0E0D00 
+ 1062      01010101 
+ 1063              	.LASF19:
+ 1064 0000 64657669 		.ascii	"device_addr\000"
+ 1064      63655F61 
+ 1064      64647200 
+ 1065              	.LASF31:
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 21
+
+
+ 1066 000c 433A5C55 		.ascii	"C:\\Users\\Nhan Phan\\Desktop\\CProjects\\Zumobot\\"
+ 1066      73657273 
+ 1066      5C4E6861 
+ 1066      6E205068 
+ 1066      616E5C44 
+ 1067 0039 5A756D6F 		.ascii	"ZumoBot.cydsn\000"
+ 1067      426F742E 
+ 1067      63796473 
+ 1067      6E00
+ 1068              	.LASF20:
+ 1069 0047 76616C75 		.ascii	"value\000"
+ 1069      6500
+ 1070              	.LASF9:
+ 1071 004d 5F5F696E 		.ascii	"__int32_t\000"
+ 1071      7433325F 
+ 1071      7400
+ 1072              	.LASF32:
+ 1073 0057 4932435F 		.ascii	"I2C_write\000"
+ 1073      77726974 
+ 1073      6500
+ 1074              	.LASF25:
+ 1075 0061 4932435F 		.ascii	"I2C_MasterClearStatus\000"
+ 1075      4D617374 
+ 1075      6572436C 
+ 1075      65617253 
+ 1075      74617475 
+ 1076              	.LASF28:
+ 1077 0077 4932435F 		.ascii	"I2C_MasterReadBuf\000"
+ 1077      4D617374 
+ 1077      65725265 
+ 1077      61644275 
+ 1077      6600
+ 1078              	.LASF15:
+ 1079 0089 666C6F61 		.ascii	"float\000"
+ 1079      7400
+ 1080              	.LASF24:
+ 1081 008f 636F6E76 		.ascii	"convert_raw\000"
+ 1081      6572745F 
+ 1081      72617700 
+ 1082              	.LASF1:
+ 1083 009b 756E7369 		.ascii	"unsigned char\000"
+ 1083      676E6564 
+ 1083      20636861 
+ 1083      7200
+ 1084              	.LASF34:
+ 1085 00a9 4932435F 		.ascii	"I2C_MasterWriteBuf\000"
+ 1085      4D617374 
+ 1085      65725772 
+ 1085      69746542 
+ 1085      756600
+ 1086              	.LASF14:
+ 1087 00bc 696E7431 		.ascii	"int16\000"
+ 1087      3600
+ 1088              	.LASF5:
+ 1089 00c2 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1089      20756E73 
+ 1089      69676E65 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 22
+
+
+ 1089      6420696E 
+ 1089      7400
+ 1090              	.LASF3:
+ 1091 00d4 73686F72 		.ascii	"short unsigned int\000"
+ 1091      7420756E 
+ 1091      7369676E 
+ 1091      65642069 
+ 1091      6E7400
+ 1092              	.LASF33:
+ 1093 00e7 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1093      52784275 
+ 1093      66666572 
+ 1093      00
+ 1094              	.LASF16:
+ 1095 00f4 646F7562 		.ascii	"double\000"
+ 1095      6C6500
+ 1096              	.LASF2:
+ 1097 00fb 73686F72 		.ascii	"short int\000"
+ 1097      7420696E 
+ 1097      7400
+ 1098              	.LASF12:
+ 1099 0105 75696E74 		.ascii	"uint16\000"
+ 1099      313600
+ 1100              	.LASF21:
+ 1101 010c 77726974 		.ascii	"write_buf\000"
+ 1101      655F6275 
+ 1101      6600
+ 1102              	.LASF13:
+ 1103 0116 75696E74 		.ascii	"uint32\000"
+ 1103      333200
+ 1104              	.LASF29:
+ 1105 011d 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 1105      4320342E 
+ 1105      392E3320 
+ 1105      32303135 
+ 1105      30333033 
+ 1106 0150 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 1106      20726576 
+ 1106      6973696F 
+ 1106      6E203232 
+ 1106      31323230 
+ 1107 0183 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1107      66756E63 
+ 1107      74696F6E 
+ 1107      2D736563 
+ 1107      74696F6E 
+ 1108              	.LASF8:
+ 1109 01ab 756E7369 		.ascii	"unsigned int\000"
+ 1109      676E6564 
+ 1109      20696E74 
+ 1109      00
+ 1110              	.LASF7:
+ 1111 01b8 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1111      206C6F6E 
+ 1111      6720756E 
+ 1111      7369676E 
+ 1111      65642069 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cc6hzIpJ.s 			page 23
+
+
+ 1112              	.LASF22:
+ 1113 01cf 72656164 		.ascii	"read_buf\000"
+ 1113      5F627566 
+ 1113      00
+ 1114              	.LASF10:
+ 1115 01d8 696E7433 		.ascii	"int32_t\000"
+ 1115      325F7400 
+ 1116              	.LASF18:
+ 1117 01e0 73697A65 		.ascii	"sizetype\000"
+ 1117      74797065 
+ 1117      00
+ 1118              	.LASF6:
+ 1119 01e9 6C6F6E67 		.ascii	"long long int\000"
+ 1119      206C6F6E 
+ 1119      6720696E 
+ 1119      7400
+ 1120              	.LASF17:
+ 1121 01f7 63686172 		.ascii	"char\000"
+ 1121      00
+ 1122              	.LASF26:
+ 1123 01fc 4932435F 		.ascii	"I2C_MasterStatus\000"
+ 1123      4D617374 
+ 1123      65725374 
+ 1123      61747573 
+ 1123      00
+ 1124              	.LASF30:
+ 1125 020d 5A756D6F 		.ascii	"ZumoLibrary\\I2C_made.c\000"
+ 1125      4C696272 
+ 1125      6172795C 
+ 1125      4932435F 
+ 1125      6D616465 
+ 1126              	.LASF23:
+ 1127 0224 4932435F 		.ascii	"I2C_read\000"
+ 1127      72656164 
+ 1127      00
+ 1128              	.LASF11:
+ 1129 022d 75696E74 		.ascii	"uint8\000"
+ 1129      3800
+ 1130              	.LASF4:
+ 1131 0233 6C6F6E67 		.ascii	"long int\000"
+ 1131      20696E74 
+ 1131      00
+ 1132              	.LASF0:
+ 1133 023c 7369676E 		.ascii	"signed char\000"
+ 1133      65642063 
+ 1133      68617200 
+ 1134              	.LASF27:
+ 1135 0248 43794465 		.ascii	"CyDelay\000"
+ 1135      6C617900 
+ 1136              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

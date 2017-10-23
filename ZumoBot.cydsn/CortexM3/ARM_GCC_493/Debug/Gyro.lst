@@ -1,0 +1,567 @@
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cckHtlZw.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"Gyro.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.global	__aeabi_ui2f
+  19              		.global	__aeabi_fmul
+  20              		.global	__aeabi_f2uiz
+  21              		.section	.text.value_convert_gyro,"ax",%progbits
+  22              		.align	2
+  23              		.global	value_convert_gyro
+  24              		.thumb
+  25              		.thumb_func
+  26              		.type	value_convert_gyro, %function
+  27              	value_convert_gyro:
+  28              	.LFB63:
+  29              		.file 1 "ZumoLibrary\\Gyro.c"
+   1:ZumoLibrary/Gyro.c **** /**
+   2:ZumoLibrary/Gyro.c ****  * @file    Gyro.c
+   3:ZumoLibrary/Gyro.c ****  * @brief   Basic methods for operating gyroscope. For more details, please refer to Gyro.h file. 
+   4:ZumoLibrary/Gyro.c ****  * @details part number: L3GD20H (included in Zumo shield)
+   5:ZumoLibrary/Gyro.c **** */
+   6:ZumoLibrary/Gyro.c **** #include "gyro.h"
+   7:ZumoLibrary/Gyro.c **** 
+   8:ZumoLibrary/Gyro.c **** 
+   9:ZumoLibrary/Gyro.c **** uint16 value_convert_gyro(uint16 raw)
+  10:ZumoLibrary/Gyro.c **** {
+  30              		.loc 1 10 0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              	.LVL0:
+  35 0000 08B5     		push	{r3, lr}
+  36              		.cfi_def_cfa_offset 8
+  37              		.cfi_offset 3, -8
+  38              		.cfi_offset 14, -4
+  39              	.LVL1:
+  11:ZumoLibrary/Gyro.c ****     float rate_result;
+  12:ZumoLibrary/Gyro.c ****     float G_GAIN = 0.07;                        // FS = 2000 dps
+  13:ZumoLibrary/Gyro.c ****   
+  14:ZumoLibrary/Gyro.c ****     rate_result = (float)raw * G_GAIN;          // degrees per second for Gyroscope
+  40              		.loc 1 14 0
+  41 0002 FFF7FEFF 		bl	__aeabi_ui2f
+  42              	.LVL2:
+  43 0006 0349     		ldr	r1, .L3
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cckHtlZw.s 			page 2
+
+
+  44 0008 FFF7FEFF 		bl	__aeabi_fmul
+  45              	.LVL3:
+  15:ZumoLibrary/Gyro.c ****     
+  16:ZumoLibrary/Gyro.c ****     return rate_result;
+  46              		.loc 1 16 0
+  47 000c FFF7FEFF 		bl	__aeabi_f2uiz
+  48              	.LVL4:
+  17:ZumoLibrary/Gyro.c **** }
+  49              		.loc 1 17 0
+  50 0010 80B2     		uxth	r0, r0
+  51 0012 08BD     		pop	{r3, pc}
+  52              	.L4:
+  53              		.align	2
+  54              	.L3:
+  55 0014 295C8F3D 		.word	1032805417
+  56              		.cfi_endproc
+  57              	.LFE63:
+  58              		.size	value_convert_gyro, .-value_convert_gyro
+  59              		.text
+  60              	.Letext0:
+  61              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+  62              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+  63              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+  64              		.file 5 "Generated_Source\\PSoC5/core_cm3.h"
+  65              		.section	.debug_info,"",%progbits
+  66              	.Ldebug_info0:
+  67 0000 FF000000 		.4byte	0xff
+  68 0004 0400     		.2byte	0x4
+  69 0006 00000000 		.4byte	.Ldebug_abbrev0
+  70 000a 04       		.byte	0x4
+  71 000b 01       		.uleb128 0x1
+  72 000c 7E000000 		.4byte	.LASF18
+  73 0010 01       		.byte	0x1
+  74 0011 0C010000 		.4byte	.LASF19
+  75 0015 42010000 		.4byte	.LASF20
+  76 0019 00000000 		.4byte	.Ldebug_ranges0+0
+  77 001d 00000000 		.4byte	0
+  78 0021 00000000 		.4byte	.Ldebug_line0
+  79 0025 02       		.uleb128 0x2
+  80 0026 01       		.byte	0x1
+  81 0027 06       		.byte	0x6
+  82 0028 7D010000 		.4byte	.LASF0
+  83 002c 02       		.uleb128 0x2
+  84 002d 01       		.byte	0x1
+  85 002e 08       		.byte	0x8
+  86 002f 1F010000 		.4byte	.LASF1
+  87 0033 02       		.uleb128 0x2
+  88 0034 02       		.byte	0x2
+  89 0035 05       		.byte	0x5
+  90 0036 99010000 		.4byte	.LASF2
+  91 003a 02       		.uleb128 0x2
+  92 003b 02       		.byte	0x2
+  93 003c 07       		.byte	0x7
+  94 003d 0E000000 		.4byte	.LASF3
+  95 0041 03       		.uleb128 0x3
+  96 0042 89010000 		.4byte	.LASF9
+  97 0046 02       		.byte	0x2
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cckHtlZw.s 			page 3
+
+
+  98 0047 3F       		.byte	0x3f
+  99 0048 4C000000 		.4byte	0x4c
+ 100 004c 02       		.uleb128 0x2
+ 101 004d 04       		.byte	0x4
+ 102 004e 05       		.byte	0x5
+ 103 004f 32010000 		.4byte	.LASF4
+ 104 0053 02       		.uleb128 0x2
+ 105 0054 04       		.byte	0x4
+ 106 0055 07       		.byte	0x7
+ 107 0056 55000000 		.4byte	.LASF5
+ 108 005a 02       		.uleb128 0x2
+ 109 005b 08       		.byte	0x8
+ 110 005c 05       		.byte	0x5
+ 111 005d 00000000 		.4byte	.LASF6
+ 112 0061 02       		.uleb128 0x2
+ 113 0062 08       		.byte	0x8
+ 114 0063 07       		.byte	0x7
+ 115 0064 67000000 		.4byte	.LASF7
+ 116 0068 04       		.uleb128 0x4
+ 117 0069 04       		.byte	0x4
+ 118 006a 05       		.byte	0x5
+ 119 006b 696E7400 		.ascii	"int\000"
+ 120 006f 02       		.uleb128 0x2
+ 121 0070 04       		.byte	0x4
+ 122 0071 07       		.byte	0x7
+ 123 0072 2E000000 		.4byte	.LASF8
+ 124 0076 03       		.uleb128 0x3
+ 125 0077 AA010000 		.4byte	.LASF10
+ 126 007b 03       		.byte	0x3
+ 127 007c 2C       		.byte	0x2c
+ 128 007d 41000000 		.4byte	0x41
+ 129 0081 05       		.uleb128 0x5
+ 130 0082 A3010000 		.4byte	.LASF11
+ 131 0086 04       		.byte	0x4
+ 132 0087 9301     		.2byte	0x193
+ 133 0089 3A000000 		.4byte	0x3a
+ 134 008d 02       		.uleb128 0x2
+ 135 008e 04       		.byte	0x4
+ 136 008f 04       		.byte	0x4
+ 137 0090 93010000 		.4byte	.LASF12
+ 138 0094 02       		.uleb128 0x2
+ 139 0095 08       		.byte	0x8
+ 140 0096 04       		.byte	0x4
+ 141 0097 3B010000 		.4byte	.LASF13
+ 142 009b 02       		.uleb128 0x2
+ 143 009c 01       		.byte	0x1
+ 144 009d 08       		.byte	0x8
+ 145 009e 2D010000 		.4byte	.LASF14
+ 146 00a2 02       		.uleb128 0x2
+ 147 00a3 04       		.byte	0x4
+ 148 00a4 07       		.byte	0x7
+ 149 00a5 B2010000 		.4byte	.LASF15
+ 150 00a9 06       		.uleb128 0x6
+ 151 00aa 3B000000 		.4byte	.LASF21
+ 152 00ae 01       		.byte	0x1
+ 153 00af 09       		.byte	0x9
+ 154 00b0 81000000 		.4byte	0x81
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cckHtlZw.s 			page 4
+
+
+ 155 00b4 00000000 		.4byte	.LFB63
+ 156 00b8 18000000 		.4byte	.LFE63-.LFB63
+ 157 00bc 01       		.uleb128 0x1
+ 158 00bd 9C       		.byte	0x9c
+ 159 00be F1000000 		.4byte	0xf1
+ 160 00c2 07       		.uleb128 0x7
+ 161 00c3 72617700 		.ascii	"raw\000"
+ 162 00c7 01       		.byte	0x1
+ 163 00c8 09       		.byte	0x9
+ 164 00c9 81000000 		.4byte	0x81
+ 165 00cd 00000000 		.4byte	.LLST0
+ 166 00d1 08       		.uleb128 0x8
+ 167 00d2 BB010000 		.4byte	.LASF16
+ 168 00d6 01       		.byte	0x1
+ 169 00d7 0B       		.byte	0xb
+ 170 00d8 8D000000 		.4byte	0x8d
+ 171 00dc 21000000 		.4byte	.LLST1
+ 172 00e0 09       		.uleb128 0x9
+ 173 00e1 4E000000 		.4byte	.LASF17
+ 174 00e5 01       		.byte	0x1
+ 175 00e6 0C       		.byte	0xc
+ 176 00e7 8D000000 		.4byte	0x8d
+ 177 00eb 04       		.byte	0x4
+ 178 00ec 295C8F3D 		.4byte	0x3d8f5c29
+ 179 00f0 00       		.byte	0
+ 180 00f1 0A       		.uleb128 0xa
+ 181 00f2 21000000 		.4byte	.LASF22
+ 182 00f6 05       		.byte	0x5
+ 183 00f7 9606     		.2byte	0x696
+ 184 00f9 FD000000 		.4byte	0xfd
+ 185 00fd 0B       		.uleb128 0xb
+ 186 00fe 76000000 		.4byte	0x76
+ 187 0102 00       		.byte	0
+ 188              		.section	.debug_abbrev,"",%progbits
+ 189              	.Ldebug_abbrev0:
+ 190 0000 01       		.uleb128 0x1
+ 191 0001 11       		.uleb128 0x11
+ 192 0002 01       		.byte	0x1
+ 193 0003 25       		.uleb128 0x25
+ 194 0004 0E       		.uleb128 0xe
+ 195 0005 13       		.uleb128 0x13
+ 196 0006 0B       		.uleb128 0xb
+ 197 0007 03       		.uleb128 0x3
+ 198 0008 0E       		.uleb128 0xe
+ 199 0009 1B       		.uleb128 0x1b
+ 200 000a 0E       		.uleb128 0xe
+ 201 000b 55       		.uleb128 0x55
+ 202 000c 17       		.uleb128 0x17
+ 203 000d 11       		.uleb128 0x11
+ 204 000e 01       		.uleb128 0x1
+ 205 000f 10       		.uleb128 0x10
+ 206 0010 17       		.uleb128 0x17
+ 207 0011 00       		.byte	0
+ 208 0012 00       		.byte	0
+ 209 0013 02       		.uleb128 0x2
+ 210 0014 24       		.uleb128 0x24
+ 211 0015 00       		.byte	0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cckHtlZw.s 			page 5
+
+
+ 212 0016 0B       		.uleb128 0xb
+ 213 0017 0B       		.uleb128 0xb
+ 214 0018 3E       		.uleb128 0x3e
+ 215 0019 0B       		.uleb128 0xb
+ 216 001a 03       		.uleb128 0x3
+ 217 001b 0E       		.uleb128 0xe
+ 218 001c 00       		.byte	0
+ 219 001d 00       		.byte	0
+ 220 001e 03       		.uleb128 0x3
+ 221 001f 16       		.uleb128 0x16
+ 222 0020 00       		.byte	0
+ 223 0021 03       		.uleb128 0x3
+ 224 0022 0E       		.uleb128 0xe
+ 225 0023 3A       		.uleb128 0x3a
+ 226 0024 0B       		.uleb128 0xb
+ 227 0025 3B       		.uleb128 0x3b
+ 228 0026 0B       		.uleb128 0xb
+ 229 0027 49       		.uleb128 0x49
+ 230 0028 13       		.uleb128 0x13
+ 231 0029 00       		.byte	0
+ 232 002a 00       		.byte	0
+ 233 002b 04       		.uleb128 0x4
+ 234 002c 24       		.uleb128 0x24
+ 235 002d 00       		.byte	0
+ 236 002e 0B       		.uleb128 0xb
+ 237 002f 0B       		.uleb128 0xb
+ 238 0030 3E       		.uleb128 0x3e
+ 239 0031 0B       		.uleb128 0xb
+ 240 0032 03       		.uleb128 0x3
+ 241 0033 08       		.uleb128 0x8
+ 242 0034 00       		.byte	0
+ 243 0035 00       		.byte	0
+ 244 0036 05       		.uleb128 0x5
+ 245 0037 16       		.uleb128 0x16
+ 246 0038 00       		.byte	0
+ 247 0039 03       		.uleb128 0x3
+ 248 003a 0E       		.uleb128 0xe
+ 249 003b 3A       		.uleb128 0x3a
+ 250 003c 0B       		.uleb128 0xb
+ 251 003d 3B       		.uleb128 0x3b
+ 252 003e 05       		.uleb128 0x5
+ 253 003f 49       		.uleb128 0x49
+ 254 0040 13       		.uleb128 0x13
+ 255 0041 00       		.byte	0
+ 256 0042 00       		.byte	0
+ 257 0043 06       		.uleb128 0x6
+ 258 0044 2E       		.uleb128 0x2e
+ 259 0045 01       		.byte	0x1
+ 260 0046 3F       		.uleb128 0x3f
+ 261 0047 19       		.uleb128 0x19
+ 262 0048 03       		.uleb128 0x3
+ 263 0049 0E       		.uleb128 0xe
+ 264 004a 3A       		.uleb128 0x3a
+ 265 004b 0B       		.uleb128 0xb
+ 266 004c 3B       		.uleb128 0x3b
+ 267 004d 0B       		.uleb128 0xb
+ 268 004e 27       		.uleb128 0x27
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cckHtlZw.s 			page 6
+
+
+ 269 004f 19       		.uleb128 0x19
+ 270 0050 49       		.uleb128 0x49
+ 271 0051 13       		.uleb128 0x13
+ 272 0052 11       		.uleb128 0x11
+ 273 0053 01       		.uleb128 0x1
+ 274 0054 12       		.uleb128 0x12
+ 275 0055 06       		.uleb128 0x6
+ 276 0056 40       		.uleb128 0x40
+ 277 0057 18       		.uleb128 0x18
+ 278 0058 9642     		.uleb128 0x2116
+ 279 005a 19       		.uleb128 0x19
+ 280 005b 01       		.uleb128 0x1
+ 281 005c 13       		.uleb128 0x13
+ 282 005d 00       		.byte	0
+ 283 005e 00       		.byte	0
+ 284 005f 07       		.uleb128 0x7
+ 285 0060 05       		.uleb128 0x5
+ 286 0061 00       		.byte	0
+ 287 0062 03       		.uleb128 0x3
+ 288 0063 08       		.uleb128 0x8
+ 289 0064 3A       		.uleb128 0x3a
+ 290 0065 0B       		.uleb128 0xb
+ 291 0066 3B       		.uleb128 0x3b
+ 292 0067 0B       		.uleb128 0xb
+ 293 0068 49       		.uleb128 0x49
+ 294 0069 13       		.uleb128 0x13
+ 295 006a 02       		.uleb128 0x2
+ 296 006b 17       		.uleb128 0x17
+ 297 006c 00       		.byte	0
+ 298 006d 00       		.byte	0
+ 299 006e 08       		.uleb128 0x8
+ 300 006f 34       		.uleb128 0x34
+ 301 0070 00       		.byte	0
+ 302 0071 03       		.uleb128 0x3
+ 303 0072 0E       		.uleb128 0xe
+ 304 0073 3A       		.uleb128 0x3a
+ 305 0074 0B       		.uleb128 0xb
+ 306 0075 3B       		.uleb128 0x3b
+ 307 0076 0B       		.uleb128 0xb
+ 308 0077 49       		.uleb128 0x49
+ 309 0078 13       		.uleb128 0x13
+ 310 0079 02       		.uleb128 0x2
+ 311 007a 17       		.uleb128 0x17
+ 312 007b 00       		.byte	0
+ 313 007c 00       		.byte	0
+ 314 007d 09       		.uleb128 0x9
+ 315 007e 34       		.uleb128 0x34
+ 316 007f 00       		.byte	0
+ 317 0080 03       		.uleb128 0x3
+ 318 0081 0E       		.uleb128 0xe
+ 319 0082 3A       		.uleb128 0x3a
+ 320 0083 0B       		.uleb128 0xb
+ 321 0084 3B       		.uleb128 0x3b
+ 322 0085 0B       		.uleb128 0xb
+ 323 0086 49       		.uleb128 0x49
+ 324 0087 13       		.uleb128 0x13
+ 325 0088 1C       		.uleb128 0x1c
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cckHtlZw.s 			page 7
+
+
+ 326 0089 0A       		.uleb128 0xa
+ 327 008a 00       		.byte	0
+ 328 008b 00       		.byte	0
+ 329 008c 0A       		.uleb128 0xa
+ 330 008d 34       		.uleb128 0x34
+ 331 008e 00       		.byte	0
+ 332 008f 03       		.uleb128 0x3
+ 333 0090 0E       		.uleb128 0xe
+ 334 0091 3A       		.uleb128 0x3a
+ 335 0092 0B       		.uleb128 0xb
+ 336 0093 3B       		.uleb128 0x3b
+ 337 0094 05       		.uleb128 0x5
+ 338 0095 49       		.uleb128 0x49
+ 339 0096 13       		.uleb128 0x13
+ 340 0097 3F       		.uleb128 0x3f
+ 341 0098 19       		.uleb128 0x19
+ 342 0099 3C       		.uleb128 0x3c
+ 343 009a 19       		.uleb128 0x19
+ 344 009b 00       		.byte	0
+ 345 009c 00       		.byte	0
+ 346 009d 0B       		.uleb128 0xb
+ 347 009e 35       		.uleb128 0x35
+ 348 009f 00       		.byte	0
+ 349 00a0 49       		.uleb128 0x49
+ 350 00a1 13       		.uleb128 0x13
+ 351 00a2 00       		.byte	0
+ 352 00a3 00       		.byte	0
+ 353 00a4 00       		.byte	0
+ 354              		.section	.debug_loc,"",%progbits
+ 355              	.Ldebug_loc0:
+ 356              	.LLST0:
+ 357 0000 00000000 		.4byte	.LVL0
+ 358 0004 05000000 		.4byte	.LVL2-1
+ 359 0008 0100     		.2byte	0x1
+ 360 000a 50       		.byte	0x50
+ 361 000b 05000000 		.4byte	.LVL2-1
+ 362 000f 18000000 		.4byte	.LFE63
+ 363 0013 0400     		.2byte	0x4
+ 364 0015 F3       		.byte	0xf3
+ 365 0016 01       		.uleb128 0x1
+ 366 0017 50       		.byte	0x50
+ 367 0018 9F       		.byte	0x9f
+ 368 0019 00000000 		.4byte	0
+ 369 001d 00000000 		.4byte	0
+ 370              	.LLST1:
+ 371 0021 0C000000 		.4byte	.LVL3
+ 372 0025 0F000000 		.4byte	.LVL4-1
+ 373 0029 0100     		.2byte	0x1
+ 374 002b 50       		.byte	0x50
+ 375 002c 00000000 		.4byte	0
+ 376 0030 00000000 		.4byte	0
+ 377              		.section	.debug_aranges,"",%progbits
+ 378 0000 1C000000 		.4byte	0x1c
+ 379 0004 0200     		.2byte	0x2
+ 380 0006 00000000 		.4byte	.Ldebug_info0
+ 381 000a 04       		.byte	0x4
+ 382 000b 00       		.byte	0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cckHtlZw.s 			page 8
+
+
+ 383 000c 0000     		.2byte	0
+ 384 000e 0000     		.2byte	0
+ 385 0010 00000000 		.4byte	.LFB63
+ 386 0014 18000000 		.4byte	.LFE63-.LFB63
+ 387 0018 00000000 		.4byte	0
+ 388 001c 00000000 		.4byte	0
+ 389              		.section	.debug_ranges,"",%progbits
+ 390              	.Ldebug_ranges0:
+ 391 0000 00000000 		.4byte	.LFB63
+ 392 0004 18000000 		.4byte	.LFE63
+ 393 0008 00000000 		.4byte	0
+ 394 000c 00000000 		.4byte	0
+ 395              		.section	.debug_line,"",%progbits
+ 396              	.Ldebug_line0:
+ 397 0000 6B010000 		.section	.debug_str,"MS",%progbits,1
+ 397      02005301 
+ 397      00000201 
+ 397      FB0E0D00 
+ 397      01010101 
+ 398              	.LASF6:
+ 399 0000 6C6F6E67 		.ascii	"long long int\000"
+ 399      206C6F6E 
+ 399      6720696E 
+ 399      7400
+ 400              	.LASF3:
+ 401 000e 73686F72 		.ascii	"short unsigned int\000"
+ 401      7420756E 
+ 401      7369676E 
+ 401      65642069 
+ 401      6E7400
+ 402              	.LASF22:
+ 403 0021 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 403      52784275 
+ 403      66666572 
+ 403      00
+ 404              	.LASF8:
+ 405 002e 756E7369 		.ascii	"unsigned int\000"
+ 405      676E6564 
+ 405      20696E74 
+ 405      00
+ 406              	.LASF21:
+ 407 003b 76616C75 		.ascii	"value_convert_gyro\000"
+ 407      655F636F 
+ 407      6E766572 
+ 407      745F6779 
+ 407      726F00
+ 408              	.LASF17:
+ 409 004e 475F4741 		.ascii	"G_GAIN\000"
+ 409      494E00
+ 410              	.LASF5:
+ 411 0055 6C6F6E67 		.ascii	"long unsigned int\000"
+ 411      20756E73 
+ 411      69676E65 
+ 411      6420696E 
+ 411      7400
+ 412              	.LASF7:
+ 413 0067 6C6F6E67 		.ascii	"long long unsigned int\000"
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cckHtlZw.s 			page 9
+
+
+ 413      206C6F6E 
+ 413      6720756E 
+ 413      7369676E 
+ 413      65642069 
+ 414              	.LASF18:
+ 415 007e 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 415      4320342E 
+ 415      392E3320 
+ 415      32303135 
+ 415      30333033 
+ 416 00b1 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 416      20726576 
+ 416      6973696F 
+ 416      6E203232 
+ 416      31323230 
+ 417 00e4 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 417      66756E63 
+ 417      74696F6E 
+ 417      2D736563 
+ 417      74696F6E 
+ 418              	.LASF19:
+ 419 010c 5A756D6F 		.ascii	"ZumoLibrary\\Gyro.c\000"
+ 419      4C696272 
+ 419      6172795C 
+ 419      4779726F 
+ 419      2E6300
+ 420              	.LASF1:
+ 421 011f 756E7369 		.ascii	"unsigned char\000"
+ 421      676E6564 
+ 421      20636861 
+ 421      7200
+ 422              	.LASF14:
+ 423 012d 63686172 		.ascii	"char\000"
+ 423      00
+ 424              	.LASF4:
+ 425 0132 6C6F6E67 		.ascii	"long int\000"
+ 425      20696E74 
+ 425      00
+ 426              	.LASF13:
+ 427 013b 646F7562 		.ascii	"double\000"
+ 427      6C6500
+ 428              	.LASF20:
+ 429 0142 433A5C55 		.ascii	"C:\\Users\\Nhan Phan\\Desktop\\CProjects\\Zumobot\\"
+ 429      73657273 
+ 429      5C4E6861 
+ 429      6E205068 
+ 429      616E5C44 
+ 430 016f 5A756D6F 		.ascii	"ZumoBot.cydsn\000"
+ 430      426F742E 
+ 430      63796473 
+ 430      6E00
+ 431              	.LASF0:
+ 432 017d 7369676E 		.ascii	"signed char\000"
+ 432      65642063 
+ 432      68617200 
+ 433              	.LASF9:
+ 434 0189 5F5F696E 		.ascii	"__int32_t\000"
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cckHtlZw.s 			page 10
+
+
+ 434      7433325F 
+ 434      7400
+ 435              	.LASF12:
+ 436 0193 666C6F61 		.ascii	"float\000"
+ 436      7400
+ 437              	.LASF2:
+ 438 0199 73686F72 		.ascii	"short int\000"
+ 438      7420696E 
+ 438      7400
+ 439              	.LASF11:
+ 440 01a3 75696E74 		.ascii	"uint16\000"
+ 440      313600
+ 441              	.LASF10:
+ 442 01aa 696E7433 		.ascii	"int32_t\000"
+ 442      325F7400 
+ 443              	.LASF15:
+ 444 01b2 73697A65 		.ascii	"sizetype\000"
+ 444      74797065 
+ 444      00
+ 445              	.LASF16:
+ 446 01bb 72617465 		.ascii	"rate_result\000"
+ 446      5F726573 
+ 446      756C7400 
+ 447              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

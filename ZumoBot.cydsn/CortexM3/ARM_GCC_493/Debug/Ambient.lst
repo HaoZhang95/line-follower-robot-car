@@ -1,0 +1,945 @@
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cceiGVOf.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"Ambient.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.global	__aeabi_ddiv
+  19              		.global	__aeabi_dcmpgt
+  20              		.global	__aeabi_dcmple
+  21              		.global	__aeabi_dmul
+  22              		.global	__aeabi_dsub
+  23              		.section	.text.getLux,"ax",%progbits
+  24              		.align	2
+  25              		.global	getLux
+  26              		.thumb
+  27              		.thumb_func
+  28              		.type	getLux, %function
+  29              	getLux:
+  30              	.LFB0:
+  31              		.file 1 "ZumoLibrary\\Ambient.c"
+   1:ZumoLibrary/Ambient.c **** /**
+   2:ZumoLibrary/Ambient.c ****  * @file Ambient.c
+   3:ZumoLibrary/Ambient.c ****  * @brief basic methods of operating ambient light sensor. For more details, please refer to Ambien
+   4:ZumoLibrary/Ambient.c ****  * @details part number: APDS-9301
+   5:ZumoLibrary/Ambient.c **** */
+   6:ZumoLibrary/Ambient.c **** #include "Ambient.h"
+   7:ZumoLibrary/Ambient.c **** 
+   8:ZumoLibrary/Ambient.c **** 
+   9:ZumoLibrary/Ambient.c **** /**
+  10:ZumoLibrary/Ambient.c **** * @brief    Get lux from raw value
+  11:ZumoLibrary/Ambient.c **** * @details  get lux using values of Channel 0 and Channel 1
+  12:ZumoLibrary/Ambient.c **** * @param    double Channel 0
+  13:ZumoLibrary/Ambient.c **** * @param    double Channel 1
+  14:ZumoLibrary/Ambient.c **** * @return   double return calculated value
+  15:ZumoLibrary/Ambient.c **** */
+  16:ZumoLibrary/Ambient.c **** double getLux(double CH0, double CH1)
+  17:ZumoLibrary/Ambient.c **** {
+  32              		.loc 1 17 0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 0
+  35              		@ frame_needed = 0, uses_anonymous_args = 0
+  36              	.LVL0:
+  37 0000 2DE9F843 		push	{r3, r4, r5, r6, r7, r8, r9, lr}
+  38              		.cfi_def_cfa_offset 32
+  39              		.cfi_offset 3, -32
+  40              		.cfi_offset 4, -28
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cceiGVOf.s 			page 2
+
+
+  41              		.cfi_offset 5, -24
+  42              		.cfi_offset 6, -20
+  43              		.cfi_offset 7, -16
+  44              		.cfi_offset 8, -12
+  45              		.cfi_offset 9, -8
+  46              		.cfi_offset 14, -4
+  47 0004 0646     		mov	r6, r0
+  48 0006 0F46     		mov	r7, r1
+  49 0008 9046     		mov	r8, r2
+  50 000a 9946     		mov	r9, r3
+  51              	.LVL1:
+  18:ZumoLibrary/Ambient.c ****     double result = 0;
+  19:ZumoLibrary/Ambient.c ****     double ChannelRatio = (double)CH1/CH0;
+  52              		.loc 1 19 0
+  53 000c 1046     		mov	r0, r2
+  54              	.LVL2:
+  55 000e 1946     		mov	r1, r3
+  56 0010 3246     		mov	r2, r6
+  57              	.LVL3:
+  58 0012 3B46     		mov	r3, r7
+  59 0014 FFF7FEFF 		bl	__aeabi_ddiv
+  60              	.LVL4:
+  61 0018 0446     		mov	r4, r0
+  62 001a 0D46     		mov	r5, r1
+  63              	.LVL5:
+  20:ZumoLibrary/Ambient.c ****     
+  21:ZumoLibrary/Ambient.c ****     if((0<ChannelRatio) && (ChannelRatio <= 0.5))
+  64              		.loc 1 21 0
+  65 001c 0022     		movs	r2, #0
+  66 001e 0023     		movs	r3, #0
+  67 0020 FFF7FEFF 		bl	__aeabi_dcmpgt
+  68              	.LVL6:
+  69 0024 68B3     		cbz	r0, .L2
+  70              		.loc 1 21 0 is_stmt 0 discriminator 1
+  71 0026 2046     		mov	r0, r4
+  72 0028 2946     		mov	r1, r5
+  73 002a 0022     		movs	r2, #0
+  74 002c 6C4B     		ldr	r3, .L27+96
+  75 002e FFF7FEFF 		bl	__aeabi_dcmple
+  76              	.LVL7:
+  77 0032 30B3     		cbz	r0, .L2
+  22:ZumoLibrary/Ambient.c ****         result = (0.0304 * CH0) - (0.062 * CH0 * pow(ChannelRatio, 1.4));
+  78              		.loc 1 22 0 is_stmt 1
+  79 0034 3046     		mov	r0, r6
+  80 0036 3946     		mov	r1, r7
+  81 0038 51A3     		adr	r3, .L27
+  82 003a D3E90023 		ldrd	r2, [r3]
+  83 003e FFF7FEFF 		bl	__aeabi_dmul
+  84              	.LVL8:
+  85 0042 8046     		mov	r8, r0
+  86 0044 8946     		mov	r9, r1
+  87 0046 3046     		mov	r0, r6
+  88 0048 3946     		mov	r1, r7
+  89 004a 4FA3     		adr	r3, .L27+8
+  90 004c D3E90023 		ldrd	r2, [r3]
+  91 0050 FFF7FEFF 		bl	__aeabi_dmul
+  92              	.LVL9:
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cceiGVOf.s 			page 3
+
+
+  93 0054 0646     		mov	r6, r0
+  94 0056 0F46     		mov	r7, r1
+  95 0058 2046     		mov	r0, r4
+  96 005a 2946     		mov	r1, r5
+  97 005c 4CA3     		adr	r3, .L27+16
+  98 005e D3E90023 		ldrd	r2, [r3]
+  99 0062 FFF7FEFF 		bl	pow
+ 100              	.LVL10:
+ 101 0066 0246     		mov	r2, r0
+ 102 0068 0B46     		mov	r3, r1
+ 103 006a 3046     		mov	r0, r6
+ 104 006c 3946     		mov	r1, r7
+ 105 006e FFF7FEFF 		bl	__aeabi_dmul
+ 106              	.LVL11:
+ 107 0072 0246     		mov	r2, r0
+ 108 0074 0B46     		mov	r3, r1
+ 109 0076 4046     		mov	r0, r8
+ 110 0078 4946     		mov	r1, r9
+ 111 007a FFF7FEFF 		bl	__aeabi_dsub
+ 112              	.LVL12:
+ 113 007e BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 114              	.LVL13:
+ 115              	.L2:
+  23:ZumoLibrary/Ambient.c ****     else if((0.5<ChannelRatio)&&(ChannelRatio <= 0.61))
+ 116              		.loc 1 23 0
+ 117 0082 2046     		mov	r0, r4
+ 118 0084 2946     		mov	r1, r5
+ 119 0086 0022     		movs	r2, #0
+ 120 0088 554B     		ldr	r3, .L27+96
+ 121 008a FFF7FEFF 		bl	__aeabi_dcmpgt
+ 122              	.LVL14:
+ 123 008e F8B1     		cbz	r0, .L6
+ 124              		.loc 1 23 0 is_stmt 0 discriminator 1
+ 125 0090 2046     		mov	r0, r4
+ 126 0092 2946     		mov	r1, r5
+ 127 0094 40A3     		adr	r3, .L27+24
+ 128 0096 D3E90023 		ldrd	r2, [r3]
+ 129 009a FFF7FEFF 		bl	__aeabi_dcmple
+ 130              	.LVL15:
+ 131 009e B8B1     		cbz	r0, .L6
+  24:ZumoLibrary/Ambient.c ****         result = (0.0224 * CH0) - (0.031 * CH1);
+ 132              		.loc 1 24 0 is_stmt 1
+ 133 00a0 3046     		mov	r0, r6
+ 134 00a2 3946     		mov	r1, r7
+ 135 00a4 3EA3     		adr	r3, .L27+32
+ 136 00a6 D3E90023 		ldrd	r2, [r3]
+ 137 00aa FFF7FEFF 		bl	__aeabi_dmul
+ 138              	.LVL16:
+ 139 00ae 0446     		mov	r4, r0
+ 140              	.LVL17:
+ 141 00b0 0D46     		mov	r5, r1
+ 142 00b2 4046     		mov	r0, r8
+ 143 00b4 4946     		mov	r1, r9
+ 144 00b6 3CA3     		adr	r3, .L27+40
+ 145 00b8 D3E90023 		ldrd	r2, [r3]
+ 146 00bc FFF7FEFF 		bl	__aeabi_dmul
+ 147              	.LVL18:
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cceiGVOf.s 			page 4
+
+
+ 148 00c0 0246     		mov	r2, r0
+ 149 00c2 0B46     		mov	r3, r1
+ 150 00c4 2046     		mov	r0, r4
+ 151 00c6 2946     		mov	r1, r5
+ 152 00c8 FFF7FEFF 		bl	__aeabi_dsub
+ 153              	.LVL19:
+ 154 00cc BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 155              	.LVL20:
+ 156              	.L6:
+  25:ZumoLibrary/Ambient.c ****     else if((0.61<ChannelRatio)&&(ChannelRatio <= 0.80))
+ 157              		.loc 1 25 0
+ 158 00d0 2046     		mov	r0, r4
+ 159 00d2 2946     		mov	r1, r5
+ 160 00d4 30A3     		adr	r3, .L27+24
+ 161 00d6 D3E90023 		ldrd	r2, [r3]
+ 162 00da FFF7FEFF 		bl	__aeabi_dcmpgt
+ 163              	.LVL21:
+ 164 00de F8B1     		cbz	r0, .L9
+ 165              		.loc 1 25 0 is_stmt 0 discriminator 1
+ 166 00e0 2046     		mov	r0, r4
+ 167 00e2 2946     		mov	r1, r5
+ 168 00e4 32A3     		adr	r3, .L27+48
+ 169 00e6 D3E90023 		ldrd	r2, [r3]
+ 170 00ea FFF7FEFF 		bl	__aeabi_dcmple
+ 171              	.LVL22:
+ 172 00ee B8B1     		cbz	r0, .L9
+  26:ZumoLibrary/Ambient.c ****         result = (0.0128 * CH0) - (0.0153 * CH1);
+ 173              		.loc 1 26 0 is_stmt 1
+ 174 00f0 3046     		mov	r0, r6
+ 175 00f2 3946     		mov	r1, r7
+ 176 00f4 30A3     		adr	r3, .L27+56
+ 177 00f6 D3E90023 		ldrd	r2, [r3]
+ 178 00fa FFF7FEFF 		bl	__aeabi_dmul
+ 179              	.LVL23:
+ 180 00fe 0446     		mov	r4, r0
+ 181              	.LVL24:
+ 182 0100 0D46     		mov	r5, r1
+ 183 0102 4046     		mov	r0, r8
+ 184 0104 4946     		mov	r1, r9
+ 185 0106 2EA3     		adr	r3, .L27+64
+ 186 0108 D3E90023 		ldrd	r2, [r3]
+ 187 010c FFF7FEFF 		bl	__aeabi_dmul
+ 188              	.LVL25:
+ 189 0110 0246     		mov	r2, r0
+ 190 0112 0B46     		mov	r3, r1
+ 191 0114 2046     		mov	r0, r4
+ 192 0116 2946     		mov	r1, r5
+ 193 0118 FFF7FEFF 		bl	__aeabi_dsub
+ 194              	.LVL26:
+ 195 011c BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 196              	.LVL27:
+ 197              	.L9:
+  27:ZumoLibrary/Ambient.c ****     else if((0.80<ChannelRatio)&&(ChannelRatio <= 1.30))
+ 198              		.loc 1 27 0
+ 199 0120 2046     		mov	r0, r4
+ 200 0122 2946     		mov	r1, r5
+ 201 0124 22A3     		adr	r3, .L27+48
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cceiGVOf.s 			page 5
+
+
+ 202 0126 D3E90023 		ldrd	r2, [r3]
+ 203 012a FFF7FEFF 		bl	__aeabi_dcmpgt
+ 204              	.LVL28:
+ 205 012e F8B1     		cbz	r0, .L24
+ 206              		.loc 1 27 0 is_stmt 0 discriminator 1
+ 207 0130 2046     		mov	r0, r4
+ 208 0132 2946     		mov	r1, r5
+ 209 0134 24A3     		adr	r3, .L27+72
+ 210 0136 D3E90023 		ldrd	r2, [r3]
+ 211 013a FFF7FEFF 		bl	__aeabi_dcmple
+ 212              	.LVL29:
+ 213 013e D8B1     		cbz	r0, .L25
+  28:ZumoLibrary/Ambient.c ****         result = (0.00146 * CH0) - (0.00112 * CH1);
+ 214              		.loc 1 28 0 is_stmt 1
+ 215 0140 3046     		mov	r0, r6
+ 216 0142 3946     		mov	r1, r7
+ 217 0144 22A3     		adr	r3, .L27+80
+ 218 0146 D3E90023 		ldrd	r2, [r3]
+ 219 014a FFF7FEFF 		bl	__aeabi_dmul
+ 220              	.LVL30:
+ 221 014e 0446     		mov	r4, r0
+ 222              	.LVL31:
+ 223 0150 0D46     		mov	r5, r1
+ 224 0152 4046     		mov	r0, r8
+ 225 0154 4946     		mov	r1, r9
+ 226 0156 20A3     		adr	r3, .L27+88
+ 227 0158 D3E90023 		ldrd	r2, [r3]
+ 228 015c FFF7FEFF 		bl	__aeabi_dmul
+ 229              	.LVL32:
+ 230 0160 0246     		mov	r2, r0
+ 231 0162 0B46     		mov	r3, r1
+ 232 0164 2046     		mov	r0, r4
+ 233 0166 2946     		mov	r1, r5
+ 234 0168 FFF7FEFF 		bl	__aeabi_dsub
+ 235              	.LVL33:
+ 236 016c BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 237              	.LVL34:
+ 238              	.L24:
+  29:ZumoLibrary/Ambient.c ****     else 
+  30:ZumoLibrary/Ambient.c ****         result = 0;
+ 239              		.loc 1 30 0
+ 240 0170 0020     		movs	r0, #0
+ 241 0172 0021     		movs	r1, #0
+ 242 0174 BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 243              	.LVL35:
+ 244              	.L25:
+ 245 0178 0020     		movs	r0, #0
+ 246 017a 0021     		movs	r1, #0
+ 247              	.LVL36:
+  31:ZumoLibrary/Ambient.c **** 
+  32:ZumoLibrary/Ambient.c ****     return result;
+  33:ZumoLibrary/Ambient.c **** }
+ 248              		.loc 1 33 0
+ 249 017c BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 250              	.LVL37:
+ 251              	.L28:
+ 252              		.align	3
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cceiGVOf.s 			page 6
+
+
+ 253              	.L27:
+ 254 0180 C58F3177 		.word	1999736773
+ 255 0184 2D219F3F 		.word	1067393325
+ 256 0188 5839B4C8 		.word	-927712936
+ 257 018c 76BEAF3F 		.word	1068482166
+ 258 0190 66666666 		.word	1717986918
+ 259 0194 6666F63F 		.word	1073112678
+ 260 0198 85EB51B8 		.word	-1202590843
+ 261 019c 1E85E33F 		.word	1071875358
+ 262 01a0 C7BAB88D 		.word	-1917273401
+ 263 01a4 06F0963F 		.word	1066856454
+ 264 01a8 5839B4C8 		.word	-927712936
+ 265 01ac 76BE9F3F 		.word	1067433590
+ 266 01b0 9A999999 		.word	-1717986918
+ 267 01b4 9999E93F 		.word	1072273817
+ 268 01b8 2D431CEB 		.word	-350469331
+ 269 01bc E2368A3F 		.word	1066022626
+ 270 01c0 4BC8073D 		.word	1023920203
+ 271 01c4 9B558F3F 		.word	1066358171
+ 272 01c8 CDCCCCCC 		.word	-858993459
+ 273 01cc CCCCF43F 		.word	1073007820
+ 274 01d0 B2632310 		.word	270754738
+ 275 01d4 AFEB573F 		.word	1062726575
+ 276 01d8 D2FBC6D7 		.word	-674825262
+ 277 01dc 9E59523F 		.word	1062361502
+ 278 01e0 0000E03F 		.word	1071644672
+ 279              		.cfi_endproc
+ 280              	.LFE0:
+ 281              		.size	getLux, .-getLux
+ 282 01e4 AFF30080 		.text
+ 283              	.Letext0:
+ 284              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 285              		.section	.debug_info,"",%progbits
+ 286              	.Ldebug_info0:
+ 287 0000 15010000 		.4byte	0x115
+ 288 0004 0400     		.2byte	0x4
+ 289 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 290 000a 04       		.byte	0x4
+ 291 000b 01       		.uleb128 0x1
+ 292 000c 99000000 		.4byte	.LASF16
+ 293 0010 01       		.byte	0x1
+ 294 0011 4A010000 		.4byte	.LASF17
+ 295 0015 1B000000 		.4byte	.LASF18
+ 296 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 297 001d 00000000 		.4byte	0
+ 298 0021 00000000 		.4byte	.Ldebug_line0
+ 299 0025 02       		.uleb128 0x2
+ 300 0026 08       		.byte	0x8
+ 301 0027 04       		.byte	0x4
+ 302 0028 60010000 		.4byte	.LASF0
+ 303 002c 03       		.uleb128 0x3
+ 304 002d 04       		.byte	0x4
+ 305 002e 05       		.byte	0x5
+ 306 002f 696E7400 		.ascii	"int\000"
+ 307 0033 02       		.uleb128 0x2
+ 308 0034 04       		.byte	0x4
+ 309 0035 07       		.byte	0x7
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cceiGVOf.s 			page 7
+
+
+ 310 0036 0E000000 		.4byte	.LASF1
+ 311 003a 02       		.uleb128 0x2
+ 312 003b 01       		.byte	0x1
+ 313 003c 06       		.byte	0x6
+ 314 003d 7A010000 		.4byte	.LASF2
+ 315 0041 02       		.uleb128 0x2
+ 316 0042 01       		.byte	0x1
+ 317 0043 08       		.byte	0x8
+ 318 0044 27010000 		.4byte	.LASF3
+ 319 0048 02       		.uleb128 0x2
+ 320 0049 02       		.byte	0x2
+ 321 004a 05       		.byte	0x5
+ 322 004b 92010000 		.4byte	.LASF4
+ 323 004f 02       		.uleb128 0x2
+ 324 0050 02       		.byte	0x2
+ 325 0051 07       		.byte	0x7
+ 326 0052 67010000 		.4byte	.LASF5
+ 327 0056 02       		.uleb128 0x2
+ 328 0057 04       		.byte	0x4
+ 329 0058 05       		.byte	0x5
+ 330 0059 41010000 		.4byte	.LASF6
+ 331 005d 02       		.uleb128 0x2
+ 332 005e 04       		.byte	0x4
+ 333 005f 07       		.byte	0x7
+ 334 0060 56000000 		.4byte	.LASF7
+ 335 0064 02       		.uleb128 0x2
+ 336 0065 08       		.byte	0x8
+ 337 0066 05       		.byte	0x5
+ 338 0067 00000000 		.4byte	.LASF8
+ 339 006b 02       		.uleb128 0x2
+ 340 006c 08       		.byte	0x8
+ 341 006d 07       		.byte	0x7
+ 342 006e 68000000 		.4byte	.LASF9
+ 343 0072 02       		.uleb128 0x2
+ 344 0073 04       		.byte	0x4
+ 345 0074 07       		.byte	0x7
+ 346 0075 9C010000 		.4byte	.LASF10
+ 347 0079 02       		.uleb128 0x2
+ 348 007a 01       		.byte	0x1
+ 349 007b 08       		.byte	0x8
+ 350 007c 35010000 		.4byte	.LASF11
+ 351 0080 02       		.uleb128 0x2
+ 352 0081 04       		.byte	0x4
+ 353 0082 04       		.byte	0x4
+ 354 0083 86000000 		.4byte	.LASF12
+ 355 0087 02       		.uleb128 0x2
+ 356 0088 08       		.byte	0x8
+ 357 0089 04       		.byte	0x4
+ 358 008a 86010000 		.4byte	.LASF13
+ 359 008e 04       		.uleb128 0x4
+ 360 008f 7F000000 		.4byte	.LASF19
+ 361 0093 01       		.byte	0x1
+ 362 0094 10       		.byte	0x10
+ 363 0095 25000000 		.4byte	0x25
+ 364 0099 00000000 		.4byte	.LFB0
+ 365 009d E4010000 		.4byte	.LFE0-.LFB0
+ 366 00a1 01       		.uleb128 0x1
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cceiGVOf.s 			page 8
+
+
+ 367 00a2 9C       		.byte	0x9c
+ 368 00a3 02010000 		.4byte	0x102
+ 369 00a7 05       		.uleb128 0x5
+ 370 00a8 43483000 		.ascii	"CH0\000"
+ 371 00ac 01       		.byte	0x1
+ 372 00ad 10       		.byte	0x10
+ 373 00ae 25000000 		.4byte	0x25
+ 374 00b2 00000000 		.4byte	.LLST0
+ 375 00b6 05       		.uleb128 0x5
+ 376 00b7 43483100 		.ascii	"CH1\000"
+ 377 00bb 01       		.byte	0x1
+ 378 00bc 10       		.byte	0x10
+ 379 00bd 25000000 		.4byte	0x25
+ 380 00c1 28000000 		.4byte	.LLST1
+ 381 00c5 06       		.uleb128 0x6
+ 382 00c6 3A010000 		.4byte	.LASF14
+ 383 00ca 01       		.byte	0x1
+ 384 00cb 12       		.byte	0x12
+ 385 00cc 25000000 		.4byte	0x25
+ 386 00d0 50000000 		.4byte	.LLST2
+ 387 00d4 06       		.uleb128 0x6
+ 388 00d5 8C000000 		.4byte	.LASF15
+ 389 00d9 01       		.byte	0x1
+ 390 00da 13       		.byte	0x13
+ 391 00db 25000000 		.4byte	0x25
+ 392 00df 0C010000 		.4byte	.LLST3
+ 393 00e3 07       		.uleb128 0x7
+ 394 00e4 66000000 		.4byte	.LVL10
+ 395 00e8 02010000 		.4byte	0x102
+ 396 00ec 08       		.uleb128 0x8
+ 397 00ed 06       		.uleb128 0x6
+ 398 00ee 52       		.byte	0x52
+ 399 00ef 93       		.byte	0x93
+ 400 00f0 04       		.uleb128 0x4
+ 401 00f1 53       		.byte	0x53
+ 402 00f2 93       		.byte	0x93
+ 403 00f3 04       		.uleb128 0x4
+ 404 00f4 0B       		.uleb128 0xb
+ 405 00f5 F4       		.byte	0xf4
+ 406 00f6 25       		.uleb128 0x25
+ 407 00f7 08       		.byte	0x8
+ 408 00f8 66666666 		.4byte	0x66666666
+ 409 00fc 6666F63F 		.4byte	0x3ff66666
+ 410 0100 00       		.byte	0
+ 411 0101 00       		.byte	0
+ 412 0102 09       		.uleb128 0x9
+ 413 0103 706F7700 		.ascii	"pow\000"
+ 414 0107 02       		.byte	0x2
+ 415 0108 85       		.byte	0x85
+ 416 0109 25000000 		.4byte	0x25
+ 417 010d 0A       		.uleb128 0xa
+ 418 010e 25000000 		.4byte	0x25
+ 419 0112 0A       		.uleb128 0xa
+ 420 0113 25000000 		.4byte	0x25
+ 421 0117 00       		.byte	0
+ 422 0118 00       		.byte	0
+ 423              		.section	.debug_abbrev,"",%progbits
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cceiGVOf.s 			page 9
+
+
+ 424              	.Ldebug_abbrev0:
+ 425 0000 01       		.uleb128 0x1
+ 426 0001 11       		.uleb128 0x11
+ 427 0002 01       		.byte	0x1
+ 428 0003 25       		.uleb128 0x25
+ 429 0004 0E       		.uleb128 0xe
+ 430 0005 13       		.uleb128 0x13
+ 431 0006 0B       		.uleb128 0xb
+ 432 0007 03       		.uleb128 0x3
+ 433 0008 0E       		.uleb128 0xe
+ 434 0009 1B       		.uleb128 0x1b
+ 435 000a 0E       		.uleb128 0xe
+ 436 000b 55       		.uleb128 0x55
+ 437 000c 17       		.uleb128 0x17
+ 438 000d 11       		.uleb128 0x11
+ 439 000e 01       		.uleb128 0x1
+ 440 000f 10       		.uleb128 0x10
+ 441 0010 17       		.uleb128 0x17
+ 442 0011 00       		.byte	0
+ 443 0012 00       		.byte	0
+ 444 0013 02       		.uleb128 0x2
+ 445 0014 24       		.uleb128 0x24
+ 446 0015 00       		.byte	0
+ 447 0016 0B       		.uleb128 0xb
+ 448 0017 0B       		.uleb128 0xb
+ 449 0018 3E       		.uleb128 0x3e
+ 450 0019 0B       		.uleb128 0xb
+ 451 001a 03       		.uleb128 0x3
+ 452 001b 0E       		.uleb128 0xe
+ 453 001c 00       		.byte	0
+ 454 001d 00       		.byte	0
+ 455 001e 03       		.uleb128 0x3
+ 456 001f 24       		.uleb128 0x24
+ 457 0020 00       		.byte	0
+ 458 0021 0B       		.uleb128 0xb
+ 459 0022 0B       		.uleb128 0xb
+ 460 0023 3E       		.uleb128 0x3e
+ 461 0024 0B       		.uleb128 0xb
+ 462 0025 03       		.uleb128 0x3
+ 463 0026 08       		.uleb128 0x8
+ 464 0027 00       		.byte	0
+ 465 0028 00       		.byte	0
+ 466 0029 04       		.uleb128 0x4
+ 467 002a 2E       		.uleb128 0x2e
+ 468 002b 01       		.byte	0x1
+ 469 002c 3F       		.uleb128 0x3f
+ 470 002d 19       		.uleb128 0x19
+ 471 002e 03       		.uleb128 0x3
+ 472 002f 0E       		.uleb128 0xe
+ 473 0030 3A       		.uleb128 0x3a
+ 474 0031 0B       		.uleb128 0xb
+ 475 0032 3B       		.uleb128 0x3b
+ 476 0033 0B       		.uleb128 0xb
+ 477 0034 27       		.uleb128 0x27
+ 478 0035 19       		.uleb128 0x19
+ 479 0036 49       		.uleb128 0x49
+ 480 0037 13       		.uleb128 0x13
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cceiGVOf.s 			page 10
+
+
+ 481 0038 11       		.uleb128 0x11
+ 482 0039 01       		.uleb128 0x1
+ 483 003a 12       		.uleb128 0x12
+ 484 003b 06       		.uleb128 0x6
+ 485 003c 40       		.uleb128 0x40
+ 486 003d 18       		.uleb128 0x18
+ 487 003e 9642     		.uleb128 0x2116
+ 488 0040 19       		.uleb128 0x19
+ 489 0041 01       		.uleb128 0x1
+ 490 0042 13       		.uleb128 0x13
+ 491 0043 00       		.byte	0
+ 492 0044 00       		.byte	0
+ 493 0045 05       		.uleb128 0x5
+ 494 0046 05       		.uleb128 0x5
+ 495 0047 00       		.byte	0
+ 496 0048 03       		.uleb128 0x3
+ 497 0049 08       		.uleb128 0x8
+ 498 004a 3A       		.uleb128 0x3a
+ 499 004b 0B       		.uleb128 0xb
+ 500 004c 3B       		.uleb128 0x3b
+ 501 004d 0B       		.uleb128 0xb
+ 502 004e 49       		.uleb128 0x49
+ 503 004f 13       		.uleb128 0x13
+ 504 0050 02       		.uleb128 0x2
+ 505 0051 17       		.uleb128 0x17
+ 506 0052 00       		.byte	0
+ 507 0053 00       		.byte	0
+ 508 0054 06       		.uleb128 0x6
+ 509 0055 34       		.uleb128 0x34
+ 510 0056 00       		.byte	0
+ 511 0057 03       		.uleb128 0x3
+ 512 0058 0E       		.uleb128 0xe
+ 513 0059 3A       		.uleb128 0x3a
+ 514 005a 0B       		.uleb128 0xb
+ 515 005b 3B       		.uleb128 0x3b
+ 516 005c 0B       		.uleb128 0xb
+ 517 005d 49       		.uleb128 0x49
+ 518 005e 13       		.uleb128 0x13
+ 519 005f 02       		.uleb128 0x2
+ 520 0060 17       		.uleb128 0x17
+ 521 0061 00       		.byte	0
+ 522 0062 00       		.byte	0
+ 523 0063 07       		.uleb128 0x7
+ 524 0064 898201   		.uleb128 0x4109
+ 525 0067 01       		.byte	0x1
+ 526 0068 11       		.uleb128 0x11
+ 527 0069 01       		.uleb128 0x1
+ 528 006a 31       		.uleb128 0x31
+ 529 006b 13       		.uleb128 0x13
+ 530 006c 00       		.byte	0
+ 531 006d 00       		.byte	0
+ 532 006e 08       		.uleb128 0x8
+ 533 006f 8A8201   		.uleb128 0x410a
+ 534 0072 00       		.byte	0
+ 535 0073 02       		.uleb128 0x2
+ 536 0074 18       		.uleb128 0x18
+ 537 0075 9142     		.uleb128 0x2111
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cceiGVOf.s 			page 11
+
+
+ 538 0077 18       		.uleb128 0x18
+ 539 0078 00       		.byte	0
+ 540 0079 00       		.byte	0
+ 541 007a 09       		.uleb128 0x9
+ 542 007b 2E       		.uleb128 0x2e
+ 543 007c 01       		.byte	0x1
+ 544 007d 3F       		.uleb128 0x3f
+ 545 007e 19       		.uleb128 0x19
+ 546 007f 03       		.uleb128 0x3
+ 547 0080 08       		.uleb128 0x8
+ 548 0081 3A       		.uleb128 0x3a
+ 549 0082 0B       		.uleb128 0xb
+ 550 0083 3B       		.uleb128 0x3b
+ 551 0084 0B       		.uleb128 0xb
+ 552 0085 27       		.uleb128 0x27
+ 553 0086 19       		.uleb128 0x19
+ 554 0087 49       		.uleb128 0x49
+ 555 0088 13       		.uleb128 0x13
+ 556 0089 3C       		.uleb128 0x3c
+ 557 008a 19       		.uleb128 0x19
+ 558 008b 00       		.byte	0
+ 559 008c 00       		.byte	0
+ 560 008d 0A       		.uleb128 0xa
+ 561 008e 05       		.uleb128 0x5
+ 562 008f 00       		.byte	0
+ 563 0090 49       		.uleb128 0x49
+ 564 0091 13       		.uleb128 0x13
+ 565 0092 00       		.byte	0
+ 566 0093 00       		.byte	0
+ 567 0094 00       		.byte	0
+ 568              		.section	.debug_loc,"",%progbits
+ 569              	.Ldebug_loc0:
+ 570              	.LLST0:
+ 571 0000 00000000 		.4byte	.LVL0
+ 572 0004 0E000000 		.4byte	.LVL2
+ 573 0008 0600     		.2byte	0x6
+ 574 000a 50       		.byte	0x50
+ 575 000b 93       		.byte	0x93
+ 576 000c 04       		.uleb128 0x4
+ 577 000d 51       		.byte	0x51
+ 578 000e 93       		.byte	0x93
+ 579 000f 04       		.uleb128 0x4
+ 580 0010 0E000000 		.4byte	.LVL2
+ 581 0014 E4010000 		.4byte	.LFE0
+ 582 0018 0600     		.2byte	0x6
+ 583 001a F3       		.byte	0xf3
+ 584 001b 03       		.uleb128 0x3
+ 585 001c F5       		.byte	0xf5
+ 586 001d 00       		.uleb128 0
+ 587 001e 25       		.uleb128 0x25
+ 588 001f 9F       		.byte	0x9f
+ 589 0020 00000000 		.4byte	0
+ 590 0024 00000000 		.4byte	0
+ 591              	.LLST1:
+ 592 0028 00000000 		.4byte	.LVL0
+ 593 002c 12000000 		.4byte	.LVL3
+ 594 0030 0600     		.2byte	0x6
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cceiGVOf.s 			page 12
+
+
+ 595 0032 52       		.byte	0x52
+ 596 0033 93       		.byte	0x93
+ 597 0034 04       		.uleb128 0x4
+ 598 0035 53       		.byte	0x53
+ 599 0036 93       		.byte	0x93
+ 600 0037 04       		.uleb128 0x4
+ 601 0038 12000000 		.4byte	.LVL3
+ 602 003c E4010000 		.4byte	.LFE0
+ 603 0040 0600     		.2byte	0x6
+ 604 0042 F3       		.byte	0xf3
+ 605 0043 03       		.uleb128 0x3
+ 606 0044 F5       		.byte	0xf5
+ 607 0045 02       		.uleb128 0x2
+ 608 0046 25       		.uleb128 0x25
+ 609 0047 9F       		.byte	0x9f
+ 610 0048 00000000 		.4byte	0
+ 611 004c 00000000 		.4byte	0
+ 612              	.LLST2:
+ 613 0050 0C000000 		.4byte	.LVL1
+ 614 0054 7E000000 		.4byte	.LVL12
+ 615 0058 0A00     		.2byte	0xa
+ 616 005a 9E       		.byte	0x9e
+ 617 005b 08       		.uleb128 0x8
+ 618 005c 00000000 		.4byte	0
+ 619 0060 00000000 		.4byte	0
+ 620 0064 7E000000 		.4byte	.LVL12
+ 621 0068 82000000 		.4byte	.LVL13
+ 622 006c 0600     		.2byte	0x6
+ 623 006e 50       		.byte	0x50
+ 624 006f 93       		.byte	0x93
+ 625 0070 04       		.uleb128 0x4
+ 626 0071 51       		.byte	0x51
+ 627 0072 93       		.byte	0x93
+ 628 0073 04       		.uleb128 0x4
+ 629 0074 82000000 		.4byte	.LVL13
+ 630 0078 CC000000 		.4byte	.LVL19
+ 631 007c 0A00     		.2byte	0xa
+ 632 007e 9E       		.byte	0x9e
+ 633 007f 08       		.uleb128 0x8
+ 634 0080 00000000 		.4byte	0
+ 635 0084 00000000 		.4byte	0
+ 636 0088 CC000000 		.4byte	.LVL19
+ 637 008c D0000000 		.4byte	.LVL20
+ 638 0090 0600     		.2byte	0x6
+ 639 0092 50       		.byte	0x50
+ 640 0093 93       		.byte	0x93
+ 641 0094 04       		.uleb128 0x4
+ 642 0095 51       		.byte	0x51
+ 643 0096 93       		.byte	0x93
+ 644 0097 04       		.uleb128 0x4
+ 645 0098 D0000000 		.4byte	.LVL20
+ 646 009c 1C010000 		.4byte	.LVL26
+ 647 00a0 0A00     		.2byte	0xa
+ 648 00a2 9E       		.byte	0x9e
+ 649 00a3 08       		.uleb128 0x8
+ 650 00a4 00000000 		.4byte	0
+ 651 00a8 00000000 		.4byte	0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cceiGVOf.s 			page 13
+
+
+ 652 00ac 1C010000 		.4byte	.LVL26
+ 653 00b0 20010000 		.4byte	.LVL27
+ 654 00b4 0600     		.2byte	0x6
+ 655 00b6 50       		.byte	0x50
+ 656 00b7 93       		.byte	0x93
+ 657 00b8 04       		.uleb128 0x4
+ 658 00b9 51       		.byte	0x51
+ 659 00ba 93       		.byte	0x93
+ 660 00bb 04       		.uleb128 0x4
+ 661 00bc 20010000 		.4byte	.LVL27
+ 662 00c0 6C010000 		.4byte	.LVL33
+ 663 00c4 0A00     		.2byte	0xa
+ 664 00c6 9E       		.byte	0x9e
+ 665 00c7 08       		.uleb128 0x8
+ 666 00c8 00000000 		.4byte	0
+ 667 00cc 00000000 		.4byte	0
+ 668 00d0 6C010000 		.4byte	.LVL33
+ 669 00d4 70010000 		.4byte	.LVL34
+ 670 00d8 0600     		.2byte	0x6
+ 671 00da 50       		.byte	0x50
+ 672 00db 93       		.byte	0x93
+ 673 00dc 04       		.uleb128 0x4
+ 674 00dd 51       		.byte	0x51
+ 675 00de 93       		.byte	0x93
+ 676 00df 04       		.uleb128 0x4
+ 677 00e0 70010000 		.4byte	.LVL34
+ 678 00e4 7C010000 		.4byte	.LVL36
+ 679 00e8 0A00     		.2byte	0xa
+ 680 00ea 9E       		.byte	0x9e
+ 681 00eb 08       		.uleb128 0x8
+ 682 00ec 00000000 		.4byte	0
+ 683 00f0 00000000 		.4byte	0
+ 684 00f4 7C010000 		.4byte	.LVL36
+ 685 00f8 E4010000 		.4byte	.LFE0
+ 686 00fc 0600     		.2byte	0x6
+ 687 00fe 50       		.byte	0x50
+ 688 00ff 93       		.byte	0x93
+ 689 0100 04       		.uleb128 0x4
+ 690 0101 51       		.byte	0x51
+ 691 0102 93       		.byte	0x93
+ 692 0103 04       		.uleb128 0x4
+ 693 0104 00000000 		.4byte	0
+ 694 0108 00000000 		.4byte	0
+ 695              	.LLST3:
+ 696 010c 1C000000 		.4byte	.LVL5
+ 697 0110 B0000000 		.4byte	.LVL17
+ 698 0114 0600     		.2byte	0x6
+ 699 0116 54       		.byte	0x54
+ 700 0117 93       		.byte	0x93
+ 701 0118 04       		.uleb128 0x4
+ 702 0119 55       		.byte	0x55
+ 703 011a 93       		.byte	0x93
+ 704 011b 04       		.uleb128 0x4
+ 705 011c D0000000 		.4byte	.LVL20
+ 706 0120 00010000 		.4byte	.LVL24
+ 707 0124 0600     		.2byte	0x6
+ 708 0126 54       		.byte	0x54
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cceiGVOf.s 			page 14
+
+
+ 709 0127 93       		.byte	0x93
+ 710 0128 04       		.uleb128 0x4
+ 711 0129 55       		.byte	0x55
+ 712 012a 93       		.byte	0x93
+ 713 012b 04       		.uleb128 0x4
+ 714 012c 20010000 		.4byte	.LVL27
+ 715 0130 50010000 		.4byte	.LVL31
+ 716 0134 0600     		.2byte	0x6
+ 717 0136 54       		.byte	0x54
+ 718 0137 93       		.byte	0x93
+ 719 0138 04       		.uleb128 0x4
+ 720 0139 55       		.byte	0x55
+ 721 013a 93       		.byte	0x93
+ 722 013b 04       		.uleb128 0x4
+ 723 013c 70010000 		.4byte	.LVL34
+ 724 0140 80010000 		.4byte	.LVL37
+ 725 0144 0600     		.2byte	0x6
+ 726 0146 54       		.byte	0x54
+ 727 0147 93       		.byte	0x93
+ 728 0148 04       		.uleb128 0x4
+ 729 0149 55       		.byte	0x55
+ 730 014a 93       		.byte	0x93
+ 731 014b 04       		.uleb128 0x4
+ 732 014c 00000000 		.4byte	0
+ 733 0150 00000000 		.4byte	0
+ 734              		.section	.debug_aranges,"",%progbits
+ 735 0000 1C000000 		.4byte	0x1c
+ 736 0004 0200     		.2byte	0x2
+ 737 0006 00000000 		.4byte	.Ldebug_info0
+ 738 000a 04       		.byte	0x4
+ 739 000b 00       		.byte	0
+ 740 000c 0000     		.2byte	0
+ 741 000e 0000     		.2byte	0
+ 742 0010 00000000 		.4byte	.LFB0
+ 743 0014 E4010000 		.4byte	.LFE0-.LFB0
+ 744 0018 00000000 		.4byte	0
+ 745 001c 00000000 		.4byte	0
+ 746              		.section	.debug_ranges,"",%progbits
+ 747              	.Ldebug_ranges0:
+ 748 0000 00000000 		.4byte	.LFB0
+ 749 0004 E4010000 		.4byte	.LFE0
+ 750 0008 00000000 		.4byte	0
+ 751 000c 00000000 		.4byte	0
+ 752              		.section	.debug_line,"",%progbits
+ 753              	.Ldebug_line0:
+ 754 0000 DF000000 		.section	.debug_str,"MS",%progbits,1
+ 754      02009E00 
+ 754      00000201 
+ 754      FB0E0D00 
+ 754      01010101 
+ 755              	.LASF8:
+ 756 0000 6C6F6E67 		.ascii	"long long int\000"
+ 756      206C6F6E 
+ 756      6720696E 
+ 756      7400
+ 757              	.LASF1:
+ 758 000e 756E7369 		.ascii	"unsigned int\000"
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cceiGVOf.s 			page 15
+
+
+ 758      676E6564 
+ 758      20696E74 
+ 758      00
+ 759              	.LASF18:
+ 760 001b 433A5C55 		.ascii	"C:\\Users\\Nhan Phan\\Desktop\\CProjects\\Zumobot\\"
+ 760      73657273 
+ 760      5C4E6861 
+ 760      6E205068 
+ 760      616E5C44 
+ 761 0048 5A756D6F 		.ascii	"ZumoBot.cydsn\000"
+ 761      426F742E 
+ 761      63796473 
+ 761      6E00
+ 762              	.LASF7:
+ 763 0056 6C6F6E67 		.ascii	"long unsigned int\000"
+ 763      20756E73 
+ 763      69676E65 
+ 763      6420696E 
+ 763      7400
+ 764              	.LASF9:
+ 765 0068 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 765      206C6F6E 
+ 765      6720756E 
+ 765      7369676E 
+ 765      65642069 
+ 766              	.LASF19:
+ 767 007f 6765744C 		.ascii	"getLux\000"
+ 767      757800
+ 768              	.LASF12:
+ 769 0086 666C6F61 		.ascii	"float\000"
+ 769      7400
+ 770              	.LASF15:
+ 771 008c 4368616E 		.ascii	"ChannelRatio\000"
+ 771      6E656C52 
+ 771      6174696F 
+ 771      00
+ 772              	.LASF16:
+ 773 0099 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 773      4320342E 
+ 773      392E3320 
+ 773      32303135 
+ 773      30333033 
+ 774 00cc 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 774      20726576 
+ 774      6973696F 
+ 774      6E203232 
+ 774      31323230 
+ 775 00ff 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 775      66756E63 
+ 775      74696F6E 
+ 775      2D736563 
+ 775      74696F6E 
+ 776              	.LASF3:
+ 777 0127 756E7369 		.ascii	"unsigned char\000"
+ 777      676E6564 
+ 777      20636861 
+ 777      7200
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cceiGVOf.s 			page 16
+
+
+ 778              	.LASF11:
+ 779 0135 63686172 		.ascii	"char\000"
+ 779      00
+ 780              	.LASF14:
+ 781 013a 72657375 		.ascii	"result\000"
+ 781      6C7400
+ 782              	.LASF6:
+ 783 0141 6C6F6E67 		.ascii	"long int\000"
+ 783      20696E74 
+ 783      00
+ 784              	.LASF17:
+ 785 014a 5A756D6F 		.ascii	"ZumoLibrary\\Ambient.c\000"
+ 785      4C696272 
+ 785      6172795C 
+ 785      416D6269 
+ 785      656E742E 
+ 786              	.LASF0:
+ 787 0160 646F7562 		.ascii	"double\000"
+ 787      6C6500
+ 788              	.LASF5:
+ 789 0167 73686F72 		.ascii	"short unsigned int\000"
+ 789      7420756E 
+ 789      7369676E 
+ 789      65642069 
+ 789      6E7400
+ 790              	.LASF2:
+ 791 017a 7369676E 		.ascii	"signed char\000"
+ 791      65642063 
+ 791      68617200 
+ 792              	.LASF13:
+ 793 0186 6C6F6E67 		.ascii	"long double\000"
+ 793      20646F75 
+ 793      626C6500 
+ 794              	.LASF4:
+ 795 0192 73686F72 		.ascii	"short int\000"
+ 795      7420696E 
+ 795      7400
+ 796              	.LASF10:
+ 797 019c 73697A65 		.ascii	"sizetype\000"
+ 797      74797065 
+ 797      00
+ 798              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

@@ -1,0 +1,715 @@
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccTULuan.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"Magnet.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text.heading,"ax",%progbits
+  19              		.align	2
+  20              		.global	heading
+  21              		.thumb
+  22              		.thumb_func
+  23              		.type	heading, %function
+  24              	heading:
+  25              	.LFB63:
+  26              		.file 1 "ZumoLibrary\\Magnet.c"
+   1:ZumoLibrary/Magnet.c **** /**
+   2:ZumoLibrary/Magnet.c ****  * @file    Magnet.c
+   3:ZumoLibrary/Magnet.c ****  * @brief   Basic methods for operating magnetometer. For more details, please refer to Accel_magne
+   4:ZumoLibrary/Magnet.c ****  * @details part number: LSM303D (simultaneously used with accelerometer and included in Zumo shiel
+   5:ZumoLibrary/Magnet.c **** */
+   6:ZumoLibrary/Magnet.c **** #include "accel_magnet.h"
+   7:ZumoLibrary/Magnet.c **** 
+   8:ZumoLibrary/Magnet.c **** 
+   9:ZumoLibrary/Magnet.c **** /**
+  10:ZumoLibrary/Magnet.c **** * @brief    Heading
+  11:ZumoLibrary/Magnet.c **** * @details  
+  12:ZumoLibrary/Magnet.c **** * @param    double X_AXIS : X axis value
+  13:ZumoLibrary/Magnet.c **** * @param    double Y_AXIS : Y axis value
+  14:ZumoLibrary/Magnet.c **** */
+  15:ZumoLibrary/Magnet.c **** void heading(double X_AXIS, double Y_AXIS)          // defined as the angle between X axis and Y ax
+  16:ZumoLibrary/Magnet.c **** {
+  27              		.loc 1 16 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              	.LVL0:
+  32 0000 08B5     		push	{r3, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 3, -8
+  35              		.cfi_offset 14, -4
+  17:ZumoLibrary/Magnet.c ****     double heading;
+  18:ZumoLibrary/Magnet.c ****     heading = 180 * atan2 (X_AXIS, Y_AXIS) / M_PI;
+  36              		.loc 1 18 0
+  37 0002 FFF7FEFF 		bl	atan2
+  38              	.LVL1:
+  19:ZumoLibrary/Magnet.c ****     
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccTULuan.s 			page 2
+
+
+  20:ZumoLibrary/Magnet.c ****     if(heading < 0)
+  21:ZumoLibrary/Magnet.c ****         heading += 360;
+  22:ZumoLibrary/Magnet.c ****     
+  23:ZumoLibrary/Magnet.c ****     //If you want to print out the value  
+  24:ZumoLibrary/Magnet.c ****     //printf("heading: %7.3f \r\n", heading);
+  25:ZumoLibrary/Magnet.c ****     CyDelay(250);
+  39              		.loc 1 25 0
+  40 0006 FA20     		movs	r0, #250
+  41 0008 FFF7FEFF 		bl	CyDelay
+  42              	.LVL2:
+  43 000c 08BD     		pop	{r3, pc}
+  44              		.cfi_endproc
+  45              	.LFE63:
+  46              		.size	heading, .-heading
+  47 000e 00BF     		.text
+  48              	.Letext0:
+  49              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+  50              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+  51              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+  52              		.file 5 "Generated_Source\\PSoC5/core_cm3.h"
+  53              		.file 6 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+  54              		.file 7 "Generated_Source\\PSoC5/CyLib.h"
+  55              		.section	.debug_info,"",%progbits
+  56              	.Ldebug_info0:
+  57 0000 5E010000 		.4byte	0x15e
+  58 0004 0400     		.2byte	0x4
+  59 0006 00000000 		.4byte	.Ldebug_abbrev0
+  60 000a 04       		.byte	0x4
+  61 000b 01       		.uleb128 0x1
+  62 000c 73000000 		.4byte	.LASF19
+  63 0010 01       		.byte	0x1
+  64 0011 89010000 		.4byte	.LASF20
+  65 0015 24010000 		.4byte	.LASF21
+  66 0019 00000000 		.4byte	.Ldebug_ranges0+0
+  67 001d 00000000 		.4byte	0
+  68 0021 00000000 		.4byte	.Ldebug_line0
+  69 0025 02       		.uleb128 0x2
+  70 0026 08       		.byte	0x8
+  71 0027 04       		.byte	0x4
+  72 0028 1D010000 		.4byte	.LASF0
+  73 002c 02       		.uleb128 0x2
+  74 002d 01       		.byte	0x1
+  75 002e 06       		.byte	0x6
+  76 002f 5F010000 		.4byte	.LASF1
+  77 0033 02       		.uleb128 0x2
+  78 0034 01       		.byte	0x1
+  79 0035 08       		.byte	0x8
+  80 0036 01010000 		.4byte	.LASF2
+  81 003a 02       		.uleb128 0x2
+  82 003b 02       		.byte	0x2
+  83 003c 05       		.byte	0x5
+  84 003d B1010000 		.4byte	.LASF3
+  85 0041 02       		.uleb128 0x2
+  86 0042 02       		.byte	0x2
+  87 0043 07       		.byte	0x7
+  88 0044 60000000 		.4byte	.LASF4
+  89 0048 03       		.uleb128 0x3
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccTULuan.s 			page 3
+
+
+  90 0049 7F010000 		.4byte	.LASF10
+  91 004d 02       		.byte	0x2
+  92 004e 3F       		.byte	0x3f
+  93 004f 53000000 		.4byte	0x53
+  94 0053 02       		.uleb128 0x2
+  95 0054 04       		.byte	0x4
+  96 0055 05       		.byte	0x5
+  97 0056 14010000 		.4byte	.LASF5
+  98 005a 02       		.uleb128 0x2
+  99 005b 04       		.byte	0x4
+ 100 005c 07       		.byte	0x7
+ 101 005d 37000000 		.4byte	.LASF6
+ 102 0061 02       		.uleb128 0x2
+ 103 0062 08       		.byte	0x8
+ 104 0063 05       		.byte	0x5
+ 105 0064 00000000 		.4byte	.LASF7
+ 106 0068 02       		.uleb128 0x2
+ 107 0069 08       		.byte	0x8
+ 108 006a 07       		.byte	0x7
+ 109 006b 49000000 		.4byte	.LASF8
+ 110 006f 04       		.uleb128 0x4
+ 111 0070 04       		.byte	0x4
+ 112 0071 05       		.byte	0x5
+ 113 0072 696E7400 		.ascii	"int\000"
+ 114 0076 02       		.uleb128 0x2
+ 115 0077 04       		.byte	0x4
+ 116 0078 07       		.byte	0x7
+ 117 0079 22000000 		.4byte	.LASF9
+ 118 007d 03       		.uleb128 0x3
+ 119 007e C2010000 		.4byte	.LASF11
+ 120 0082 03       		.byte	0x3
+ 121 0083 2C       		.byte	0x2c
+ 122 0084 48000000 		.4byte	0x48
+ 123 0088 05       		.uleb128 0x5
+ 124 0089 0E000000 		.4byte	.LASF12
+ 125 008d 04       		.byte	0x4
+ 126 008e 9401     		.2byte	0x194
+ 127 0090 5A000000 		.4byte	0x5a
+ 128 0094 02       		.uleb128 0x2
+ 129 0095 04       		.byte	0x4
+ 130 0096 04       		.byte	0x4
+ 131 0097 9E010000 		.4byte	.LASF13
+ 132 009b 02       		.uleb128 0x2
+ 133 009c 01       		.byte	0x1
+ 134 009d 08       		.byte	0x8
+ 135 009e 0F010000 		.4byte	.LASF14
+ 136 00a2 02       		.uleb128 0x2
+ 137 00a3 04       		.byte	0x4
+ 138 00a4 07       		.byte	0x7
+ 139 00a5 CA010000 		.4byte	.LASF15
+ 140 00a9 02       		.uleb128 0x2
+ 141 00aa 08       		.byte	0x8
+ 142 00ab 04       		.byte	0x4
+ 143 00ac 6B010000 		.4byte	.LASF16
+ 144 00b0 06       		.uleb128 0x6
+ 145 00b1 77010000 		.4byte	.LASF22
+ 146 00b5 01       		.byte	0x1
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccTULuan.s 			page 4
+
+
+ 147 00b6 0F       		.byte	0xf
+ 148 00b7 00000000 		.4byte	.LFB63
+ 149 00bb 0E000000 		.4byte	.LFE63-.LFB63
+ 150 00bf 01       		.uleb128 0x1
+ 151 00c0 9C       		.byte	0x9c
+ 152 00c1 29010000 		.4byte	0x129
+ 153 00c5 07       		.uleb128 0x7
+ 154 00c6 BB010000 		.4byte	.LASF17
+ 155 00ca 01       		.byte	0x1
+ 156 00cb 0F       		.byte	0xf
+ 157 00cc 25000000 		.4byte	0x25
+ 158 00d0 00000000 		.4byte	.LLST0
+ 159 00d4 07       		.uleb128 0x7
+ 160 00d5 A4010000 		.4byte	.LASF18
+ 161 00d9 01       		.byte	0x1
+ 162 00da 0F       		.byte	0xf
+ 163 00db 25000000 		.4byte	0x25
+ 164 00df 28000000 		.4byte	.LLST1
+ 165 00e3 08       		.uleb128 0x8
+ 166 00e4 77010000 		.4byte	.LASF22
+ 167 00e8 01       		.byte	0x1
+ 168 00e9 11       		.byte	0x11
+ 169 00ea 25000000 		.4byte	0x25
+ 170 00ee 09       		.uleb128 0x9
+ 171 00ef 06000000 		.4byte	.LVL1
+ 172 00f3 3A010000 		.4byte	0x13a
+ 173 00f7 18010000 		.4byte	0x118
+ 174 00fb 0A       		.uleb128 0xa
+ 175 00fc 06       		.uleb128 0x6
+ 176 00fd 52       		.byte	0x52
+ 177 00fe 93       		.byte	0x93
+ 178 00ff 04       		.uleb128 0x4
+ 179 0100 53       		.byte	0x53
+ 180 0101 93       		.byte	0x93
+ 181 0102 04       		.uleb128 0x4
+ 182 0103 05       		.uleb128 0x5
+ 183 0104 F3       		.byte	0xf3
+ 184 0105 03       		.uleb128 0x3
+ 185 0106 F5       		.byte	0xf5
+ 186 0107 02       		.uleb128 0x2
+ 187 0108 25       		.uleb128 0x25
+ 188 0109 0A       		.uleb128 0xa
+ 189 010a 06       		.uleb128 0x6
+ 190 010b 50       		.byte	0x50
+ 191 010c 93       		.byte	0x93
+ 192 010d 04       		.uleb128 0x4
+ 193 010e 51       		.byte	0x51
+ 194 010f 93       		.byte	0x93
+ 195 0110 04       		.uleb128 0x4
+ 196 0111 05       		.uleb128 0x5
+ 197 0112 F3       		.byte	0xf3
+ 198 0113 03       		.uleb128 0x3
+ 199 0114 F5       		.byte	0xf5
+ 200 0115 00       		.uleb128 0
+ 201 0116 25       		.uleb128 0x25
+ 202 0117 00       		.byte	0
+ 203 0118 0B       		.uleb128 0xb
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccTULuan.s 			page 5
+
+
+ 204 0119 0C000000 		.4byte	.LVL2
+ 205 011d 54010000 		.4byte	0x154
+ 206 0121 0A       		.uleb128 0xa
+ 207 0122 01       		.uleb128 0x1
+ 208 0123 50       		.byte	0x50
+ 209 0124 02       		.uleb128 0x2
+ 210 0125 08       		.byte	0x8
+ 211 0126 FA       		.byte	0xfa
+ 212 0127 00       		.byte	0
+ 213 0128 00       		.byte	0
+ 214 0129 0C       		.uleb128 0xc
+ 215 012a 15000000 		.4byte	.LASF23
+ 216 012e 05       		.byte	0x5
+ 217 012f 9606     		.2byte	0x696
+ 218 0131 35010000 		.4byte	0x135
+ 219 0135 0D       		.uleb128 0xd
+ 220 0136 7D000000 		.4byte	0x7d
+ 221 013a 0E       		.uleb128 0xe
+ 222 013b AB010000 		.4byte	.LASF24
+ 223 013f 06       		.byte	0x6
+ 224 0140 7E       		.byte	0x7e
+ 225 0141 25000000 		.4byte	0x25
+ 226 0145 54010000 		.4byte	0x154
+ 227 0149 0F       		.uleb128 0xf
+ 228 014a 25000000 		.4byte	0x25
+ 229 014e 0F       		.uleb128 0xf
+ 230 014f 25000000 		.4byte	0x25
+ 231 0153 00       		.byte	0
+ 232 0154 10       		.uleb128 0x10
+ 233 0155 2F000000 		.4byte	.LASF25
+ 234 0159 07       		.byte	0x7
+ 235 015a 76       		.byte	0x76
+ 236 015b 0F       		.uleb128 0xf
+ 237 015c 88000000 		.4byte	0x88
+ 238 0160 00       		.byte	0
+ 239 0161 00       		.byte	0
+ 240              		.section	.debug_abbrev,"",%progbits
+ 241              	.Ldebug_abbrev0:
+ 242 0000 01       		.uleb128 0x1
+ 243 0001 11       		.uleb128 0x11
+ 244 0002 01       		.byte	0x1
+ 245 0003 25       		.uleb128 0x25
+ 246 0004 0E       		.uleb128 0xe
+ 247 0005 13       		.uleb128 0x13
+ 248 0006 0B       		.uleb128 0xb
+ 249 0007 03       		.uleb128 0x3
+ 250 0008 0E       		.uleb128 0xe
+ 251 0009 1B       		.uleb128 0x1b
+ 252 000a 0E       		.uleb128 0xe
+ 253 000b 55       		.uleb128 0x55
+ 254 000c 17       		.uleb128 0x17
+ 255 000d 11       		.uleb128 0x11
+ 256 000e 01       		.uleb128 0x1
+ 257 000f 10       		.uleb128 0x10
+ 258 0010 17       		.uleb128 0x17
+ 259 0011 00       		.byte	0
+ 260 0012 00       		.byte	0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccTULuan.s 			page 6
+
+
+ 261 0013 02       		.uleb128 0x2
+ 262 0014 24       		.uleb128 0x24
+ 263 0015 00       		.byte	0
+ 264 0016 0B       		.uleb128 0xb
+ 265 0017 0B       		.uleb128 0xb
+ 266 0018 3E       		.uleb128 0x3e
+ 267 0019 0B       		.uleb128 0xb
+ 268 001a 03       		.uleb128 0x3
+ 269 001b 0E       		.uleb128 0xe
+ 270 001c 00       		.byte	0
+ 271 001d 00       		.byte	0
+ 272 001e 03       		.uleb128 0x3
+ 273 001f 16       		.uleb128 0x16
+ 274 0020 00       		.byte	0
+ 275 0021 03       		.uleb128 0x3
+ 276 0022 0E       		.uleb128 0xe
+ 277 0023 3A       		.uleb128 0x3a
+ 278 0024 0B       		.uleb128 0xb
+ 279 0025 3B       		.uleb128 0x3b
+ 280 0026 0B       		.uleb128 0xb
+ 281 0027 49       		.uleb128 0x49
+ 282 0028 13       		.uleb128 0x13
+ 283 0029 00       		.byte	0
+ 284 002a 00       		.byte	0
+ 285 002b 04       		.uleb128 0x4
+ 286 002c 24       		.uleb128 0x24
+ 287 002d 00       		.byte	0
+ 288 002e 0B       		.uleb128 0xb
+ 289 002f 0B       		.uleb128 0xb
+ 290 0030 3E       		.uleb128 0x3e
+ 291 0031 0B       		.uleb128 0xb
+ 292 0032 03       		.uleb128 0x3
+ 293 0033 08       		.uleb128 0x8
+ 294 0034 00       		.byte	0
+ 295 0035 00       		.byte	0
+ 296 0036 05       		.uleb128 0x5
+ 297 0037 16       		.uleb128 0x16
+ 298 0038 00       		.byte	0
+ 299 0039 03       		.uleb128 0x3
+ 300 003a 0E       		.uleb128 0xe
+ 301 003b 3A       		.uleb128 0x3a
+ 302 003c 0B       		.uleb128 0xb
+ 303 003d 3B       		.uleb128 0x3b
+ 304 003e 05       		.uleb128 0x5
+ 305 003f 49       		.uleb128 0x49
+ 306 0040 13       		.uleb128 0x13
+ 307 0041 00       		.byte	0
+ 308 0042 00       		.byte	0
+ 309 0043 06       		.uleb128 0x6
+ 310 0044 2E       		.uleb128 0x2e
+ 311 0045 01       		.byte	0x1
+ 312 0046 3F       		.uleb128 0x3f
+ 313 0047 19       		.uleb128 0x19
+ 314 0048 03       		.uleb128 0x3
+ 315 0049 0E       		.uleb128 0xe
+ 316 004a 3A       		.uleb128 0x3a
+ 317 004b 0B       		.uleb128 0xb
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccTULuan.s 			page 7
+
+
+ 318 004c 3B       		.uleb128 0x3b
+ 319 004d 0B       		.uleb128 0xb
+ 320 004e 27       		.uleb128 0x27
+ 321 004f 19       		.uleb128 0x19
+ 322 0050 11       		.uleb128 0x11
+ 323 0051 01       		.uleb128 0x1
+ 324 0052 12       		.uleb128 0x12
+ 325 0053 06       		.uleb128 0x6
+ 326 0054 40       		.uleb128 0x40
+ 327 0055 18       		.uleb128 0x18
+ 328 0056 9742     		.uleb128 0x2117
+ 329 0058 19       		.uleb128 0x19
+ 330 0059 01       		.uleb128 0x1
+ 331 005a 13       		.uleb128 0x13
+ 332 005b 00       		.byte	0
+ 333 005c 00       		.byte	0
+ 334 005d 07       		.uleb128 0x7
+ 335 005e 05       		.uleb128 0x5
+ 336 005f 00       		.byte	0
+ 337 0060 03       		.uleb128 0x3
+ 338 0061 0E       		.uleb128 0xe
+ 339 0062 3A       		.uleb128 0x3a
+ 340 0063 0B       		.uleb128 0xb
+ 341 0064 3B       		.uleb128 0x3b
+ 342 0065 0B       		.uleb128 0xb
+ 343 0066 49       		.uleb128 0x49
+ 344 0067 13       		.uleb128 0x13
+ 345 0068 02       		.uleb128 0x2
+ 346 0069 17       		.uleb128 0x17
+ 347 006a 00       		.byte	0
+ 348 006b 00       		.byte	0
+ 349 006c 08       		.uleb128 0x8
+ 350 006d 34       		.uleb128 0x34
+ 351 006e 00       		.byte	0
+ 352 006f 03       		.uleb128 0x3
+ 353 0070 0E       		.uleb128 0xe
+ 354 0071 3A       		.uleb128 0x3a
+ 355 0072 0B       		.uleb128 0xb
+ 356 0073 3B       		.uleb128 0x3b
+ 357 0074 0B       		.uleb128 0xb
+ 358 0075 49       		.uleb128 0x49
+ 359 0076 13       		.uleb128 0x13
+ 360 0077 00       		.byte	0
+ 361 0078 00       		.byte	0
+ 362 0079 09       		.uleb128 0x9
+ 363 007a 898201   		.uleb128 0x4109
+ 364 007d 01       		.byte	0x1
+ 365 007e 11       		.uleb128 0x11
+ 366 007f 01       		.uleb128 0x1
+ 367 0080 31       		.uleb128 0x31
+ 368 0081 13       		.uleb128 0x13
+ 369 0082 01       		.uleb128 0x1
+ 370 0083 13       		.uleb128 0x13
+ 371 0084 00       		.byte	0
+ 372 0085 00       		.byte	0
+ 373 0086 0A       		.uleb128 0xa
+ 374 0087 8A8201   		.uleb128 0x410a
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccTULuan.s 			page 8
+
+
+ 375 008a 00       		.byte	0
+ 376 008b 02       		.uleb128 0x2
+ 377 008c 18       		.uleb128 0x18
+ 378 008d 9142     		.uleb128 0x2111
+ 379 008f 18       		.uleb128 0x18
+ 380 0090 00       		.byte	0
+ 381 0091 00       		.byte	0
+ 382 0092 0B       		.uleb128 0xb
+ 383 0093 898201   		.uleb128 0x4109
+ 384 0096 01       		.byte	0x1
+ 385 0097 11       		.uleb128 0x11
+ 386 0098 01       		.uleb128 0x1
+ 387 0099 31       		.uleb128 0x31
+ 388 009a 13       		.uleb128 0x13
+ 389 009b 00       		.byte	0
+ 390 009c 00       		.byte	0
+ 391 009d 0C       		.uleb128 0xc
+ 392 009e 34       		.uleb128 0x34
+ 393 009f 00       		.byte	0
+ 394 00a0 03       		.uleb128 0x3
+ 395 00a1 0E       		.uleb128 0xe
+ 396 00a2 3A       		.uleb128 0x3a
+ 397 00a3 0B       		.uleb128 0xb
+ 398 00a4 3B       		.uleb128 0x3b
+ 399 00a5 05       		.uleb128 0x5
+ 400 00a6 49       		.uleb128 0x49
+ 401 00a7 13       		.uleb128 0x13
+ 402 00a8 3F       		.uleb128 0x3f
+ 403 00a9 19       		.uleb128 0x19
+ 404 00aa 3C       		.uleb128 0x3c
+ 405 00ab 19       		.uleb128 0x19
+ 406 00ac 00       		.byte	0
+ 407 00ad 00       		.byte	0
+ 408 00ae 0D       		.uleb128 0xd
+ 409 00af 35       		.uleb128 0x35
+ 410 00b0 00       		.byte	0
+ 411 00b1 49       		.uleb128 0x49
+ 412 00b2 13       		.uleb128 0x13
+ 413 00b3 00       		.byte	0
+ 414 00b4 00       		.byte	0
+ 415 00b5 0E       		.uleb128 0xe
+ 416 00b6 2E       		.uleb128 0x2e
+ 417 00b7 01       		.byte	0x1
+ 418 00b8 3F       		.uleb128 0x3f
+ 419 00b9 19       		.uleb128 0x19
+ 420 00ba 03       		.uleb128 0x3
+ 421 00bb 0E       		.uleb128 0xe
+ 422 00bc 3A       		.uleb128 0x3a
+ 423 00bd 0B       		.uleb128 0xb
+ 424 00be 3B       		.uleb128 0x3b
+ 425 00bf 0B       		.uleb128 0xb
+ 426 00c0 27       		.uleb128 0x27
+ 427 00c1 19       		.uleb128 0x19
+ 428 00c2 49       		.uleb128 0x49
+ 429 00c3 13       		.uleb128 0x13
+ 430 00c4 3C       		.uleb128 0x3c
+ 431 00c5 19       		.uleb128 0x19
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccTULuan.s 			page 9
+
+
+ 432 00c6 01       		.uleb128 0x1
+ 433 00c7 13       		.uleb128 0x13
+ 434 00c8 00       		.byte	0
+ 435 00c9 00       		.byte	0
+ 436 00ca 0F       		.uleb128 0xf
+ 437 00cb 05       		.uleb128 0x5
+ 438 00cc 00       		.byte	0
+ 439 00cd 49       		.uleb128 0x49
+ 440 00ce 13       		.uleb128 0x13
+ 441 00cf 00       		.byte	0
+ 442 00d0 00       		.byte	0
+ 443 00d1 10       		.uleb128 0x10
+ 444 00d2 2E       		.uleb128 0x2e
+ 445 00d3 01       		.byte	0x1
+ 446 00d4 3F       		.uleb128 0x3f
+ 447 00d5 19       		.uleb128 0x19
+ 448 00d6 03       		.uleb128 0x3
+ 449 00d7 0E       		.uleb128 0xe
+ 450 00d8 3A       		.uleb128 0x3a
+ 451 00d9 0B       		.uleb128 0xb
+ 452 00da 3B       		.uleb128 0x3b
+ 453 00db 0B       		.uleb128 0xb
+ 454 00dc 27       		.uleb128 0x27
+ 455 00dd 19       		.uleb128 0x19
+ 456 00de 3C       		.uleb128 0x3c
+ 457 00df 19       		.uleb128 0x19
+ 458 00e0 00       		.byte	0
+ 459 00e1 00       		.byte	0
+ 460 00e2 00       		.byte	0
+ 461              		.section	.debug_loc,"",%progbits
+ 462              	.Ldebug_loc0:
+ 463              	.LLST0:
+ 464 0000 00000000 		.4byte	.LVL0
+ 465 0004 05000000 		.4byte	.LVL1-1
+ 466 0008 0600     		.2byte	0x6
+ 467 000a 50       		.byte	0x50
+ 468 000b 93       		.byte	0x93
+ 469 000c 04       		.uleb128 0x4
+ 470 000d 51       		.byte	0x51
+ 471 000e 93       		.byte	0x93
+ 472 000f 04       		.uleb128 0x4
+ 473 0010 05000000 		.4byte	.LVL1-1
+ 474 0014 0E000000 		.4byte	.LFE63
+ 475 0018 0600     		.2byte	0x6
+ 476 001a F3       		.byte	0xf3
+ 477 001b 03       		.uleb128 0x3
+ 478 001c F5       		.byte	0xf5
+ 479 001d 00       		.uleb128 0
+ 480 001e 25       		.uleb128 0x25
+ 481 001f 9F       		.byte	0x9f
+ 482 0020 00000000 		.4byte	0
+ 483 0024 00000000 		.4byte	0
+ 484              	.LLST1:
+ 485 0028 00000000 		.4byte	.LVL0
+ 486 002c 05000000 		.4byte	.LVL1-1
+ 487 0030 0600     		.2byte	0x6
+ 488 0032 52       		.byte	0x52
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccTULuan.s 			page 10
+
+
+ 489 0033 93       		.byte	0x93
+ 490 0034 04       		.uleb128 0x4
+ 491 0035 53       		.byte	0x53
+ 492 0036 93       		.byte	0x93
+ 493 0037 04       		.uleb128 0x4
+ 494 0038 05000000 		.4byte	.LVL1-1
+ 495 003c 0E000000 		.4byte	.LFE63
+ 496 0040 0600     		.2byte	0x6
+ 497 0042 F3       		.byte	0xf3
+ 498 0043 03       		.uleb128 0x3
+ 499 0044 F5       		.byte	0xf5
+ 500 0045 02       		.uleb128 0x2
+ 501 0046 25       		.uleb128 0x25
+ 502 0047 9F       		.byte	0x9f
+ 503 0048 00000000 		.4byte	0
+ 504 004c 00000000 		.4byte	0
+ 505              		.section	.debug_aranges,"",%progbits
+ 506 0000 1C000000 		.4byte	0x1c
+ 507 0004 0200     		.2byte	0x2
+ 508 0006 00000000 		.4byte	.Ldebug_info0
+ 509 000a 04       		.byte	0x4
+ 510 000b 00       		.byte	0
+ 511 000c 0000     		.2byte	0
+ 512 000e 0000     		.2byte	0
+ 513 0010 00000000 		.4byte	.LFB63
+ 514 0014 0E000000 		.4byte	.LFE63-.LFB63
+ 515 0018 00000000 		.4byte	0
+ 516 001c 00000000 		.4byte	0
+ 517              		.section	.debug_ranges,"",%progbits
+ 518              	.Ldebug_ranges0:
+ 519 0000 00000000 		.4byte	.LFB63
+ 520 0004 0E000000 		.4byte	.LFE63
+ 521 0008 00000000 		.4byte	0
+ 522 000c 00000000 		.4byte	0
+ 523              		.section	.debug_line,"",%progbits
+ 524              	.Ldebug_line0:
+ 525 0000 81010000 		.section	.debug_str,"MS",%progbits,1
+ 525      02006A01 
+ 525      00000201 
+ 525      FB0E0D00 
+ 525      01010101 
+ 526              	.LASF7:
+ 527 0000 6C6F6E67 		.ascii	"long long int\000"
+ 527      206C6F6E 
+ 527      6720696E 
+ 527      7400
+ 528              	.LASF12:
+ 529 000e 75696E74 		.ascii	"uint32\000"
+ 529      333200
+ 530              	.LASF23:
+ 531 0015 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 531      52784275 
+ 531      66666572 
+ 531      00
+ 532              	.LASF9:
+ 533 0022 756E7369 		.ascii	"unsigned int\000"
+ 533      676E6564 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccTULuan.s 			page 11
+
+
+ 533      20696E74 
+ 533      00
+ 534              	.LASF25:
+ 535 002f 43794465 		.ascii	"CyDelay\000"
+ 535      6C617900 
+ 536              	.LASF6:
+ 537 0037 6C6F6E67 		.ascii	"long unsigned int\000"
+ 537      20756E73 
+ 537      69676E65 
+ 537      6420696E 
+ 537      7400
+ 538              	.LASF8:
+ 539 0049 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 539      206C6F6E 
+ 539      6720756E 
+ 539      7369676E 
+ 539      65642069 
+ 540              	.LASF4:
+ 541 0060 73686F72 		.ascii	"short unsigned int\000"
+ 541      7420756E 
+ 541      7369676E 
+ 541      65642069 
+ 541      6E7400
+ 542              	.LASF19:
+ 543 0073 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 543      4320342E 
+ 543      392E3320 
+ 543      32303135 
+ 543      30333033 
+ 544 00a6 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 544      20726576 
+ 544      6973696F 
+ 544      6E203232 
+ 544      31323230 
+ 545 00d9 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 545      66756E63 
+ 545      74696F6E 
+ 545      2D736563 
+ 545      74696F6E 
+ 546              	.LASF2:
+ 547 0101 756E7369 		.ascii	"unsigned char\000"
+ 547      676E6564 
+ 547      20636861 
+ 547      7200
+ 548              	.LASF14:
+ 549 010f 63686172 		.ascii	"char\000"
+ 549      00
+ 550              	.LASF5:
+ 551 0114 6C6F6E67 		.ascii	"long int\000"
+ 551      20696E74 
+ 551      00
+ 552              	.LASF0:
+ 553 011d 646F7562 		.ascii	"double\000"
+ 553      6C6500
+ 554              	.LASF21:
+ 555 0124 433A5C55 		.ascii	"C:\\Users\\Nhan Phan\\Desktop\\CProjects\\Zumobot\\"
+ 555      73657273 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccTULuan.s 			page 12
+
+
+ 555      5C4E6861 
+ 555      6E205068 
+ 555      616E5C44 
+ 556 0151 5A756D6F 		.ascii	"ZumoBot.cydsn\000"
+ 556      426F742E 
+ 556      63796473 
+ 556      6E00
+ 557              	.LASF1:
+ 558 015f 7369676E 		.ascii	"signed char\000"
+ 558      65642063 
+ 558      68617200 
+ 559              	.LASF16:
+ 560 016b 6C6F6E67 		.ascii	"long double\000"
+ 560      20646F75 
+ 560      626C6500 
+ 561              	.LASF22:
+ 562 0177 68656164 		.ascii	"heading\000"
+ 562      696E6700 
+ 563              	.LASF10:
+ 564 017f 5F5F696E 		.ascii	"__int32_t\000"
+ 564      7433325F 
+ 564      7400
+ 565              	.LASF20:
+ 566 0189 5A756D6F 		.ascii	"ZumoLibrary\\Magnet.c\000"
+ 566      4C696272 
+ 566      6172795C 
+ 566      4D61676E 
+ 566      65742E63 
+ 567              	.LASF13:
+ 568 019e 666C6F61 		.ascii	"float\000"
+ 568      7400
+ 569              	.LASF18:
+ 570 01a4 595F4158 		.ascii	"Y_AXIS\000"
+ 570      495300
+ 571              	.LASF24:
+ 572 01ab 6174616E 		.ascii	"atan2\000"
+ 572      3200
+ 573              	.LASF3:
+ 574 01b1 73686F72 		.ascii	"short int\000"
+ 574      7420696E 
+ 574      7400
+ 575              	.LASF17:
+ 576 01bb 585F4158 		.ascii	"X_AXIS\000"
+ 576      495300
+ 577              	.LASF11:
+ 578 01c2 696E7433 		.ascii	"int32_t\000"
+ 578      325F7400 
+ 579              	.LASF15:
+ 580 01ca 73697A65 		.ascii	"sizetype\000"
+ 580      74797065 
+ 580      00
+ 581              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

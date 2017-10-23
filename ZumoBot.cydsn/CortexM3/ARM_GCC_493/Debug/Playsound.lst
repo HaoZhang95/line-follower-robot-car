@@ -1,0 +1,2623 @@
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"Playsound.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text.Dancing,"ax",%progbits
+  19              		.align	2
+  20              		.global	Dancing
+  21              		.thumb
+  22              		.thumb_func
+  23              		.type	Dancing, %function
+  24              	Dancing:
+  25              	.LFB63:
+  26              		.file 1 "Playsound.c"
+   1:Playsound.c   **** /* ========================================
+   2:Playsound.c   ****  *
+   3:Playsound.c   ****  * Copyright YOUR COMPANY, THE YEAR
+   4:Playsound.c   ****  * All Rights Reserved
+   5:Playsound.c   ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:Playsound.c   ****  *
+   7:Playsound.c   ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:Playsound.c   ****  * WHICH IS THE PROPERTY OF your company.
+   9:Playsound.c   ****  *
+  10:Playsound.c   ****  * ========================================
+  11:Playsound.c   **** */
+  12:Playsound.c   **** #include <project.h>
+  13:Playsound.c   **** #include "Playsound.h"
+  14:Playsound.c   **** #include "Beep.h"
+  15:Playsound.c   **** #include "Motor.h"
+  16:Playsound.c   **** 
+  17:Playsound.c   **** // Cuong's notes
+  18:Playsound.c   **** /*
+  19:Playsound.c   **** #define Re7 84
+  20:Playsound.c   **** #define Dom7 87
+  21:Playsound.c   **** #define Do7 94
+  22:Playsound.c   **** #define Si6 100
+  23:Playsound.c   **** #define La6 110
+  24:Playsound.c   **** #define Sol6 125
+  25:Playsound.c   **** #define Fa6 135
+  26:Playsound.c   **** #define Mi6 148
+  27:Playsound.c   **** #define Re6 168
+  28:Playsound.c   **** #define Do6 183
+  29:Playsound.c   **** #define Si5 200
+  30:Playsound.c   **** #define La5 223
+  31:Playsound.c   **** #define Sol5 250
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 2
+
+
+  32:Playsound.c   **** */
+  33:Playsound.c   **** 
+  34:Playsound.c   **** #define D6 84
+  35:Playsound.c   **** #define Cm6 87
+  36:Playsound.c   **** #define C6 94
+  37:Playsound.c   **** #define B7 100
+  38:Playsound.c   **** #define A7 110
+  39:Playsound.c   **** #define G7 125
+  40:Playsound.c   **** #define F7 135
+  41:Playsound.c   **** #define E7 148
+  42:Playsound.c   **** #define D7 168
+  43:Playsound.c   **** #define C7 183
+  44:Playsound.c   **** #define B8 200
+  45:Playsound.c   **** #define A8 223
+  46:Playsound.c   **** #define G8 250
+  47:Playsound.c   **** #define SPEED 200
+  48:Playsound.c   **** 
+  49:Playsound.c   **** /*
+  50:Playsound.c   **** #define D7 255
+  51:Playsound.c   **** #define Dm7 250
+  52:Playsound.c   **** #define E7 230
+  53:Playsound.c   **** #define F7 215
+  54:Playsound.c   **** #define Fm7 205
+  55:Playsound.c   **** #define G7 190
+  56:Playsound.c   **** #define Gm7 175
+  57:Playsound.c   **** #define A7 160
+  58:Playsound.c   **** #define B7 145
+  59:Playsound.c   **** #define C6 130
+  60:Playsound.c   **** #define Cm6 120
+  61:Playsound.c   **** #define D6 115
+  62:Playsound.c   **** */
+  63:Playsound.c   **** 
+  64:Playsound.c   **** void Dancing(uint32 length, uint8 pitch, uint8_t *i) {
+  27              		.loc 1 64 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              	.LVL0:
+  32 0000 38B5     		push	{r3, r4, r5, lr}
+  33              		.cfi_def_cfa_offset 16
+  34              		.cfi_offset 3, -16
+  35              		.cfi_offset 4, -12
+  36              		.cfi_offset 5, -8
+  37              		.cfi_offset 14, -4
+  38 0002 0546     		mov	r5, r0
+  39 0004 1446     		mov	r4, r2
+  65:Playsound.c   ****     Beep(length, pitch);
+  40              		.loc 1 65 0
+  41 0006 FFF7FEFF 		bl	Beep
+  42              	.LVL1:
+  66:Playsound.c   ****     if (*i == 0) {
+  43              		.loc 1 66 0
+  44 000a 2378     		ldrb	r3, [r4]	@ zero_extendqisi2
+  45 000c 6BB9     		cbnz	r3, .L2
+  67:Playsound.c   ****         BatteryLed_Write(1);
+  46              		.loc 1 67 0
+  47 000e 0120     		movs	r0, #1
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 3
+
+
+  48 0010 FFF7FEFF 		bl	BatteryLed_Write
+  49              	.LVL2:
+  68:Playsound.c   ****         IR_led_Write(1);
+  50              		.loc 1 68 0
+  51 0014 0120     		movs	r0, #1
+  52 0016 FFF7FEFF 		bl	IR_led_Write
+  53              	.LVL3:
+  69:Playsound.c   ****         *i = 1;
+  54              		.loc 1 69 0
+  55 001a 0123     		movs	r3, #1
+  56 001c 2370     		strb	r3, [r4]
+  70:Playsound.c   ****         motor_forward(SPEED, length/2);
+  57              		.loc 1 70 0
+  58 001e C820     		movs	r0, #200
+  59 0020 25FA03F1 		lsr	r1, r5, r3
+  60 0024 FFF7FEFF 		bl	motor_forward
+  61              	.LVL4:
+  62 0028 38BD     		pop	{r3, r4, r5, pc}
+  63              	.LVL5:
+  64              	.L2:
+  71:Playsound.c   ****     } else {
+  72:Playsound.c   ****         BatteryLed_Write(0);
+  65              		.loc 1 72 0
+  66 002a 0020     		movs	r0, #0
+  67 002c FFF7FEFF 		bl	BatteryLed_Write
+  68              	.LVL6:
+  73:Playsound.c   ****         IR_led_Write(0);
+  69              		.loc 1 73 0
+  70 0030 0020     		movs	r0, #0
+  71 0032 FFF7FEFF 		bl	IR_led_Write
+  72              	.LVL7:
+  74:Playsound.c   ****         *i = 0;
+  73              		.loc 1 74 0
+  74 0036 0023     		movs	r3, #0
+  75 0038 2370     		strb	r3, [r4]
+  75:Playsound.c   ****         motor_backward(SPEED, length/2);
+  76              		.loc 1 75 0
+  77 003a C820     		movs	r0, #200
+  78 003c 6908     		lsrs	r1, r5, #1
+  79 003e FFF7FEFF 		bl	motor_backward
+  80              	.LVL8:
+  81 0042 38BD     		pop	{r3, r4, r5, pc}
+  82              		.cfi_endproc
+  83              	.LFE63:
+  84              		.size	Dancing, .-Dancing
+  85              		.section	.text.Playsound,"ax",%progbits
+  86              		.align	2
+  87              		.global	Playsound
+  88              		.thumb
+  89              		.thumb_func
+  90              		.type	Playsound, %function
+  91              	Playsound:
+  92              	.LFB64:
+  76:Playsound.c   ****     }
+  77:Playsound.c   ****     
+  78:Playsound.c   **** }
+  79:Playsound.c   **** 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 4
+
+
+  80:Playsound.c   **** void Playsound(){
+  93              		.loc 1 80 0
+  94              		.cfi_startproc
+  95              		@ args = 0, pretend = 0, frame = 8
+  96              		@ frame_needed = 0, uses_anonymous_args = 0
+  97 0000 30B5     		push	{r4, r5, lr}
+  98              		.cfi_def_cfa_offset 12
+  99              		.cfi_offset 4, -12
+ 100              		.cfi_offset 5, -8
+ 101              		.cfi_offset 14, -4
+ 102 0002 83B0     		sub	sp, sp, #12
+ 103              		.cfi_def_cfa_offset 24
+  81:Playsound.c   ****     uint8_t i = 0;
+ 104              		.loc 1 81 0
+ 105 0004 0025     		movs	r5, #0
+ 106 0006 02AC     		add	r4, sp, #8
+ 107 0008 04F8015D 		strb	r5, [r4, #-1]!
+  82:Playsound.c   ****     motor_start();
+ 108              		.loc 1 82 0
+ 109 000c FFF7FEFF 		bl	motor_start
+ 110              	.LVL9:
+  83:Playsound.c   ****     Dancing(120, D6, &i);
+ 111              		.loc 1 83 0
+ 112 0010 7820     		movs	r0, #120
+ 113 0012 5421     		movs	r1, #84
+ 114 0014 2246     		mov	r2, r4
+ 115 0016 FFF7FEFF 		bl	Dancing
+ 116              	.LVL10:
+  84:Playsound.c   ****     CyDelay(30);
+ 117              		.loc 1 84 0
+ 118 001a 1E20     		movs	r0, #30
+ 119 001c FFF7FEFF 		bl	CyDelay
+ 120              	.LVL11:
+  85:Playsound.c   ****     Dancing(120, D6, &i);
+ 121              		.loc 1 85 0
+ 122 0020 7820     		movs	r0, #120
+ 123 0022 5421     		movs	r1, #84
+ 124 0024 2246     		mov	r2, r4
+ 125 0026 FFF7FEFF 		bl	Dancing
+ 126              	.LVL12:
+  86:Playsound.c   ****     CyDelay(30);
+ 127              		.loc 1 86 0
+ 128 002a 1E20     		movs	r0, #30
+ 129 002c FFF7FEFF 		bl	CyDelay
+ 130              	.LVL13:
+  87:Playsound.c   ****     Dancing(120, D6, &i);
+ 131              		.loc 1 87 0
+ 132 0030 7820     		movs	r0, #120
+ 133 0032 5421     		movs	r1, #84
+ 134 0034 2246     		mov	r2, r4
+ 135 0036 FFF7FEFF 		bl	Dancing
+ 136              	.LVL14:
+  88:Playsound.c   ****     CyDelay(30);
+ 137              		.loc 1 88 0
+ 138 003a 1E20     		movs	r0, #30
+ 139 003c FFF7FEFF 		bl	CyDelay
+ 140              	.LVL15:
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 5
+
+
+  89:Playsound.c   ****     Dancing(150, D6, &i);
+ 141              		.loc 1 89 0
+ 142 0040 9620     		movs	r0, #150
+ 143 0042 5421     		movs	r1, #84
+ 144 0044 2246     		mov	r2, r4
+ 145 0046 FFF7FEFF 		bl	Dancing
+ 146              	.LVL16:
+  90:Playsound.c   ****     
+  91:Playsound.c   ****     
+  92:Playsound.c   ****     // F#7 + B7
+  93:Playsound.c   ****     Dancing(300, 175, &i);     
+ 147              		.loc 1 93 0
+ 148 004a 4FF49670 		mov	r0, #300
+ 149 004e AF21     		movs	r1, #175
+ 150 0050 2246     		mov	r2, r4
+ 151 0052 FFF7FEFF 		bl	Dancing
+ 152              	.LVL17:
+  94:Playsound.c   ****     
+  95:Playsound.c   ****   
+  96:Playsound.c   ****     // E7 + C6
+  97:Playsound.c   ****     Dancing(300, 155, &i); 
+ 153              		.loc 1 97 0
+ 154 0056 4FF49670 		mov	r0, #300
+ 155 005a 9B21     		movs	r1, #155
+ 156 005c 2246     		mov	r2, r4
+ 157 005e FFF7FEFF 		bl	Dancing
+ 158              	.LVL18:
+  98:Playsound.c   ****     CyDelay(10);
+ 159              		.loc 1 98 0
+ 160 0062 0A20     		movs	r0, #10
+ 161 0064 FFF7FEFF 		bl	CyDelay
+ 162              	.LVL19:
+  99:Playsound.c   ****     
+ 100:Playsound.c   ****     
+ 101:Playsound.c   ****     // F7 + D6
+ 102:Playsound.c   ****     Dancing(150, 135, &i); 
+ 163              		.loc 1 102 0
+ 164 0068 9620     		movs	r0, #150
+ 165 006a 8721     		movs	r1, #135
+ 166 006c 2246     		mov	r2, r4
+ 167 006e FFF7FEFF 		bl	Dancing
+ 168              	.LVL20:
+ 103:Playsound.c   ****      
+ 104:Playsound.c   ****     
+ 105:Playsound.c   ****     // E7 + C6
+ 106:Playsound.c   ****     Dancing(150, 155, &i); 
+ 169              		.loc 1 106 0
+ 170 0072 9620     		movs	r0, #150
+ 171 0074 9B21     		movs	r1, #155
+ 172 0076 2246     		mov	r2, r4
+ 173 0078 FFF7FEFF 		bl	Dancing
+ 174              	.LVL21:
+ 107:Playsound.c   ****     
+ 108:Playsound.c   ****     
+ 109:Playsound.c   ****     // F7 + D6
+ 110:Playsound.c   ****     Dancing(600, 135, &i); 
+ 175              		.loc 1 110 0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 6
+
+
+ 176 007c 4FF41670 		mov	r0, #600
+ 177 0080 8721     		movs	r1, #135
+ 178 0082 2246     		mov	r2, r4
+ 179 0084 FFF7FEFF 		bl	Dancing
+ 180              	.LVL22:
+ 111:Playsound.c   ****     CyDelay(50);  
+ 181              		.loc 1 111 0
+ 182 0088 3220     		movs	r0, #50
+ 183 008a FFF7FEFF 		bl	CyDelay
+ 184              	.LVL23:
+ 112:Playsound.c   ****     
+ 113:Playsound.c   ****        
+ 114:Playsound.c   ****     // A G A G C6
+ 115:Playsound.c   ****     Dancing(300, A7, &i);
+ 185              		.loc 1 115 0
+ 186 008e 4FF49670 		mov	r0, #300
+ 187 0092 6E21     		movs	r1, #110
+ 188 0094 2246     		mov	r2, r4
+ 189 0096 FFF7FEFF 		bl	Dancing
+ 190              	.LVL24:
+ 116:Playsound.c   ****     Dancing(300, G7, &i); 
+ 191              		.loc 1 116 0
+ 192 009a 4FF49670 		mov	r0, #300
+ 193 009e 7D21     		movs	r1, #125
+ 194 00a0 2246     		mov	r2, r4
+ 195 00a2 FFF7FEFF 		bl	Dancing
+ 196              	.LVL25:
+ 117:Playsound.c   ****     Dancing(300, A7, &i);
+ 197              		.loc 1 117 0
+ 198 00a6 4FF49670 		mov	r0, #300
+ 199 00aa 6E21     		movs	r1, #110
+ 200 00ac 2246     		mov	r2, r4
+ 201 00ae FFF7FEFF 		bl	Dancing
+ 202              	.LVL26:
+ 118:Playsound.c   ****     Dancing(150, G7, &i); 
+ 203              		.loc 1 118 0
+ 204 00b2 9620     		movs	r0, #150
+ 205 00b4 7D21     		movs	r1, #125
+ 206 00b6 2246     		mov	r2, r4
+ 207 00b8 FFF7FEFF 		bl	Dancing
+ 208              	.LVL27:
+ 119:Playsound.c   ****     Dancing(150, C6, &i);
+ 209              		.loc 1 119 0
+ 210 00bc 9620     		movs	r0, #150
+ 211 00be 5E21     		movs	r1, #94
+ 212 00c0 2246     		mov	r2, r4
+ 213 00c2 FFF7FEFF 		bl	Dancing
+ 214              	.LVL28:
+ 120:Playsound.c   ****     
+ 121:Playsound.c   ****         
+ 122:Playsound.c   ****     Dancing(150, Cm6, &i);
+ 215              		.loc 1 122 0
+ 216 00c6 9620     		movs	r0, #150
+ 217 00c8 5721     		movs	r1, #87
+ 218 00ca 2246     		mov	r2, r4
+ 219 00cc FFF7FEFF 		bl	Dancing
+ 220              	.LVL29:
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 7
+
+
+ 123:Playsound.c   ****     Dancing(150, C6, &i);
+ 221              		.loc 1 123 0
+ 222 00d0 9620     		movs	r0, #150
+ 223 00d2 5E21     		movs	r1, #94
+ 224 00d4 2246     		mov	r2, r4
+ 225 00d6 FFF7FEFF 		bl	Dancing
+ 226              	.LVL30:
+ 124:Playsound.c   ****     Dancing(300, B7, &i);
+ 227              		.loc 1 124 0
+ 228 00da 4FF49670 		mov	r0, #300
+ 229 00de 6421     		movs	r1, #100
+ 230 00e0 2246     		mov	r2, r4
+ 231 00e2 FFF7FEFF 		bl	Dancing
+ 232              	.LVL31:
+ 125:Playsound.c   ****     Dancing(150, Cm6, &i);
+ 233              		.loc 1 125 0
+ 234 00e6 9620     		movs	r0, #150
+ 235 00e8 5721     		movs	r1, #87
+ 236 00ea 2246     		mov	r2, r4
+ 237 00ec FFF7FEFF 		bl	Dancing
+ 238              	.LVL32:
+ 126:Playsound.c   ****     Dancing(300, B7, &i);
+ 239              		.loc 1 126 0
+ 240 00f0 4FF49670 		mov	r0, #300
+ 241 00f4 6421     		movs	r1, #100
+ 242 00f6 2246     		mov	r2, r4
+ 243 00f8 FFF7FEFF 		bl	Dancing
+ 244              	.LVL33:
+ 127:Playsound.c   ****     Dancing(150, B7, &i);
+ 245              		.loc 1 127 0
+ 246 00fc 9620     		movs	r0, #150
+ 247 00fe 6421     		movs	r1, #100
+ 248 0100 2246     		mov	r2, r4
+ 249 0102 FFF7FEFF 		bl	Dancing
+ 250              	.LVL34:
+ 128:Playsound.c   ****     
+ 129:Playsound.c   ****     
+ 130:Playsound.c   ****     Dancing(300, A7, &i);
+ 251              		.loc 1 130 0
+ 252 0106 4FF49670 		mov	r0, #300
+ 253 010a 6E21     		movs	r1, #110
+ 254 010c 2246     		mov	r2, r4
+ 255 010e FFF7FEFF 		bl	Dancing
+ 256              	.LVL35:
+ 131:Playsound.c   ****     Dancing(300, G7, &i);
+ 257              		.loc 1 131 0
+ 258 0112 4FF49670 		mov	r0, #300
+ 259 0116 7D21     		movs	r1, #125
+ 260 0118 2246     		mov	r2, r4
+ 261 011a FFF7FEFF 		bl	Dancing
+ 262              	.LVL36:
+ 132:Playsound.c   ****     Dancing(300, F7, &i);
+ 263              		.loc 1 132 0
+ 264 011e 4FF49670 		mov	r0, #300
+ 265 0122 8721     		movs	r1, #135
+ 266 0124 2246     		mov	r2, r4
+ 267 0126 FFF7FEFF 		bl	Dancing
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 8
+
+
+ 268              	.LVL37:
+ 133:Playsound.c   ****     Dancing(150, G7, &i);
+ 269              		.loc 1 133 0
+ 270 012a 9620     		movs	r0, #150
+ 271 012c 7D21     		movs	r1, #125
+ 272 012e 2246     		mov	r2, r4
+ 273 0130 FFF7FEFF 		bl	Dancing
+ 274              	.LVL38:
+ 134:Playsound.c   ****     Dancing(150, E7, &i);
+ 275              		.loc 1 134 0
+ 276 0134 9620     		movs	r0, #150
+ 277 0136 9421     		movs	r1, #148
+ 278 0138 2246     		mov	r2, r4
+ 279 013a FFF7FEFF 		bl	Dancing
+ 280              	.LVL39:
+ 135:Playsound.c   ****     Beep(1200, E7);
+ 281              		.loc 1 135 0
+ 282 013e 4FF49660 		mov	r0, #1200
+ 283 0142 9421     		movs	r1, #148
+ 284 0144 FFF7FEFF 		bl	Beep
+ 285              	.LVL40:
+ 136:Playsound.c   ****     motor_turn(SPEED,0,600);
+ 286              		.loc 1 136 0
+ 287 0148 C820     		movs	r0, #200
+ 288 014a 2946     		mov	r1, r5
+ 289 014c 4FF41672 		mov	r2, #600
+ 290 0150 FFF7FEFF 		bl	motor_turn
+ 291              	.LVL41:
+ 137:Playsound.c   ****     
+ 138:Playsound.c   ****     
+ 139:Playsound.c   ****     
+ 140:Playsound.c   ****     CyDelay(250);
+ 292              		.loc 1 140 0
+ 293 0154 FA20     		movs	r0, #250
+ 294 0156 FFF7FEFF 		bl	CyDelay
+ 295              	.LVL42:
+ 141:Playsound.c   ****     
+ 142:Playsound.c   ****     // A G A G C6
+ 143:Playsound.c   ****     Dancing(300, A7, &i);
+ 296              		.loc 1 143 0
+ 297 015a 4FF49670 		mov	r0, #300
+ 298 015e 6E21     		movs	r1, #110
+ 299 0160 2246     		mov	r2, r4
+ 300 0162 FFF7FEFF 		bl	Dancing
+ 301              	.LVL43:
+ 144:Playsound.c   ****     Dancing(300, G7, &i); 
+ 302              		.loc 1 144 0
+ 303 0166 4FF49670 		mov	r0, #300
+ 304 016a 7D21     		movs	r1, #125
+ 305 016c 2246     		mov	r2, r4
+ 306 016e FFF7FEFF 		bl	Dancing
+ 307              	.LVL44:
+ 145:Playsound.c   ****     Dancing(300, A7, &i);
+ 308              		.loc 1 145 0
+ 309 0172 4FF49670 		mov	r0, #300
+ 310 0176 6E21     		movs	r1, #110
+ 311 0178 2246     		mov	r2, r4
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 9
+
+
+ 312 017a FFF7FEFF 		bl	Dancing
+ 313              	.LVL45:
+ 146:Playsound.c   ****     Dancing(150, G7, &i); 
+ 314              		.loc 1 146 0
+ 315 017e 9620     		movs	r0, #150
+ 316 0180 7D21     		movs	r1, #125
+ 317 0182 2246     		mov	r2, r4
+ 318 0184 FFF7FEFF 		bl	Dancing
+ 319              	.LVL46:
+ 147:Playsound.c   ****     Dancing(150, C6, &i);
+ 320              		.loc 1 147 0
+ 321 0188 9620     		movs	r0, #150
+ 322 018a 5E21     		movs	r1, #94
+ 323 018c 2246     		mov	r2, r4
+ 324 018e FFF7FEFF 		bl	Dancing
+ 325              	.LVL47:
+ 148:Playsound.c   ****     
+ 149:Playsound.c   ****     
+ 150:Playsound.c   ****     Dancing(150, Cm6, &i);
+ 326              		.loc 1 150 0
+ 327 0192 9620     		movs	r0, #150
+ 328 0194 5721     		movs	r1, #87
+ 329 0196 2246     		mov	r2, r4
+ 330 0198 FFF7FEFF 		bl	Dancing
+ 331              	.LVL48:
+ 151:Playsound.c   ****     Dancing(150, C6, &i);
+ 332              		.loc 1 151 0
+ 333 019c 9620     		movs	r0, #150
+ 334 019e 5E21     		movs	r1, #94
+ 335 01a0 2246     		mov	r2, r4
+ 336 01a2 FFF7FEFF 		bl	Dancing
+ 337              	.LVL49:
+ 152:Playsound.c   ****     Dancing(300, B7, &i);
+ 338              		.loc 1 152 0
+ 339 01a6 4FF49670 		mov	r0, #300
+ 340 01aa 6421     		movs	r1, #100
+ 341 01ac 2246     		mov	r2, r4
+ 342 01ae FFF7FEFF 		bl	Dancing
+ 343              	.LVL50:
+ 153:Playsound.c   ****     Dancing(150, Cm6, &i);
+ 344              		.loc 1 153 0
+ 345 01b2 9620     		movs	r0, #150
+ 346 01b4 5721     		movs	r1, #87
+ 347 01b6 2246     		mov	r2, r4
+ 348 01b8 FFF7FEFF 		bl	Dancing
+ 349              	.LVL51:
+ 154:Playsound.c   ****     Dancing(450, B7, &i);
+ 350              		.loc 1 154 0
+ 351 01bc 4FF4E170 		mov	r0, #450
+ 352 01c0 6421     		movs	r1, #100
+ 353 01c2 2246     		mov	r2, r4
+ 354 01c4 FFF7FEFF 		bl	Dancing
+ 355              	.LVL52:
+ 155:Playsound.c   ****     
+ 156:Playsound.c   ****     
+ 157:Playsound.c   ****     
+ 158:Playsound.c   ****     Dancing(300, A7, &i);
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 10
+
+
+ 356              		.loc 1 158 0
+ 357 01c8 4FF49670 		mov	r0, #300
+ 358 01cc 6E21     		movs	r1, #110
+ 359 01ce 2246     		mov	r2, r4
+ 360 01d0 FFF7FEFF 		bl	Dancing
+ 361              	.LVL53:
+ 159:Playsound.c   ****     Dancing(300, G7, &i);
+ 362              		.loc 1 159 0
+ 363 01d4 4FF49670 		mov	r0, #300
+ 364 01d8 7D21     		movs	r1, #125
+ 365 01da 2246     		mov	r2, r4
+ 366 01dc FFF7FEFF 		bl	Dancing
+ 367              	.LVL54:
+ 160:Playsound.c   ****     Dancing(300, A7, &i);
+ 368              		.loc 1 160 0
+ 369 01e0 4FF49670 		mov	r0, #300
+ 370 01e4 6E21     		movs	r1, #110
+ 371 01e6 2246     		mov	r2, r4
+ 372 01e8 FFF7FEFF 		bl	Dancing
+ 373              	.LVL55:
+ 161:Playsound.c   ****     Dancing(150, C6, &i);
+ 374              		.loc 1 161 0
+ 375 01ec 9620     		movs	r0, #150
+ 376 01ee 5E21     		movs	r1, #94
+ 377 01f0 2246     		mov	r2, r4
+ 378 01f2 FFF7FEFF 		bl	Dancing
+ 379              	.LVL56:
+ 162:Playsound.c   ****     Dancing(150, D6, &i);    
+ 380              		.loc 1 162 0
+ 381 01f6 9620     		movs	r0, #150
+ 382 01f8 5421     		movs	r1, #84
+ 383 01fa 2246     		mov	r2, r4
+ 384 01fc FFF7FEFF 		bl	Dancing
+ 385              	.LVL57:
+ 163:Playsound.c   ****  
+ 164:Playsound.c   ****     
+ 165:Playsound.c   ****     Beep(1200, D6);
+ 386              		.loc 1 165 0
+ 387 0200 4FF49660 		mov	r0, #1200
+ 388 0204 5421     		movs	r1, #84
+ 389 0206 FFF7FEFF 		bl	Beep
+ 390              	.LVL58:
+ 166:Playsound.c   ****     motor_turn(0, SPEED, 600);
+ 391              		.loc 1 166 0
+ 392 020a 2846     		mov	r0, r5
+ 393 020c C821     		movs	r1, #200
+ 394 020e 4FF41672 		mov	r2, #600
+ 395 0212 FFF7FEFF 		bl	motor_turn
+ 396              	.LVL59:
+ 167:Playsound.c   **** }
+ 397              		.loc 1 167 0
+ 398 0216 03B0     		add	sp, sp, #12
+ 399              		.cfi_def_cfa_offset 12
+ 400              		@ sp needed
+ 401 0218 30BD     		pop	{r4, r5, pc}
+ 402              		.cfi_endproc
+ 403              	.LFE64:
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 11
+
+
+ 404              		.size	Playsound, .-Playsound
+ 405 021a 00BF     		.text
+ 406              	.Letext0:
+ 407              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 408              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 409              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 410              		.file 5 ".\\ZumoLibrary/Beep.h"
+ 411              		.file 6 "Generated_Source\\PSoC5/BatteryLed.h"
+ 412              		.file 7 "Generated_Source\\PSoC5/IR_led.h"
+ 413              		.file 8 ".\\ZumoLibrary/Motor.h"
+ 414              		.file 9 "Generated_Source\\PSoC5/CyLib.h"
+ 415              		.file 10 "Generated_Source\\PSoC5/core_cm3.h"
+ 416              		.section	.debug_info,"",%progbits
+ 417              	.Ldebug_info0:
+ 418 0000 73080000 		.4byte	0x873
+ 419 0004 0400     		.2byte	0x4
+ 420 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 421 000a 04       		.byte	0x4
+ 422 000b 01       		.uleb128 0x1
+ 423 000c EF000000 		.4byte	.LASF29
+ 424 0010 01       		.byte	0x1
+ 425 0011 4F000000 		.4byte	.LASF30
+ 426 0015 0A000000 		.4byte	.LASF31
+ 427 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 428 001d 00000000 		.4byte	0
+ 429 0021 00000000 		.4byte	.Ldebug_line0
+ 430 0025 02       		.uleb128 0x2
+ 431 0026 01       		.byte	0x1
+ 432 0027 06       		.byte	0x6
+ 433 0028 7A000000 		.4byte	.LASF0
+ 434 002c 03       		.uleb128 0x3
+ 435 002d 00000000 		.4byte	.LASF4
+ 436 0031 02       		.byte	0x2
+ 437 0032 1D       		.byte	0x1d
+ 438 0033 37000000 		.4byte	0x37
+ 439 0037 02       		.uleb128 0x2
+ 440 0038 01       		.byte	0x1
+ 441 0039 08       		.byte	0x8
+ 442 003a 86000000 		.4byte	.LASF1
+ 443 003e 02       		.uleb128 0x2
+ 444 003f 02       		.byte	0x2
+ 445 0040 05       		.byte	0x5
+ 446 0041 F5010000 		.4byte	.LASF2
+ 447 0045 02       		.uleb128 0x2
+ 448 0046 02       		.byte	0x2
+ 449 0047 07       		.byte	0x7
+ 450 0048 A6000000 		.4byte	.LASF3
+ 451 004c 03       		.uleb128 0x3
+ 452 004d 45000000 		.4byte	.LASF5
+ 453 0051 02       		.byte	0x2
+ 454 0052 3F       		.byte	0x3f
+ 455 0053 57000000 		.4byte	0x57
+ 456 0057 02       		.uleb128 0x2
+ 457 0058 04       		.byte	0x4
+ 458 0059 05       		.byte	0x5
+ 459 005a 05020000 		.4byte	.LASF6
+ 460 005e 02       		.uleb128 0x2
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 12
+
+
+ 461 005f 04       		.byte	0x4
+ 462 0060 07       		.byte	0x7
+ 463 0061 94000000 		.4byte	.LASF7
+ 464 0065 02       		.uleb128 0x2
+ 465 0066 08       		.byte	0x8
+ 466 0067 05       		.byte	0x5
+ 467 0068 CB010000 		.4byte	.LASF8
+ 468 006c 02       		.uleb128 0x2
+ 469 006d 08       		.byte	0x8
+ 470 006e 07       		.byte	0x7
+ 471 006f 8A010000 		.4byte	.LASF9
+ 472 0073 04       		.uleb128 0x4
+ 473 0074 04       		.byte	0x4
+ 474 0075 05       		.byte	0x5
+ 475 0076 696E7400 		.ascii	"int\000"
+ 476 007a 02       		.uleb128 0x2
+ 477 007b 04       		.byte	0x4
+ 478 007c 07       		.byte	0x7
+ 479 007d 7D010000 		.4byte	.LASF10
+ 480 0081 03       		.uleb128 0x3
+ 481 0082 A1010000 		.4byte	.LASF11
+ 482 0086 03       		.byte	0x3
+ 483 0087 15       		.byte	0x15
+ 484 0088 2C000000 		.4byte	0x2c
+ 485 008c 03       		.uleb128 0x3
+ 486 008d AE010000 		.4byte	.LASF12
+ 487 0091 03       		.byte	0x3
+ 488 0092 2C       		.byte	0x2c
+ 489 0093 4C000000 		.4byte	0x4c
+ 490 0097 05       		.uleb128 0x5
+ 491 0098 FF010000 		.4byte	.LASF13
+ 492 009c 04       		.byte	0x4
+ 493 009d 9201     		.2byte	0x192
+ 494 009f 37000000 		.4byte	0x37
+ 495 00a3 05       		.uleb128 0x5
+ 496 00a4 E8000000 		.4byte	.LASF14
+ 497 00a8 04       		.byte	0x4
+ 498 00a9 9401     		.2byte	0x194
+ 499 00ab 5E000000 		.4byte	0x5e
+ 500 00af 02       		.uleb128 0x2
+ 501 00b0 04       		.byte	0x4
+ 502 00b1 04       		.byte	0x4
+ 503 00b2 74000000 		.4byte	.LASF15
+ 504 00b6 02       		.uleb128 0x2
+ 505 00b7 08       		.byte	0x8
+ 506 00b8 04       		.byte	0x4
+ 507 00b9 E1000000 		.4byte	.LASF16
+ 508 00bd 02       		.uleb128 0x2
+ 509 00be 01       		.byte	0x1
+ 510 00bf 08       		.byte	0x8
+ 511 00c0 EA010000 		.4byte	.LASF17
+ 512 00c4 02       		.uleb128 0x2
+ 513 00c5 04       		.byte	0x4
+ 514 00c6 07       		.byte	0x7
+ 515 00c7 B6010000 		.4byte	.LASF18
+ 516 00cb 06       		.uleb128 0x6
+ 517 00cc 19020000 		.4byte	.LASF32
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 13
+
+
+ 518 00d0 01       		.byte	0x1
+ 519 00d1 40       		.byte	0x40
+ 520 00d2 00000000 		.4byte	.LFB63
+ 521 00d6 44000000 		.4byte	.LFE63-.LFB63
+ 522 00da 01       		.uleb128 0x1
+ 523 00db 9C       		.byte	0x9c
+ 524 00dc A0010000 		.4byte	0x1a0
+ 525 00e0 07       		.uleb128 0x7
+ 526 00e1 21020000 		.4byte	.LASF19
+ 527 00e5 01       		.byte	0x1
+ 528 00e6 40       		.byte	0x40
+ 529 00e7 A3000000 		.4byte	0xa3
+ 530 00eb 00000000 		.4byte	.LLST0
+ 531 00ef 07       		.uleb128 0x7
+ 532 00f0 EF010000 		.4byte	.LASF20
+ 533 00f4 01       		.byte	0x1
+ 534 00f5 40       		.byte	0x40
+ 535 00f6 97000000 		.4byte	0x97
+ 536 00fa 1E000000 		.4byte	.LLST1
+ 537 00fe 08       		.uleb128 0x8
+ 538 00ff 6900     		.ascii	"i\000"
+ 539 0101 01       		.byte	0x1
+ 540 0102 40       		.byte	0x40
+ 541 0103 A0010000 		.4byte	0x1a0
+ 542 0107 3F000000 		.4byte	.LLST2
+ 543 010b 09       		.uleb128 0x9
+ 544 010c 0A000000 		.4byte	.LVL1
+ 545 0110 DD070000 		.4byte	0x7dd
+ 546 0114 1F010000 		.4byte	0x11f
+ 547 0118 0A       		.uleb128 0xa
+ 548 0119 01       		.uleb128 0x1
+ 549 011a 50       		.byte	0x50
+ 550 011b 02       		.uleb128 0x2
+ 551 011c 75       		.byte	0x75
+ 552 011d 00       		.sleb128 0
+ 553 011e 00       		.byte	0
+ 554 011f 09       		.uleb128 0x9
+ 555 0120 14000000 		.4byte	.LVL2
+ 556 0124 F3070000 		.4byte	0x7f3
+ 557 0128 32010000 		.4byte	0x132
+ 558 012c 0A       		.uleb128 0xa
+ 559 012d 01       		.uleb128 0x1
+ 560 012e 50       		.byte	0x50
+ 561 012f 01       		.uleb128 0x1
+ 562 0130 31       		.byte	0x31
+ 563 0131 00       		.byte	0
+ 564 0132 09       		.uleb128 0x9
+ 565 0133 1A000000 		.4byte	.LVL3
+ 566 0137 04080000 		.4byte	0x804
+ 567 013b 45010000 		.4byte	0x145
+ 568 013f 0A       		.uleb128 0xa
+ 569 0140 01       		.uleb128 0x1
+ 570 0141 50       		.byte	0x50
+ 571 0142 01       		.uleb128 0x1
+ 572 0143 31       		.byte	0x31
+ 573 0144 00       		.byte	0
+ 574 0145 09       		.uleb128 0x9
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 14
+
+
+ 575 0146 28000000 		.4byte	.LVL4
+ 576 014a 15080000 		.4byte	0x815
+ 577 014e 61010000 		.4byte	0x161
+ 578 0152 0A       		.uleb128 0xa
+ 579 0153 01       		.uleb128 0x1
+ 580 0154 51       		.byte	0x51
+ 581 0155 04       		.uleb128 0x4
+ 582 0156 75       		.byte	0x75
+ 583 0157 00       		.sleb128 0
+ 584 0158 31       		.byte	0x31
+ 585 0159 25       		.byte	0x25
+ 586 015a 0A       		.uleb128 0xa
+ 587 015b 01       		.uleb128 0x1
+ 588 015c 50       		.byte	0x50
+ 589 015d 02       		.uleb128 0x2
+ 590 015e 09       		.byte	0x9
+ 591 015f C8       		.byte	0xc8
+ 592 0160 00       		.byte	0
+ 593 0161 09       		.uleb128 0x9
+ 594 0162 30000000 		.4byte	.LVL6
+ 595 0166 F3070000 		.4byte	0x7f3
+ 596 016a 74010000 		.4byte	0x174
+ 597 016e 0A       		.uleb128 0xa
+ 598 016f 01       		.uleb128 0x1
+ 599 0170 50       		.byte	0x50
+ 600 0171 01       		.uleb128 0x1
+ 601 0172 30       		.byte	0x30
+ 602 0173 00       		.byte	0
+ 603 0174 09       		.uleb128 0x9
+ 604 0175 36000000 		.4byte	.LVL7
+ 605 0179 04080000 		.4byte	0x804
+ 606 017d 87010000 		.4byte	0x187
+ 607 0181 0A       		.uleb128 0xa
+ 608 0182 01       		.uleb128 0x1
+ 609 0183 50       		.byte	0x50
+ 610 0184 01       		.uleb128 0x1
+ 611 0185 30       		.byte	0x30
+ 612 0186 00       		.byte	0
+ 613 0187 0B       		.uleb128 0xb
+ 614 0188 42000000 		.4byte	.LVL8
+ 615 018c 2B080000 		.4byte	0x82b
+ 616 0190 0A       		.uleb128 0xa
+ 617 0191 01       		.uleb128 0x1
+ 618 0192 51       		.byte	0x51
+ 619 0193 04       		.uleb128 0x4
+ 620 0194 75       		.byte	0x75
+ 621 0195 00       		.sleb128 0
+ 622 0196 31       		.byte	0x31
+ 623 0197 25       		.byte	0x25
+ 624 0198 0A       		.uleb128 0xa
+ 625 0199 01       		.uleb128 0x1
+ 626 019a 50       		.byte	0x50
+ 627 019b 02       		.uleb128 0x2
+ 628 019c 09       		.byte	0x9
+ 629 019d C8       		.byte	0xc8
+ 630 019e 00       		.byte	0
+ 631 019f 00       		.byte	0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 15
+
+
+ 632 01a0 0C       		.uleb128 0xc
+ 633 01a1 04       		.byte	0x4
+ 634 01a2 81000000 		.4byte	0x81
+ 635 01a6 0D       		.uleb128 0xd
+ 636 01a7 6A000000 		.4byte	.LASF33
+ 637 01ab 01       		.byte	0x1
+ 638 01ac 50       		.byte	0x50
+ 639 01ad 00000000 		.4byte	.LFB64
+ 640 01b1 1A020000 		.4byte	.LFE64-.LFB64
+ 641 01b5 01       		.uleb128 0x1
+ 642 01b6 9C       		.byte	0x9c
+ 643 01b7 CC070000 		.4byte	0x7cc
+ 644 01bb 0E       		.uleb128 0xe
+ 645 01bc 6900     		.ascii	"i\000"
+ 646 01be 01       		.byte	0x1
+ 647 01bf 51       		.byte	0x51
+ 648 01c0 81000000 		.4byte	0x81
+ 649 01c4 02       		.uleb128 0x2
+ 650 01c5 91       		.byte	0x91
+ 651 01c6 6F       		.sleb128 -17
+ 652 01c7 0F       		.uleb128 0xf
+ 653 01c8 10000000 		.4byte	.LVL9
+ 654 01cc 41080000 		.4byte	0x841
+ 655 01d0 09       		.uleb128 0x9
+ 656 01d1 1A000000 		.4byte	.LVL10
+ 657 01d5 CB000000 		.4byte	0xcb
+ 658 01d9 F0010000 		.4byte	0x1f0
+ 659 01dd 0A       		.uleb128 0xa
+ 660 01de 01       		.uleb128 0x1
+ 661 01df 52       		.byte	0x52
+ 662 01e0 02       		.uleb128 0x2
+ 663 01e1 74       		.byte	0x74
+ 664 01e2 00       		.sleb128 0
+ 665 01e3 0A       		.uleb128 0xa
+ 666 01e4 01       		.uleb128 0x1
+ 667 01e5 51       		.byte	0x51
+ 668 01e6 02       		.uleb128 0x2
+ 669 01e7 08       		.byte	0x8
+ 670 01e8 54       		.byte	0x54
+ 671 01e9 0A       		.uleb128 0xa
+ 672 01ea 01       		.uleb128 0x1
+ 673 01eb 50       		.byte	0x50
+ 674 01ec 02       		.uleb128 0x2
+ 675 01ed 08       		.byte	0x8
+ 676 01ee 78       		.byte	0x78
+ 677 01ef 00       		.byte	0
+ 678 01f0 09       		.uleb128 0x9
+ 679 01f1 20000000 		.4byte	.LVL11
+ 680 01f5 4E080000 		.4byte	0x84e
+ 681 01f9 03020000 		.4byte	0x203
+ 682 01fd 0A       		.uleb128 0xa
+ 683 01fe 01       		.uleb128 0x1
+ 684 01ff 50       		.byte	0x50
+ 685 0200 01       		.uleb128 0x1
+ 686 0201 4E       		.byte	0x4e
+ 687 0202 00       		.byte	0
+ 688 0203 09       		.uleb128 0x9
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 16
+
+
+ 689 0204 2A000000 		.4byte	.LVL12
+ 690 0208 CB000000 		.4byte	0xcb
+ 691 020c 23020000 		.4byte	0x223
+ 692 0210 0A       		.uleb128 0xa
+ 693 0211 01       		.uleb128 0x1
+ 694 0212 52       		.byte	0x52
+ 695 0213 02       		.uleb128 0x2
+ 696 0214 74       		.byte	0x74
+ 697 0215 00       		.sleb128 0
+ 698 0216 0A       		.uleb128 0xa
+ 699 0217 01       		.uleb128 0x1
+ 700 0218 51       		.byte	0x51
+ 701 0219 02       		.uleb128 0x2
+ 702 021a 08       		.byte	0x8
+ 703 021b 54       		.byte	0x54
+ 704 021c 0A       		.uleb128 0xa
+ 705 021d 01       		.uleb128 0x1
+ 706 021e 50       		.byte	0x50
+ 707 021f 02       		.uleb128 0x2
+ 708 0220 08       		.byte	0x8
+ 709 0221 78       		.byte	0x78
+ 710 0222 00       		.byte	0
+ 711 0223 09       		.uleb128 0x9
+ 712 0224 30000000 		.4byte	.LVL13
+ 713 0228 4E080000 		.4byte	0x84e
+ 714 022c 36020000 		.4byte	0x236
+ 715 0230 0A       		.uleb128 0xa
+ 716 0231 01       		.uleb128 0x1
+ 717 0232 50       		.byte	0x50
+ 718 0233 01       		.uleb128 0x1
+ 719 0234 4E       		.byte	0x4e
+ 720 0235 00       		.byte	0
+ 721 0236 09       		.uleb128 0x9
+ 722 0237 3A000000 		.4byte	.LVL14
+ 723 023b CB000000 		.4byte	0xcb
+ 724 023f 56020000 		.4byte	0x256
+ 725 0243 0A       		.uleb128 0xa
+ 726 0244 01       		.uleb128 0x1
+ 727 0245 52       		.byte	0x52
+ 728 0246 02       		.uleb128 0x2
+ 729 0247 74       		.byte	0x74
+ 730 0248 00       		.sleb128 0
+ 731 0249 0A       		.uleb128 0xa
+ 732 024a 01       		.uleb128 0x1
+ 733 024b 51       		.byte	0x51
+ 734 024c 02       		.uleb128 0x2
+ 735 024d 08       		.byte	0x8
+ 736 024e 54       		.byte	0x54
+ 737 024f 0A       		.uleb128 0xa
+ 738 0250 01       		.uleb128 0x1
+ 739 0251 50       		.byte	0x50
+ 740 0252 02       		.uleb128 0x2
+ 741 0253 08       		.byte	0x8
+ 742 0254 78       		.byte	0x78
+ 743 0255 00       		.byte	0
+ 744 0256 09       		.uleb128 0x9
+ 745 0257 40000000 		.4byte	.LVL15
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 17
+
+
+ 746 025b 4E080000 		.4byte	0x84e
+ 747 025f 69020000 		.4byte	0x269
+ 748 0263 0A       		.uleb128 0xa
+ 749 0264 01       		.uleb128 0x1
+ 750 0265 50       		.byte	0x50
+ 751 0266 01       		.uleb128 0x1
+ 752 0267 4E       		.byte	0x4e
+ 753 0268 00       		.byte	0
+ 754 0269 09       		.uleb128 0x9
+ 755 026a 4A000000 		.4byte	.LVL16
+ 756 026e CB000000 		.4byte	0xcb
+ 757 0272 89020000 		.4byte	0x289
+ 758 0276 0A       		.uleb128 0xa
+ 759 0277 01       		.uleb128 0x1
+ 760 0278 52       		.byte	0x52
+ 761 0279 02       		.uleb128 0x2
+ 762 027a 74       		.byte	0x74
+ 763 027b 00       		.sleb128 0
+ 764 027c 0A       		.uleb128 0xa
+ 765 027d 01       		.uleb128 0x1
+ 766 027e 51       		.byte	0x51
+ 767 027f 02       		.uleb128 0x2
+ 768 0280 08       		.byte	0x8
+ 769 0281 54       		.byte	0x54
+ 770 0282 0A       		.uleb128 0xa
+ 771 0283 01       		.uleb128 0x1
+ 772 0284 50       		.byte	0x50
+ 773 0285 02       		.uleb128 0x2
+ 774 0286 08       		.byte	0x8
+ 775 0287 96       		.byte	0x96
+ 776 0288 00       		.byte	0
+ 777 0289 09       		.uleb128 0x9
+ 778 028a 56000000 		.4byte	.LVL17
+ 779 028e CB000000 		.4byte	0xcb
+ 780 0292 AA020000 		.4byte	0x2aa
+ 781 0296 0A       		.uleb128 0xa
+ 782 0297 01       		.uleb128 0x1
+ 783 0298 52       		.byte	0x52
+ 784 0299 02       		.uleb128 0x2
+ 785 029a 74       		.byte	0x74
+ 786 029b 00       		.sleb128 0
+ 787 029c 0A       		.uleb128 0xa
+ 788 029d 01       		.uleb128 0x1
+ 789 029e 51       		.byte	0x51
+ 790 029f 02       		.uleb128 0x2
+ 791 02a0 09       		.byte	0x9
+ 792 02a1 AF       		.byte	0xaf
+ 793 02a2 0A       		.uleb128 0xa
+ 794 02a3 01       		.uleb128 0x1
+ 795 02a4 50       		.byte	0x50
+ 796 02a5 03       		.uleb128 0x3
+ 797 02a6 0A       		.byte	0xa
+ 798 02a7 2C01     		.2byte	0x12c
+ 799 02a9 00       		.byte	0
+ 800 02aa 09       		.uleb128 0x9
+ 801 02ab 62000000 		.4byte	.LVL18
+ 802 02af CB000000 		.4byte	0xcb
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 18
+
+
+ 803 02b3 CB020000 		.4byte	0x2cb
+ 804 02b7 0A       		.uleb128 0xa
+ 805 02b8 01       		.uleb128 0x1
+ 806 02b9 52       		.byte	0x52
+ 807 02ba 02       		.uleb128 0x2
+ 808 02bb 74       		.byte	0x74
+ 809 02bc 00       		.sleb128 0
+ 810 02bd 0A       		.uleb128 0xa
+ 811 02be 01       		.uleb128 0x1
+ 812 02bf 51       		.byte	0x51
+ 813 02c0 02       		.uleb128 0x2
+ 814 02c1 09       		.byte	0x9
+ 815 02c2 9B       		.byte	0x9b
+ 816 02c3 0A       		.uleb128 0xa
+ 817 02c4 01       		.uleb128 0x1
+ 818 02c5 50       		.byte	0x50
+ 819 02c6 03       		.uleb128 0x3
+ 820 02c7 0A       		.byte	0xa
+ 821 02c8 2C01     		.2byte	0x12c
+ 822 02ca 00       		.byte	0
+ 823 02cb 09       		.uleb128 0x9
+ 824 02cc 68000000 		.4byte	.LVL19
+ 825 02d0 4E080000 		.4byte	0x84e
+ 826 02d4 DE020000 		.4byte	0x2de
+ 827 02d8 0A       		.uleb128 0xa
+ 828 02d9 01       		.uleb128 0x1
+ 829 02da 50       		.byte	0x50
+ 830 02db 01       		.uleb128 0x1
+ 831 02dc 3A       		.byte	0x3a
+ 832 02dd 00       		.byte	0
+ 833 02de 09       		.uleb128 0x9
+ 834 02df 72000000 		.4byte	.LVL20
+ 835 02e3 CB000000 		.4byte	0xcb
+ 836 02e7 FE020000 		.4byte	0x2fe
+ 837 02eb 0A       		.uleb128 0xa
+ 838 02ec 01       		.uleb128 0x1
+ 839 02ed 52       		.byte	0x52
+ 840 02ee 02       		.uleb128 0x2
+ 841 02ef 74       		.byte	0x74
+ 842 02f0 00       		.sleb128 0
+ 843 02f1 0A       		.uleb128 0xa
+ 844 02f2 01       		.uleb128 0x1
+ 845 02f3 51       		.byte	0x51
+ 846 02f4 02       		.uleb128 0x2
+ 847 02f5 09       		.byte	0x9
+ 848 02f6 87       		.byte	0x87
+ 849 02f7 0A       		.uleb128 0xa
+ 850 02f8 01       		.uleb128 0x1
+ 851 02f9 50       		.byte	0x50
+ 852 02fa 02       		.uleb128 0x2
+ 853 02fb 08       		.byte	0x8
+ 854 02fc 96       		.byte	0x96
+ 855 02fd 00       		.byte	0
+ 856 02fe 09       		.uleb128 0x9
+ 857 02ff 7C000000 		.4byte	.LVL21
+ 858 0303 CB000000 		.4byte	0xcb
+ 859 0307 1E030000 		.4byte	0x31e
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 19
+
+
+ 860 030b 0A       		.uleb128 0xa
+ 861 030c 01       		.uleb128 0x1
+ 862 030d 52       		.byte	0x52
+ 863 030e 02       		.uleb128 0x2
+ 864 030f 74       		.byte	0x74
+ 865 0310 00       		.sleb128 0
+ 866 0311 0A       		.uleb128 0xa
+ 867 0312 01       		.uleb128 0x1
+ 868 0313 51       		.byte	0x51
+ 869 0314 02       		.uleb128 0x2
+ 870 0315 09       		.byte	0x9
+ 871 0316 9B       		.byte	0x9b
+ 872 0317 0A       		.uleb128 0xa
+ 873 0318 01       		.uleb128 0x1
+ 874 0319 50       		.byte	0x50
+ 875 031a 02       		.uleb128 0x2
+ 876 031b 08       		.byte	0x8
+ 877 031c 96       		.byte	0x96
+ 878 031d 00       		.byte	0
+ 879 031e 09       		.uleb128 0x9
+ 880 031f 88000000 		.4byte	.LVL22
+ 881 0323 CB000000 		.4byte	0xcb
+ 882 0327 3F030000 		.4byte	0x33f
+ 883 032b 0A       		.uleb128 0xa
+ 884 032c 01       		.uleb128 0x1
+ 885 032d 52       		.byte	0x52
+ 886 032e 02       		.uleb128 0x2
+ 887 032f 74       		.byte	0x74
+ 888 0330 00       		.sleb128 0
+ 889 0331 0A       		.uleb128 0xa
+ 890 0332 01       		.uleb128 0x1
+ 891 0333 51       		.byte	0x51
+ 892 0334 02       		.uleb128 0x2
+ 893 0335 09       		.byte	0x9
+ 894 0336 87       		.byte	0x87
+ 895 0337 0A       		.uleb128 0xa
+ 896 0338 01       		.uleb128 0x1
+ 897 0339 50       		.byte	0x50
+ 898 033a 03       		.uleb128 0x3
+ 899 033b 0A       		.byte	0xa
+ 900 033c 5802     		.2byte	0x258
+ 901 033e 00       		.byte	0
+ 902 033f 09       		.uleb128 0x9
+ 903 0340 8E000000 		.4byte	.LVL23
+ 904 0344 4E080000 		.4byte	0x84e
+ 905 0348 53030000 		.4byte	0x353
+ 906 034c 0A       		.uleb128 0xa
+ 907 034d 01       		.uleb128 0x1
+ 908 034e 50       		.byte	0x50
+ 909 034f 02       		.uleb128 0x2
+ 910 0350 08       		.byte	0x8
+ 911 0351 32       		.byte	0x32
+ 912 0352 00       		.byte	0
+ 913 0353 09       		.uleb128 0x9
+ 914 0354 9A000000 		.4byte	.LVL24
+ 915 0358 CB000000 		.4byte	0xcb
+ 916 035c 74030000 		.4byte	0x374
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 20
+
+
+ 917 0360 0A       		.uleb128 0xa
+ 918 0361 01       		.uleb128 0x1
+ 919 0362 52       		.byte	0x52
+ 920 0363 02       		.uleb128 0x2
+ 921 0364 74       		.byte	0x74
+ 922 0365 00       		.sleb128 0
+ 923 0366 0A       		.uleb128 0xa
+ 924 0367 01       		.uleb128 0x1
+ 925 0368 51       		.byte	0x51
+ 926 0369 02       		.uleb128 0x2
+ 927 036a 08       		.byte	0x8
+ 928 036b 6E       		.byte	0x6e
+ 929 036c 0A       		.uleb128 0xa
+ 930 036d 01       		.uleb128 0x1
+ 931 036e 50       		.byte	0x50
+ 932 036f 03       		.uleb128 0x3
+ 933 0370 0A       		.byte	0xa
+ 934 0371 2C01     		.2byte	0x12c
+ 935 0373 00       		.byte	0
+ 936 0374 09       		.uleb128 0x9
+ 937 0375 A6000000 		.4byte	.LVL25
+ 938 0379 CB000000 		.4byte	0xcb
+ 939 037d 95030000 		.4byte	0x395
+ 940 0381 0A       		.uleb128 0xa
+ 941 0382 01       		.uleb128 0x1
+ 942 0383 52       		.byte	0x52
+ 943 0384 02       		.uleb128 0x2
+ 944 0385 74       		.byte	0x74
+ 945 0386 00       		.sleb128 0
+ 946 0387 0A       		.uleb128 0xa
+ 947 0388 01       		.uleb128 0x1
+ 948 0389 51       		.byte	0x51
+ 949 038a 02       		.uleb128 0x2
+ 950 038b 08       		.byte	0x8
+ 951 038c 7D       		.byte	0x7d
+ 952 038d 0A       		.uleb128 0xa
+ 953 038e 01       		.uleb128 0x1
+ 954 038f 50       		.byte	0x50
+ 955 0390 03       		.uleb128 0x3
+ 956 0391 0A       		.byte	0xa
+ 957 0392 2C01     		.2byte	0x12c
+ 958 0394 00       		.byte	0
+ 959 0395 09       		.uleb128 0x9
+ 960 0396 B2000000 		.4byte	.LVL26
+ 961 039a CB000000 		.4byte	0xcb
+ 962 039e B6030000 		.4byte	0x3b6
+ 963 03a2 0A       		.uleb128 0xa
+ 964 03a3 01       		.uleb128 0x1
+ 965 03a4 52       		.byte	0x52
+ 966 03a5 02       		.uleb128 0x2
+ 967 03a6 74       		.byte	0x74
+ 968 03a7 00       		.sleb128 0
+ 969 03a8 0A       		.uleb128 0xa
+ 970 03a9 01       		.uleb128 0x1
+ 971 03aa 51       		.byte	0x51
+ 972 03ab 02       		.uleb128 0x2
+ 973 03ac 08       		.byte	0x8
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 21
+
+
+ 974 03ad 6E       		.byte	0x6e
+ 975 03ae 0A       		.uleb128 0xa
+ 976 03af 01       		.uleb128 0x1
+ 977 03b0 50       		.byte	0x50
+ 978 03b1 03       		.uleb128 0x3
+ 979 03b2 0A       		.byte	0xa
+ 980 03b3 2C01     		.2byte	0x12c
+ 981 03b5 00       		.byte	0
+ 982 03b6 09       		.uleb128 0x9
+ 983 03b7 BC000000 		.4byte	.LVL27
+ 984 03bb CB000000 		.4byte	0xcb
+ 985 03bf D6030000 		.4byte	0x3d6
+ 986 03c3 0A       		.uleb128 0xa
+ 987 03c4 01       		.uleb128 0x1
+ 988 03c5 52       		.byte	0x52
+ 989 03c6 02       		.uleb128 0x2
+ 990 03c7 74       		.byte	0x74
+ 991 03c8 00       		.sleb128 0
+ 992 03c9 0A       		.uleb128 0xa
+ 993 03ca 01       		.uleb128 0x1
+ 994 03cb 51       		.byte	0x51
+ 995 03cc 02       		.uleb128 0x2
+ 996 03cd 08       		.byte	0x8
+ 997 03ce 7D       		.byte	0x7d
+ 998 03cf 0A       		.uleb128 0xa
+ 999 03d0 01       		.uleb128 0x1
+ 1000 03d1 50       		.byte	0x50
+ 1001 03d2 02       		.uleb128 0x2
+ 1002 03d3 08       		.byte	0x8
+ 1003 03d4 96       		.byte	0x96
+ 1004 03d5 00       		.byte	0
+ 1005 03d6 09       		.uleb128 0x9
+ 1006 03d7 C6000000 		.4byte	.LVL28
+ 1007 03db CB000000 		.4byte	0xcb
+ 1008 03df F6030000 		.4byte	0x3f6
+ 1009 03e3 0A       		.uleb128 0xa
+ 1010 03e4 01       		.uleb128 0x1
+ 1011 03e5 52       		.byte	0x52
+ 1012 03e6 02       		.uleb128 0x2
+ 1013 03e7 74       		.byte	0x74
+ 1014 03e8 00       		.sleb128 0
+ 1015 03e9 0A       		.uleb128 0xa
+ 1016 03ea 01       		.uleb128 0x1
+ 1017 03eb 51       		.byte	0x51
+ 1018 03ec 02       		.uleb128 0x2
+ 1019 03ed 08       		.byte	0x8
+ 1020 03ee 5E       		.byte	0x5e
+ 1021 03ef 0A       		.uleb128 0xa
+ 1022 03f0 01       		.uleb128 0x1
+ 1023 03f1 50       		.byte	0x50
+ 1024 03f2 02       		.uleb128 0x2
+ 1025 03f3 08       		.byte	0x8
+ 1026 03f4 96       		.byte	0x96
+ 1027 03f5 00       		.byte	0
+ 1028 03f6 09       		.uleb128 0x9
+ 1029 03f7 D0000000 		.4byte	.LVL29
+ 1030 03fb CB000000 		.4byte	0xcb
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 22
+
+
+ 1031 03ff 16040000 		.4byte	0x416
+ 1032 0403 0A       		.uleb128 0xa
+ 1033 0404 01       		.uleb128 0x1
+ 1034 0405 52       		.byte	0x52
+ 1035 0406 02       		.uleb128 0x2
+ 1036 0407 74       		.byte	0x74
+ 1037 0408 00       		.sleb128 0
+ 1038 0409 0A       		.uleb128 0xa
+ 1039 040a 01       		.uleb128 0x1
+ 1040 040b 51       		.byte	0x51
+ 1041 040c 02       		.uleb128 0x2
+ 1042 040d 08       		.byte	0x8
+ 1043 040e 57       		.byte	0x57
+ 1044 040f 0A       		.uleb128 0xa
+ 1045 0410 01       		.uleb128 0x1
+ 1046 0411 50       		.byte	0x50
+ 1047 0412 02       		.uleb128 0x2
+ 1048 0413 08       		.byte	0x8
+ 1049 0414 96       		.byte	0x96
+ 1050 0415 00       		.byte	0
+ 1051 0416 09       		.uleb128 0x9
+ 1052 0417 DA000000 		.4byte	.LVL30
+ 1053 041b CB000000 		.4byte	0xcb
+ 1054 041f 36040000 		.4byte	0x436
+ 1055 0423 0A       		.uleb128 0xa
+ 1056 0424 01       		.uleb128 0x1
+ 1057 0425 52       		.byte	0x52
+ 1058 0426 02       		.uleb128 0x2
+ 1059 0427 74       		.byte	0x74
+ 1060 0428 00       		.sleb128 0
+ 1061 0429 0A       		.uleb128 0xa
+ 1062 042a 01       		.uleb128 0x1
+ 1063 042b 51       		.byte	0x51
+ 1064 042c 02       		.uleb128 0x2
+ 1065 042d 08       		.byte	0x8
+ 1066 042e 5E       		.byte	0x5e
+ 1067 042f 0A       		.uleb128 0xa
+ 1068 0430 01       		.uleb128 0x1
+ 1069 0431 50       		.byte	0x50
+ 1070 0432 02       		.uleb128 0x2
+ 1071 0433 08       		.byte	0x8
+ 1072 0434 96       		.byte	0x96
+ 1073 0435 00       		.byte	0
+ 1074 0436 09       		.uleb128 0x9
+ 1075 0437 E6000000 		.4byte	.LVL31
+ 1076 043b CB000000 		.4byte	0xcb
+ 1077 043f 57040000 		.4byte	0x457
+ 1078 0443 0A       		.uleb128 0xa
+ 1079 0444 01       		.uleb128 0x1
+ 1080 0445 52       		.byte	0x52
+ 1081 0446 02       		.uleb128 0x2
+ 1082 0447 74       		.byte	0x74
+ 1083 0448 00       		.sleb128 0
+ 1084 0449 0A       		.uleb128 0xa
+ 1085 044a 01       		.uleb128 0x1
+ 1086 044b 51       		.byte	0x51
+ 1087 044c 02       		.uleb128 0x2
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 23
+
+
+ 1088 044d 08       		.byte	0x8
+ 1089 044e 64       		.byte	0x64
+ 1090 044f 0A       		.uleb128 0xa
+ 1091 0450 01       		.uleb128 0x1
+ 1092 0451 50       		.byte	0x50
+ 1093 0452 03       		.uleb128 0x3
+ 1094 0453 0A       		.byte	0xa
+ 1095 0454 2C01     		.2byte	0x12c
+ 1096 0456 00       		.byte	0
+ 1097 0457 09       		.uleb128 0x9
+ 1098 0458 F0000000 		.4byte	.LVL32
+ 1099 045c CB000000 		.4byte	0xcb
+ 1100 0460 77040000 		.4byte	0x477
+ 1101 0464 0A       		.uleb128 0xa
+ 1102 0465 01       		.uleb128 0x1
+ 1103 0466 52       		.byte	0x52
+ 1104 0467 02       		.uleb128 0x2
+ 1105 0468 74       		.byte	0x74
+ 1106 0469 00       		.sleb128 0
+ 1107 046a 0A       		.uleb128 0xa
+ 1108 046b 01       		.uleb128 0x1
+ 1109 046c 51       		.byte	0x51
+ 1110 046d 02       		.uleb128 0x2
+ 1111 046e 08       		.byte	0x8
+ 1112 046f 57       		.byte	0x57
+ 1113 0470 0A       		.uleb128 0xa
+ 1114 0471 01       		.uleb128 0x1
+ 1115 0472 50       		.byte	0x50
+ 1116 0473 02       		.uleb128 0x2
+ 1117 0474 08       		.byte	0x8
+ 1118 0475 96       		.byte	0x96
+ 1119 0476 00       		.byte	0
+ 1120 0477 09       		.uleb128 0x9
+ 1121 0478 FC000000 		.4byte	.LVL33
+ 1122 047c CB000000 		.4byte	0xcb
+ 1123 0480 98040000 		.4byte	0x498
+ 1124 0484 0A       		.uleb128 0xa
+ 1125 0485 01       		.uleb128 0x1
+ 1126 0486 52       		.byte	0x52
+ 1127 0487 02       		.uleb128 0x2
+ 1128 0488 74       		.byte	0x74
+ 1129 0489 00       		.sleb128 0
+ 1130 048a 0A       		.uleb128 0xa
+ 1131 048b 01       		.uleb128 0x1
+ 1132 048c 51       		.byte	0x51
+ 1133 048d 02       		.uleb128 0x2
+ 1134 048e 08       		.byte	0x8
+ 1135 048f 64       		.byte	0x64
+ 1136 0490 0A       		.uleb128 0xa
+ 1137 0491 01       		.uleb128 0x1
+ 1138 0492 50       		.byte	0x50
+ 1139 0493 03       		.uleb128 0x3
+ 1140 0494 0A       		.byte	0xa
+ 1141 0495 2C01     		.2byte	0x12c
+ 1142 0497 00       		.byte	0
+ 1143 0498 09       		.uleb128 0x9
+ 1144 0499 06010000 		.4byte	.LVL34
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 24
+
+
+ 1145 049d CB000000 		.4byte	0xcb
+ 1146 04a1 B8040000 		.4byte	0x4b8
+ 1147 04a5 0A       		.uleb128 0xa
+ 1148 04a6 01       		.uleb128 0x1
+ 1149 04a7 52       		.byte	0x52
+ 1150 04a8 02       		.uleb128 0x2
+ 1151 04a9 74       		.byte	0x74
+ 1152 04aa 00       		.sleb128 0
+ 1153 04ab 0A       		.uleb128 0xa
+ 1154 04ac 01       		.uleb128 0x1
+ 1155 04ad 51       		.byte	0x51
+ 1156 04ae 02       		.uleb128 0x2
+ 1157 04af 08       		.byte	0x8
+ 1158 04b0 64       		.byte	0x64
+ 1159 04b1 0A       		.uleb128 0xa
+ 1160 04b2 01       		.uleb128 0x1
+ 1161 04b3 50       		.byte	0x50
+ 1162 04b4 02       		.uleb128 0x2
+ 1163 04b5 08       		.byte	0x8
+ 1164 04b6 96       		.byte	0x96
+ 1165 04b7 00       		.byte	0
+ 1166 04b8 09       		.uleb128 0x9
+ 1167 04b9 12010000 		.4byte	.LVL35
+ 1168 04bd CB000000 		.4byte	0xcb
+ 1169 04c1 D9040000 		.4byte	0x4d9
+ 1170 04c5 0A       		.uleb128 0xa
+ 1171 04c6 01       		.uleb128 0x1
+ 1172 04c7 52       		.byte	0x52
+ 1173 04c8 02       		.uleb128 0x2
+ 1174 04c9 74       		.byte	0x74
+ 1175 04ca 00       		.sleb128 0
+ 1176 04cb 0A       		.uleb128 0xa
+ 1177 04cc 01       		.uleb128 0x1
+ 1178 04cd 51       		.byte	0x51
+ 1179 04ce 02       		.uleb128 0x2
+ 1180 04cf 08       		.byte	0x8
+ 1181 04d0 6E       		.byte	0x6e
+ 1182 04d1 0A       		.uleb128 0xa
+ 1183 04d2 01       		.uleb128 0x1
+ 1184 04d3 50       		.byte	0x50
+ 1185 04d4 03       		.uleb128 0x3
+ 1186 04d5 0A       		.byte	0xa
+ 1187 04d6 2C01     		.2byte	0x12c
+ 1188 04d8 00       		.byte	0
+ 1189 04d9 09       		.uleb128 0x9
+ 1190 04da 1E010000 		.4byte	.LVL36
+ 1191 04de CB000000 		.4byte	0xcb
+ 1192 04e2 FA040000 		.4byte	0x4fa
+ 1193 04e6 0A       		.uleb128 0xa
+ 1194 04e7 01       		.uleb128 0x1
+ 1195 04e8 52       		.byte	0x52
+ 1196 04e9 02       		.uleb128 0x2
+ 1197 04ea 74       		.byte	0x74
+ 1198 04eb 00       		.sleb128 0
+ 1199 04ec 0A       		.uleb128 0xa
+ 1200 04ed 01       		.uleb128 0x1
+ 1201 04ee 51       		.byte	0x51
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 25
+
+
+ 1202 04ef 02       		.uleb128 0x2
+ 1203 04f0 08       		.byte	0x8
+ 1204 04f1 7D       		.byte	0x7d
+ 1205 04f2 0A       		.uleb128 0xa
+ 1206 04f3 01       		.uleb128 0x1
+ 1207 04f4 50       		.byte	0x50
+ 1208 04f5 03       		.uleb128 0x3
+ 1209 04f6 0A       		.byte	0xa
+ 1210 04f7 2C01     		.2byte	0x12c
+ 1211 04f9 00       		.byte	0
+ 1212 04fa 09       		.uleb128 0x9
+ 1213 04fb 2A010000 		.4byte	.LVL37
+ 1214 04ff CB000000 		.4byte	0xcb
+ 1215 0503 1B050000 		.4byte	0x51b
+ 1216 0507 0A       		.uleb128 0xa
+ 1217 0508 01       		.uleb128 0x1
+ 1218 0509 52       		.byte	0x52
+ 1219 050a 02       		.uleb128 0x2
+ 1220 050b 74       		.byte	0x74
+ 1221 050c 00       		.sleb128 0
+ 1222 050d 0A       		.uleb128 0xa
+ 1223 050e 01       		.uleb128 0x1
+ 1224 050f 51       		.byte	0x51
+ 1225 0510 02       		.uleb128 0x2
+ 1226 0511 09       		.byte	0x9
+ 1227 0512 87       		.byte	0x87
+ 1228 0513 0A       		.uleb128 0xa
+ 1229 0514 01       		.uleb128 0x1
+ 1230 0515 50       		.byte	0x50
+ 1231 0516 03       		.uleb128 0x3
+ 1232 0517 0A       		.byte	0xa
+ 1233 0518 2C01     		.2byte	0x12c
+ 1234 051a 00       		.byte	0
+ 1235 051b 09       		.uleb128 0x9
+ 1236 051c 34010000 		.4byte	.LVL38
+ 1237 0520 CB000000 		.4byte	0xcb
+ 1238 0524 3B050000 		.4byte	0x53b
+ 1239 0528 0A       		.uleb128 0xa
+ 1240 0529 01       		.uleb128 0x1
+ 1241 052a 52       		.byte	0x52
+ 1242 052b 02       		.uleb128 0x2
+ 1243 052c 74       		.byte	0x74
+ 1244 052d 00       		.sleb128 0
+ 1245 052e 0A       		.uleb128 0xa
+ 1246 052f 01       		.uleb128 0x1
+ 1247 0530 51       		.byte	0x51
+ 1248 0531 02       		.uleb128 0x2
+ 1249 0532 08       		.byte	0x8
+ 1250 0533 7D       		.byte	0x7d
+ 1251 0534 0A       		.uleb128 0xa
+ 1252 0535 01       		.uleb128 0x1
+ 1253 0536 50       		.byte	0x50
+ 1254 0537 02       		.uleb128 0x2
+ 1255 0538 08       		.byte	0x8
+ 1256 0539 96       		.byte	0x96
+ 1257 053a 00       		.byte	0
+ 1258 053b 09       		.uleb128 0x9
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 26
+
+
+ 1259 053c 3E010000 		.4byte	.LVL39
+ 1260 0540 CB000000 		.4byte	0xcb
+ 1261 0544 5B050000 		.4byte	0x55b
+ 1262 0548 0A       		.uleb128 0xa
+ 1263 0549 01       		.uleb128 0x1
+ 1264 054a 52       		.byte	0x52
+ 1265 054b 02       		.uleb128 0x2
+ 1266 054c 74       		.byte	0x74
+ 1267 054d 00       		.sleb128 0
+ 1268 054e 0A       		.uleb128 0xa
+ 1269 054f 01       		.uleb128 0x1
+ 1270 0550 51       		.byte	0x51
+ 1271 0551 02       		.uleb128 0x2
+ 1272 0552 09       		.byte	0x9
+ 1273 0553 94       		.byte	0x94
+ 1274 0554 0A       		.uleb128 0xa
+ 1275 0555 01       		.uleb128 0x1
+ 1276 0556 50       		.byte	0x50
+ 1277 0557 02       		.uleb128 0x2
+ 1278 0558 08       		.byte	0x8
+ 1279 0559 96       		.byte	0x96
+ 1280 055a 00       		.byte	0
+ 1281 055b 09       		.uleb128 0x9
+ 1282 055c 48010000 		.4byte	.LVL40
+ 1283 0560 DD070000 		.4byte	0x7dd
+ 1284 0564 76050000 		.4byte	0x576
+ 1285 0568 0A       		.uleb128 0xa
+ 1286 0569 01       		.uleb128 0x1
+ 1287 056a 51       		.byte	0x51
+ 1288 056b 02       		.uleb128 0x2
+ 1289 056c 09       		.byte	0x9
+ 1290 056d 94       		.byte	0x94
+ 1291 056e 0A       		.uleb128 0xa
+ 1292 056f 01       		.uleb128 0x1
+ 1293 0570 50       		.byte	0x50
+ 1294 0571 03       		.uleb128 0x3
+ 1295 0572 0A       		.byte	0xa
+ 1296 0573 B004     		.2byte	0x4b0
+ 1297 0575 00       		.byte	0
+ 1298 0576 09       		.uleb128 0x9
+ 1299 0577 54010000 		.4byte	.LVL41
+ 1300 057b 5F080000 		.4byte	0x85f
+ 1301 057f 97050000 		.4byte	0x597
+ 1302 0583 0A       		.uleb128 0xa
+ 1303 0584 01       		.uleb128 0x1
+ 1304 0585 52       		.byte	0x52
+ 1305 0586 03       		.uleb128 0x3
+ 1306 0587 0A       		.byte	0xa
+ 1307 0588 5802     		.2byte	0x258
+ 1308 058a 0A       		.uleb128 0xa
+ 1309 058b 01       		.uleb128 0x1
+ 1310 058c 51       		.byte	0x51
+ 1311 058d 02       		.uleb128 0x2
+ 1312 058e 75       		.byte	0x75
+ 1313 058f 00       		.sleb128 0
+ 1314 0590 0A       		.uleb128 0xa
+ 1315 0591 01       		.uleb128 0x1
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 27
+
+
+ 1316 0592 50       		.byte	0x50
+ 1317 0593 02       		.uleb128 0x2
+ 1318 0594 09       		.byte	0x9
+ 1319 0595 C8       		.byte	0xc8
+ 1320 0596 00       		.byte	0
+ 1321 0597 09       		.uleb128 0x9
+ 1322 0598 5A010000 		.4byte	.LVL42
+ 1323 059c 4E080000 		.4byte	0x84e
+ 1324 05a0 AB050000 		.4byte	0x5ab
+ 1325 05a4 0A       		.uleb128 0xa
+ 1326 05a5 01       		.uleb128 0x1
+ 1327 05a6 50       		.byte	0x50
+ 1328 05a7 02       		.uleb128 0x2
+ 1329 05a8 08       		.byte	0x8
+ 1330 05a9 FA       		.byte	0xfa
+ 1331 05aa 00       		.byte	0
+ 1332 05ab 09       		.uleb128 0x9
+ 1333 05ac 66010000 		.4byte	.LVL43
+ 1334 05b0 CB000000 		.4byte	0xcb
+ 1335 05b4 CC050000 		.4byte	0x5cc
+ 1336 05b8 0A       		.uleb128 0xa
+ 1337 05b9 01       		.uleb128 0x1
+ 1338 05ba 52       		.byte	0x52
+ 1339 05bb 02       		.uleb128 0x2
+ 1340 05bc 74       		.byte	0x74
+ 1341 05bd 00       		.sleb128 0
+ 1342 05be 0A       		.uleb128 0xa
+ 1343 05bf 01       		.uleb128 0x1
+ 1344 05c0 51       		.byte	0x51
+ 1345 05c1 02       		.uleb128 0x2
+ 1346 05c2 08       		.byte	0x8
+ 1347 05c3 6E       		.byte	0x6e
+ 1348 05c4 0A       		.uleb128 0xa
+ 1349 05c5 01       		.uleb128 0x1
+ 1350 05c6 50       		.byte	0x50
+ 1351 05c7 03       		.uleb128 0x3
+ 1352 05c8 0A       		.byte	0xa
+ 1353 05c9 2C01     		.2byte	0x12c
+ 1354 05cb 00       		.byte	0
+ 1355 05cc 09       		.uleb128 0x9
+ 1356 05cd 72010000 		.4byte	.LVL44
+ 1357 05d1 CB000000 		.4byte	0xcb
+ 1358 05d5 ED050000 		.4byte	0x5ed
+ 1359 05d9 0A       		.uleb128 0xa
+ 1360 05da 01       		.uleb128 0x1
+ 1361 05db 52       		.byte	0x52
+ 1362 05dc 02       		.uleb128 0x2
+ 1363 05dd 74       		.byte	0x74
+ 1364 05de 00       		.sleb128 0
+ 1365 05df 0A       		.uleb128 0xa
+ 1366 05e0 01       		.uleb128 0x1
+ 1367 05e1 51       		.byte	0x51
+ 1368 05e2 02       		.uleb128 0x2
+ 1369 05e3 08       		.byte	0x8
+ 1370 05e4 7D       		.byte	0x7d
+ 1371 05e5 0A       		.uleb128 0xa
+ 1372 05e6 01       		.uleb128 0x1
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 28
+
+
+ 1373 05e7 50       		.byte	0x50
+ 1374 05e8 03       		.uleb128 0x3
+ 1375 05e9 0A       		.byte	0xa
+ 1376 05ea 2C01     		.2byte	0x12c
+ 1377 05ec 00       		.byte	0
+ 1378 05ed 09       		.uleb128 0x9
+ 1379 05ee 7E010000 		.4byte	.LVL45
+ 1380 05f2 CB000000 		.4byte	0xcb
+ 1381 05f6 0E060000 		.4byte	0x60e
+ 1382 05fa 0A       		.uleb128 0xa
+ 1383 05fb 01       		.uleb128 0x1
+ 1384 05fc 52       		.byte	0x52
+ 1385 05fd 02       		.uleb128 0x2
+ 1386 05fe 74       		.byte	0x74
+ 1387 05ff 00       		.sleb128 0
+ 1388 0600 0A       		.uleb128 0xa
+ 1389 0601 01       		.uleb128 0x1
+ 1390 0602 51       		.byte	0x51
+ 1391 0603 02       		.uleb128 0x2
+ 1392 0604 08       		.byte	0x8
+ 1393 0605 6E       		.byte	0x6e
+ 1394 0606 0A       		.uleb128 0xa
+ 1395 0607 01       		.uleb128 0x1
+ 1396 0608 50       		.byte	0x50
+ 1397 0609 03       		.uleb128 0x3
+ 1398 060a 0A       		.byte	0xa
+ 1399 060b 2C01     		.2byte	0x12c
+ 1400 060d 00       		.byte	0
+ 1401 060e 09       		.uleb128 0x9
+ 1402 060f 88010000 		.4byte	.LVL46
+ 1403 0613 CB000000 		.4byte	0xcb
+ 1404 0617 2E060000 		.4byte	0x62e
+ 1405 061b 0A       		.uleb128 0xa
+ 1406 061c 01       		.uleb128 0x1
+ 1407 061d 52       		.byte	0x52
+ 1408 061e 02       		.uleb128 0x2
+ 1409 061f 74       		.byte	0x74
+ 1410 0620 00       		.sleb128 0
+ 1411 0621 0A       		.uleb128 0xa
+ 1412 0622 01       		.uleb128 0x1
+ 1413 0623 51       		.byte	0x51
+ 1414 0624 02       		.uleb128 0x2
+ 1415 0625 08       		.byte	0x8
+ 1416 0626 7D       		.byte	0x7d
+ 1417 0627 0A       		.uleb128 0xa
+ 1418 0628 01       		.uleb128 0x1
+ 1419 0629 50       		.byte	0x50
+ 1420 062a 02       		.uleb128 0x2
+ 1421 062b 08       		.byte	0x8
+ 1422 062c 96       		.byte	0x96
+ 1423 062d 00       		.byte	0
+ 1424 062e 09       		.uleb128 0x9
+ 1425 062f 92010000 		.4byte	.LVL47
+ 1426 0633 CB000000 		.4byte	0xcb
+ 1427 0637 4E060000 		.4byte	0x64e
+ 1428 063b 0A       		.uleb128 0xa
+ 1429 063c 01       		.uleb128 0x1
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 29
+
+
+ 1430 063d 52       		.byte	0x52
+ 1431 063e 02       		.uleb128 0x2
+ 1432 063f 74       		.byte	0x74
+ 1433 0640 00       		.sleb128 0
+ 1434 0641 0A       		.uleb128 0xa
+ 1435 0642 01       		.uleb128 0x1
+ 1436 0643 51       		.byte	0x51
+ 1437 0644 02       		.uleb128 0x2
+ 1438 0645 08       		.byte	0x8
+ 1439 0646 5E       		.byte	0x5e
+ 1440 0647 0A       		.uleb128 0xa
+ 1441 0648 01       		.uleb128 0x1
+ 1442 0649 50       		.byte	0x50
+ 1443 064a 02       		.uleb128 0x2
+ 1444 064b 08       		.byte	0x8
+ 1445 064c 96       		.byte	0x96
+ 1446 064d 00       		.byte	0
+ 1447 064e 09       		.uleb128 0x9
+ 1448 064f 9C010000 		.4byte	.LVL48
+ 1449 0653 CB000000 		.4byte	0xcb
+ 1450 0657 6E060000 		.4byte	0x66e
+ 1451 065b 0A       		.uleb128 0xa
+ 1452 065c 01       		.uleb128 0x1
+ 1453 065d 52       		.byte	0x52
+ 1454 065e 02       		.uleb128 0x2
+ 1455 065f 74       		.byte	0x74
+ 1456 0660 00       		.sleb128 0
+ 1457 0661 0A       		.uleb128 0xa
+ 1458 0662 01       		.uleb128 0x1
+ 1459 0663 51       		.byte	0x51
+ 1460 0664 02       		.uleb128 0x2
+ 1461 0665 08       		.byte	0x8
+ 1462 0666 57       		.byte	0x57
+ 1463 0667 0A       		.uleb128 0xa
+ 1464 0668 01       		.uleb128 0x1
+ 1465 0669 50       		.byte	0x50
+ 1466 066a 02       		.uleb128 0x2
+ 1467 066b 08       		.byte	0x8
+ 1468 066c 96       		.byte	0x96
+ 1469 066d 00       		.byte	0
+ 1470 066e 09       		.uleb128 0x9
+ 1471 066f A6010000 		.4byte	.LVL49
+ 1472 0673 CB000000 		.4byte	0xcb
+ 1473 0677 8E060000 		.4byte	0x68e
+ 1474 067b 0A       		.uleb128 0xa
+ 1475 067c 01       		.uleb128 0x1
+ 1476 067d 52       		.byte	0x52
+ 1477 067e 02       		.uleb128 0x2
+ 1478 067f 74       		.byte	0x74
+ 1479 0680 00       		.sleb128 0
+ 1480 0681 0A       		.uleb128 0xa
+ 1481 0682 01       		.uleb128 0x1
+ 1482 0683 51       		.byte	0x51
+ 1483 0684 02       		.uleb128 0x2
+ 1484 0685 08       		.byte	0x8
+ 1485 0686 5E       		.byte	0x5e
+ 1486 0687 0A       		.uleb128 0xa
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 30
+
+
+ 1487 0688 01       		.uleb128 0x1
+ 1488 0689 50       		.byte	0x50
+ 1489 068a 02       		.uleb128 0x2
+ 1490 068b 08       		.byte	0x8
+ 1491 068c 96       		.byte	0x96
+ 1492 068d 00       		.byte	0
+ 1493 068e 09       		.uleb128 0x9
+ 1494 068f B2010000 		.4byte	.LVL50
+ 1495 0693 CB000000 		.4byte	0xcb
+ 1496 0697 AF060000 		.4byte	0x6af
+ 1497 069b 0A       		.uleb128 0xa
+ 1498 069c 01       		.uleb128 0x1
+ 1499 069d 52       		.byte	0x52
+ 1500 069e 02       		.uleb128 0x2
+ 1501 069f 74       		.byte	0x74
+ 1502 06a0 00       		.sleb128 0
+ 1503 06a1 0A       		.uleb128 0xa
+ 1504 06a2 01       		.uleb128 0x1
+ 1505 06a3 51       		.byte	0x51
+ 1506 06a4 02       		.uleb128 0x2
+ 1507 06a5 08       		.byte	0x8
+ 1508 06a6 64       		.byte	0x64
+ 1509 06a7 0A       		.uleb128 0xa
+ 1510 06a8 01       		.uleb128 0x1
+ 1511 06a9 50       		.byte	0x50
+ 1512 06aa 03       		.uleb128 0x3
+ 1513 06ab 0A       		.byte	0xa
+ 1514 06ac 2C01     		.2byte	0x12c
+ 1515 06ae 00       		.byte	0
+ 1516 06af 09       		.uleb128 0x9
+ 1517 06b0 BC010000 		.4byte	.LVL51
+ 1518 06b4 CB000000 		.4byte	0xcb
+ 1519 06b8 CF060000 		.4byte	0x6cf
+ 1520 06bc 0A       		.uleb128 0xa
+ 1521 06bd 01       		.uleb128 0x1
+ 1522 06be 52       		.byte	0x52
+ 1523 06bf 02       		.uleb128 0x2
+ 1524 06c0 74       		.byte	0x74
+ 1525 06c1 00       		.sleb128 0
+ 1526 06c2 0A       		.uleb128 0xa
+ 1527 06c3 01       		.uleb128 0x1
+ 1528 06c4 51       		.byte	0x51
+ 1529 06c5 02       		.uleb128 0x2
+ 1530 06c6 08       		.byte	0x8
+ 1531 06c7 57       		.byte	0x57
+ 1532 06c8 0A       		.uleb128 0xa
+ 1533 06c9 01       		.uleb128 0x1
+ 1534 06ca 50       		.byte	0x50
+ 1535 06cb 02       		.uleb128 0x2
+ 1536 06cc 08       		.byte	0x8
+ 1537 06cd 96       		.byte	0x96
+ 1538 06ce 00       		.byte	0
+ 1539 06cf 09       		.uleb128 0x9
+ 1540 06d0 C8010000 		.4byte	.LVL52
+ 1541 06d4 CB000000 		.4byte	0xcb
+ 1542 06d8 F0060000 		.4byte	0x6f0
+ 1543 06dc 0A       		.uleb128 0xa
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 31
+
+
+ 1544 06dd 01       		.uleb128 0x1
+ 1545 06de 52       		.byte	0x52
+ 1546 06df 02       		.uleb128 0x2
+ 1547 06e0 74       		.byte	0x74
+ 1548 06e1 00       		.sleb128 0
+ 1549 06e2 0A       		.uleb128 0xa
+ 1550 06e3 01       		.uleb128 0x1
+ 1551 06e4 51       		.byte	0x51
+ 1552 06e5 02       		.uleb128 0x2
+ 1553 06e6 08       		.byte	0x8
+ 1554 06e7 64       		.byte	0x64
+ 1555 06e8 0A       		.uleb128 0xa
+ 1556 06e9 01       		.uleb128 0x1
+ 1557 06ea 50       		.byte	0x50
+ 1558 06eb 03       		.uleb128 0x3
+ 1559 06ec 0A       		.byte	0xa
+ 1560 06ed C201     		.2byte	0x1c2
+ 1561 06ef 00       		.byte	0
+ 1562 06f0 09       		.uleb128 0x9
+ 1563 06f1 D4010000 		.4byte	.LVL53
+ 1564 06f5 CB000000 		.4byte	0xcb
+ 1565 06f9 11070000 		.4byte	0x711
+ 1566 06fd 0A       		.uleb128 0xa
+ 1567 06fe 01       		.uleb128 0x1
+ 1568 06ff 52       		.byte	0x52
+ 1569 0700 02       		.uleb128 0x2
+ 1570 0701 74       		.byte	0x74
+ 1571 0702 00       		.sleb128 0
+ 1572 0703 0A       		.uleb128 0xa
+ 1573 0704 01       		.uleb128 0x1
+ 1574 0705 51       		.byte	0x51
+ 1575 0706 02       		.uleb128 0x2
+ 1576 0707 08       		.byte	0x8
+ 1577 0708 6E       		.byte	0x6e
+ 1578 0709 0A       		.uleb128 0xa
+ 1579 070a 01       		.uleb128 0x1
+ 1580 070b 50       		.byte	0x50
+ 1581 070c 03       		.uleb128 0x3
+ 1582 070d 0A       		.byte	0xa
+ 1583 070e 2C01     		.2byte	0x12c
+ 1584 0710 00       		.byte	0
+ 1585 0711 09       		.uleb128 0x9
+ 1586 0712 E0010000 		.4byte	.LVL54
+ 1587 0716 CB000000 		.4byte	0xcb
+ 1588 071a 32070000 		.4byte	0x732
+ 1589 071e 0A       		.uleb128 0xa
+ 1590 071f 01       		.uleb128 0x1
+ 1591 0720 52       		.byte	0x52
+ 1592 0721 02       		.uleb128 0x2
+ 1593 0722 74       		.byte	0x74
+ 1594 0723 00       		.sleb128 0
+ 1595 0724 0A       		.uleb128 0xa
+ 1596 0725 01       		.uleb128 0x1
+ 1597 0726 51       		.byte	0x51
+ 1598 0727 02       		.uleb128 0x2
+ 1599 0728 08       		.byte	0x8
+ 1600 0729 7D       		.byte	0x7d
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 32
+
+
+ 1601 072a 0A       		.uleb128 0xa
+ 1602 072b 01       		.uleb128 0x1
+ 1603 072c 50       		.byte	0x50
+ 1604 072d 03       		.uleb128 0x3
+ 1605 072e 0A       		.byte	0xa
+ 1606 072f 2C01     		.2byte	0x12c
+ 1607 0731 00       		.byte	0
+ 1608 0732 09       		.uleb128 0x9
+ 1609 0733 EC010000 		.4byte	.LVL55
+ 1610 0737 CB000000 		.4byte	0xcb
+ 1611 073b 53070000 		.4byte	0x753
+ 1612 073f 0A       		.uleb128 0xa
+ 1613 0740 01       		.uleb128 0x1
+ 1614 0741 52       		.byte	0x52
+ 1615 0742 02       		.uleb128 0x2
+ 1616 0743 74       		.byte	0x74
+ 1617 0744 00       		.sleb128 0
+ 1618 0745 0A       		.uleb128 0xa
+ 1619 0746 01       		.uleb128 0x1
+ 1620 0747 51       		.byte	0x51
+ 1621 0748 02       		.uleb128 0x2
+ 1622 0749 08       		.byte	0x8
+ 1623 074a 6E       		.byte	0x6e
+ 1624 074b 0A       		.uleb128 0xa
+ 1625 074c 01       		.uleb128 0x1
+ 1626 074d 50       		.byte	0x50
+ 1627 074e 03       		.uleb128 0x3
+ 1628 074f 0A       		.byte	0xa
+ 1629 0750 2C01     		.2byte	0x12c
+ 1630 0752 00       		.byte	0
+ 1631 0753 09       		.uleb128 0x9
+ 1632 0754 F6010000 		.4byte	.LVL56
+ 1633 0758 CB000000 		.4byte	0xcb
+ 1634 075c 73070000 		.4byte	0x773
+ 1635 0760 0A       		.uleb128 0xa
+ 1636 0761 01       		.uleb128 0x1
+ 1637 0762 52       		.byte	0x52
+ 1638 0763 02       		.uleb128 0x2
+ 1639 0764 74       		.byte	0x74
+ 1640 0765 00       		.sleb128 0
+ 1641 0766 0A       		.uleb128 0xa
+ 1642 0767 01       		.uleb128 0x1
+ 1643 0768 51       		.byte	0x51
+ 1644 0769 02       		.uleb128 0x2
+ 1645 076a 08       		.byte	0x8
+ 1646 076b 5E       		.byte	0x5e
+ 1647 076c 0A       		.uleb128 0xa
+ 1648 076d 01       		.uleb128 0x1
+ 1649 076e 50       		.byte	0x50
+ 1650 076f 02       		.uleb128 0x2
+ 1651 0770 08       		.byte	0x8
+ 1652 0771 96       		.byte	0x96
+ 1653 0772 00       		.byte	0
+ 1654 0773 09       		.uleb128 0x9
+ 1655 0774 00020000 		.4byte	.LVL57
+ 1656 0778 CB000000 		.4byte	0xcb
+ 1657 077c 93070000 		.4byte	0x793
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 33
+
+
+ 1658 0780 0A       		.uleb128 0xa
+ 1659 0781 01       		.uleb128 0x1
+ 1660 0782 52       		.byte	0x52
+ 1661 0783 02       		.uleb128 0x2
+ 1662 0784 74       		.byte	0x74
+ 1663 0785 00       		.sleb128 0
+ 1664 0786 0A       		.uleb128 0xa
+ 1665 0787 01       		.uleb128 0x1
+ 1666 0788 51       		.byte	0x51
+ 1667 0789 02       		.uleb128 0x2
+ 1668 078a 08       		.byte	0x8
+ 1669 078b 54       		.byte	0x54
+ 1670 078c 0A       		.uleb128 0xa
+ 1671 078d 01       		.uleb128 0x1
+ 1672 078e 50       		.byte	0x50
+ 1673 078f 02       		.uleb128 0x2
+ 1674 0790 08       		.byte	0x8
+ 1675 0791 96       		.byte	0x96
+ 1676 0792 00       		.byte	0
+ 1677 0793 09       		.uleb128 0x9
+ 1678 0794 0A020000 		.4byte	.LVL58
+ 1679 0798 DD070000 		.4byte	0x7dd
+ 1680 079c AE070000 		.4byte	0x7ae
+ 1681 07a0 0A       		.uleb128 0xa
+ 1682 07a1 01       		.uleb128 0x1
+ 1683 07a2 51       		.byte	0x51
+ 1684 07a3 02       		.uleb128 0x2
+ 1685 07a4 08       		.byte	0x8
+ 1686 07a5 54       		.byte	0x54
+ 1687 07a6 0A       		.uleb128 0xa
+ 1688 07a7 01       		.uleb128 0x1
+ 1689 07a8 50       		.byte	0x50
+ 1690 07a9 03       		.uleb128 0x3
+ 1691 07aa 0A       		.byte	0xa
+ 1692 07ab B004     		.2byte	0x4b0
+ 1693 07ad 00       		.byte	0
+ 1694 07ae 0B       		.uleb128 0xb
+ 1695 07af 16020000 		.4byte	.LVL59
+ 1696 07b3 5F080000 		.4byte	0x85f
+ 1697 07b7 0A       		.uleb128 0xa
+ 1698 07b8 01       		.uleb128 0x1
+ 1699 07b9 52       		.byte	0x52
+ 1700 07ba 03       		.uleb128 0x3
+ 1701 07bb 0A       		.byte	0xa
+ 1702 07bc 5802     		.2byte	0x258
+ 1703 07be 0A       		.uleb128 0xa
+ 1704 07bf 01       		.uleb128 0x1
+ 1705 07c0 51       		.byte	0x51
+ 1706 07c1 02       		.uleb128 0x2
+ 1707 07c2 09       		.byte	0x9
+ 1708 07c3 C8       		.byte	0xc8
+ 1709 07c4 0A       		.uleb128 0xa
+ 1710 07c5 01       		.uleb128 0x1
+ 1711 07c6 50       		.byte	0x50
+ 1712 07c7 02       		.uleb128 0x2
+ 1713 07c8 75       		.byte	0x75
+ 1714 07c9 00       		.sleb128 0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 34
+
+
+ 1715 07ca 00       		.byte	0
+ 1716 07cb 00       		.byte	0
+ 1717 07cc 10       		.uleb128 0x10
+ 1718 07cd B9000000 		.4byte	.LASF34
+ 1719 07d1 0A       		.byte	0xa
+ 1720 07d2 9606     		.2byte	0x696
+ 1721 07d4 D8070000 		.4byte	0x7d8
+ 1722 07d8 11       		.uleb128 0x11
+ 1723 07d9 8C000000 		.4byte	0x8c
+ 1724 07dd 12       		.uleb128 0x12
+ 1725 07de A9010000 		.4byte	.LASF21
+ 1726 07e2 05       		.byte	0x5
+ 1727 07e3 04       		.byte	0x4
+ 1728 07e4 F3070000 		.4byte	0x7f3
+ 1729 07e8 13       		.uleb128 0x13
+ 1730 07e9 A3000000 		.4byte	0xa3
+ 1731 07ed 13       		.uleb128 0x13
+ 1732 07ee 97000000 		.4byte	0x97
+ 1733 07f2 00       		.byte	0
+ 1734 07f3 12       		.uleb128 0x12
+ 1735 07f4 D9010000 		.4byte	.LASF22
+ 1736 07f8 06       		.byte	0x6
+ 1737 07f9 26       		.byte	0x26
+ 1738 07fa 04080000 		.4byte	0x804
+ 1739 07fe 13       		.uleb128 0x13
+ 1740 07ff 97000000 		.4byte	0x97
+ 1741 0803 00       		.byte	0
+ 1742 0804 12       		.uleb128 0x12
+ 1743 0805 D4000000 		.4byte	.LASF23
+ 1744 0809 07       		.byte	0x7
+ 1745 080a 26       		.byte	0x26
+ 1746 080b 15080000 		.4byte	0x815
+ 1747 080f 13       		.uleb128 0x13
+ 1748 0810 97000000 		.4byte	0x97
+ 1749 0814 00       		.byte	0
+ 1750 0815 12       		.uleb128 0x12
+ 1751 0816 C6000000 		.4byte	.LASF24
+ 1752 081a 08       		.byte	0x8
+ 1753 081b 0F       		.byte	0xf
+ 1754 081c 2B080000 		.4byte	0x82b
+ 1755 0820 13       		.uleb128 0x13
+ 1756 0821 97000000 		.4byte	0x97
+ 1757 0825 13       		.uleb128 0x13
+ 1758 0826 A3000000 		.4byte	0xa3
+ 1759 082a 00       		.byte	0
+ 1760 082b 12       		.uleb128 0x12
+ 1761 082c 5B000000 		.4byte	.LASF25
+ 1762 0830 08       		.byte	0x8
+ 1763 0831 1A       		.byte	0x1a
+ 1764 0832 41080000 		.4byte	0x841
+ 1765 0836 13       		.uleb128 0x13
+ 1766 0837 97000000 		.4byte	0x97
+ 1767 083b 13       		.uleb128 0x13
+ 1768 083c A3000000 		.4byte	0xa3
+ 1769 0840 00       		.byte	0
+ 1770 0841 14       		.uleb128 0x14
+ 1771 0842 BF010000 		.4byte	.LASF27
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 35
+
+
+ 1772 0846 08       		.byte	0x8
+ 1773 0847 0B       		.byte	0xb
+ 1774 0848 4E080000 		.4byte	0x84e
+ 1775 084c 15       		.uleb128 0x15
+ 1776 084d 00       		.byte	0
+ 1777 084e 12       		.uleb128 0x12
+ 1778 084f 28020000 		.4byte	.LASF26
+ 1779 0853 09       		.byte	0x9
+ 1780 0854 76       		.byte	0x76
+ 1781 0855 5F080000 		.4byte	0x85f
+ 1782 0859 13       		.uleb128 0x13
+ 1783 085a A3000000 		.4byte	0xa3
+ 1784 085e 00       		.byte	0
+ 1785 085f 16       		.uleb128 0x16
+ 1786 0860 0E020000 		.4byte	.LASF28
+ 1787 0864 08       		.byte	0x8
+ 1788 0865 12       		.byte	0x12
+ 1789 0866 13       		.uleb128 0x13
+ 1790 0867 97000000 		.4byte	0x97
+ 1791 086b 13       		.uleb128 0x13
+ 1792 086c 97000000 		.4byte	0x97
+ 1793 0870 13       		.uleb128 0x13
+ 1794 0871 A3000000 		.4byte	0xa3
+ 1795 0875 00       		.byte	0
+ 1796 0876 00       		.byte	0
+ 1797              		.section	.debug_abbrev,"",%progbits
+ 1798              	.Ldebug_abbrev0:
+ 1799 0000 01       		.uleb128 0x1
+ 1800 0001 11       		.uleb128 0x11
+ 1801 0002 01       		.byte	0x1
+ 1802 0003 25       		.uleb128 0x25
+ 1803 0004 0E       		.uleb128 0xe
+ 1804 0005 13       		.uleb128 0x13
+ 1805 0006 0B       		.uleb128 0xb
+ 1806 0007 03       		.uleb128 0x3
+ 1807 0008 0E       		.uleb128 0xe
+ 1808 0009 1B       		.uleb128 0x1b
+ 1809 000a 0E       		.uleb128 0xe
+ 1810 000b 55       		.uleb128 0x55
+ 1811 000c 17       		.uleb128 0x17
+ 1812 000d 11       		.uleb128 0x11
+ 1813 000e 01       		.uleb128 0x1
+ 1814 000f 10       		.uleb128 0x10
+ 1815 0010 17       		.uleb128 0x17
+ 1816 0011 00       		.byte	0
+ 1817 0012 00       		.byte	0
+ 1818 0013 02       		.uleb128 0x2
+ 1819 0014 24       		.uleb128 0x24
+ 1820 0015 00       		.byte	0
+ 1821 0016 0B       		.uleb128 0xb
+ 1822 0017 0B       		.uleb128 0xb
+ 1823 0018 3E       		.uleb128 0x3e
+ 1824 0019 0B       		.uleb128 0xb
+ 1825 001a 03       		.uleb128 0x3
+ 1826 001b 0E       		.uleb128 0xe
+ 1827 001c 00       		.byte	0
+ 1828 001d 00       		.byte	0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 36
+
+
+ 1829 001e 03       		.uleb128 0x3
+ 1830 001f 16       		.uleb128 0x16
+ 1831 0020 00       		.byte	0
+ 1832 0021 03       		.uleb128 0x3
+ 1833 0022 0E       		.uleb128 0xe
+ 1834 0023 3A       		.uleb128 0x3a
+ 1835 0024 0B       		.uleb128 0xb
+ 1836 0025 3B       		.uleb128 0x3b
+ 1837 0026 0B       		.uleb128 0xb
+ 1838 0027 49       		.uleb128 0x49
+ 1839 0028 13       		.uleb128 0x13
+ 1840 0029 00       		.byte	0
+ 1841 002a 00       		.byte	0
+ 1842 002b 04       		.uleb128 0x4
+ 1843 002c 24       		.uleb128 0x24
+ 1844 002d 00       		.byte	0
+ 1845 002e 0B       		.uleb128 0xb
+ 1846 002f 0B       		.uleb128 0xb
+ 1847 0030 3E       		.uleb128 0x3e
+ 1848 0031 0B       		.uleb128 0xb
+ 1849 0032 03       		.uleb128 0x3
+ 1850 0033 08       		.uleb128 0x8
+ 1851 0034 00       		.byte	0
+ 1852 0035 00       		.byte	0
+ 1853 0036 05       		.uleb128 0x5
+ 1854 0037 16       		.uleb128 0x16
+ 1855 0038 00       		.byte	0
+ 1856 0039 03       		.uleb128 0x3
+ 1857 003a 0E       		.uleb128 0xe
+ 1858 003b 3A       		.uleb128 0x3a
+ 1859 003c 0B       		.uleb128 0xb
+ 1860 003d 3B       		.uleb128 0x3b
+ 1861 003e 05       		.uleb128 0x5
+ 1862 003f 49       		.uleb128 0x49
+ 1863 0040 13       		.uleb128 0x13
+ 1864 0041 00       		.byte	0
+ 1865 0042 00       		.byte	0
+ 1866 0043 06       		.uleb128 0x6
+ 1867 0044 2E       		.uleb128 0x2e
+ 1868 0045 01       		.byte	0x1
+ 1869 0046 3F       		.uleb128 0x3f
+ 1870 0047 19       		.uleb128 0x19
+ 1871 0048 03       		.uleb128 0x3
+ 1872 0049 0E       		.uleb128 0xe
+ 1873 004a 3A       		.uleb128 0x3a
+ 1874 004b 0B       		.uleb128 0xb
+ 1875 004c 3B       		.uleb128 0x3b
+ 1876 004d 0B       		.uleb128 0xb
+ 1877 004e 27       		.uleb128 0x27
+ 1878 004f 19       		.uleb128 0x19
+ 1879 0050 11       		.uleb128 0x11
+ 1880 0051 01       		.uleb128 0x1
+ 1881 0052 12       		.uleb128 0x12
+ 1882 0053 06       		.uleb128 0x6
+ 1883 0054 40       		.uleb128 0x40
+ 1884 0055 18       		.uleb128 0x18
+ 1885 0056 9742     		.uleb128 0x2117
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 37
+
+
+ 1886 0058 19       		.uleb128 0x19
+ 1887 0059 01       		.uleb128 0x1
+ 1888 005a 13       		.uleb128 0x13
+ 1889 005b 00       		.byte	0
+ 1890 005c 00       		.byte	0
+ 1891 005d 07       		.uleb128 0x7
+ 1892 005e 05       		.uleb128 0x5
+ 1893 005f 00       		.byte	0
+ 1894 0060 03       		.uleb128 0x3
+ 1895 0061 0E       		.uleb128 0xe
+ 1896 0062 3A       		.uleb128 0x3a
+ 1897 0063 0B       		.uleb128 0xb
+ 1898 0064 3B       		.uleb128 0x3b
+ 1899 0065 0B       		.uleb128 0xb
+ 1900 0066 49       		.uleb128 0x49
+ 1901 0067 13       		.uleb128 0x13
+ 1902 0068 02       		.uleb128 0x2
+ 1903 0069 17       		.uleb128 0x17
+ 1904 006a 00       		.byte	0
+ 1905 006b 00       		.byte	0
+ 1906 006c 08       		.uleb128 0x8
+ 1907 006d 05       		.uleb128 0x5
+ 1908 006e 00       		.byte	0
+ 1909 006f 03       		.uleb128 0x3
+ 1910 0070 08       		.uleb128 0x8
+ 1911 0071 3A       		.uleb128 0x3a
+ 1912 0072 0B       		.uleb128 0xb
+ 1913 0073 3B       		.uleb128 0x3b
+ 1914 0074 0B       		.uleb128 0xb
+ 1915 0075 49       		.uleb128 0x49
+ 1916 0076 13       		.uleb128 0x13
+ 1917 0077 02       		.uleb128 0x2
+ 1918 0078 17       		.uleb128 0x17
+ 1919 0079 00       		.byte	0
+ 1920 007a 00       		.byte	0
+ 1921 007b 09       		.uleb128 0x9
+ 1922 007c 898201   		.uleb128 0x4109
+ 1923 007f 01       		.byte	0x1
+ 1924 0080 11       		.uleb128 0x11
+ 1925 0081 01       		.uleb128 0x1
+ 1926 0082 31       		.uleb128 0x31
+ 1927 0083 13       		.uleb128 0x13
+ 1928 0084 01       		.uleb128 0x1
+ 1929 0085 13       		.uleb128 0x13
+ 1930 0086 00       		.byte	0
+ 1931 0087 00       		.byte	0
+ 1932 0088 0A       		.uleb128 0xa
+ 1933 0089 8A8201   		.uleb128 0x410a
+ 1934 008c 00       		.byte	0
+ 1935 008d 02       		.uleb128 0x2
+ 1936 008e 18       		.uleb128 0x18
+ 1937 008f 9142     		.uleb128 0x2111
+ 1938 0091 18       		.uleb128 0x18
+ 1939 0092 00       		.byte	0
+ 1940 0093 00       		.byte	0
+ 1941 0094 0B       		.uleb128 0xb
+ 1942 0095 898201   		.uleb128 0x4109
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 38
+
+
+ 1943 0098 01       		.byte	0x1
+ 1944 0099 11       		.uleb128 0x11
+ 1945 009a 01       		.uleb128 0x1
+ 1946 009b 31       		.uleb128 0x31
+ 1947 009c 13       		.uleb128 0x13
+ 1948 009d 00       		.byte	0
+ 1949 009e 00       		.byte	0
+ 1950 009f 0C       		.uleb128 0xc
+ 1951 00a0 0F       		.uleb128 0xf
+ 1952 00a1 00       		.byte	0
+ 1953 00a2 0B       		.uleb128 0xb
+ 1954 00a3 0B       		.uleb128 0xb
+ 1955 00a4 49       		.uleb128 0x49
+ 1956 00a5 13       		.uleb128 0x13
+ 1957 00a6 00       		.byte	0
+ 1958 00a7 00       		.byte	0
+ 1959 00a8 0D       		.uleb128 0xd
+ 1960 00a9 2E       		.uleb128 0x2e
+ 1961 00aa 01       		.byte	0x1
+ 1962 00ab 3F       		.uleb128 0x3f
+ 1963 00ac 19       		.uleb128 0x19
+ 1964 00ad 03       		.uleb128 0x3
+ 1965 00ae 0E       		.uleb128 0xe
+ 1966 00af 3A       		.uleb128 0x3a
+ 1967 00b0 0B       		.uleb128 0xb
+ 1968 00b1 3B       		.uleb128 0x3b
+ 1969 00b2 0B       		.uleb128 0xb
+ 1970 00b3 11       		.uleb128 0x11
+ 1971 00b4 01       		.uleb128 0x1
+ 1972 00b5 12       		.uleb128 0x12
+ 1973 00b6 06       		.uleb128 0x6
+ 1974 00b7 40       		.uleb128 0x40
+ 1975 00b8 18       		.uleb128 0x18
+ 1976 00b9 9742     		.uleb128 0x2117
+ 1977 00bb 19       		.uleb128 0x19
+ 1978 00bc 01       		.uleb128 0x1
+ 1979 00bd 13       		.uleb128 0x13
+ 1980 00be 00       		.byte	0
+ 1981 00bf 00       		.byte	0
+ 1982 00c0 0E       		.uleb128 0xe
+ 1983 00c1 34       		.uleb128 0x34
+ 1984 00c2 00       		.byte	0
+ 1985 00c3 03       		.uleb128 0x3
+ 1986 00c4 08       		.uleb128 0x8
+ 1987 00c5 3A       		.uleb128 0x3a
+ 1988 00c6 0B       		.uleb128 0xb
+ 1989 00c7 3B       		.uleb128 0x3b
+ 1990 00c8 0B       		.uleb128 0xb
+ 1991 00c9 49       		.uleb128 0x49
+ 1992 00ca 13       		.uleb128 0x13
+ 1993 00cb 02       		.uleb128 0x2
+ 1994 00cc 18       		.uleb128 0x18
+ 1995 00cd 00       		.byte	0
+ 1996 00ce 00       		.byte	0
+ 1997 00cf 0F       		.uleb128 0xf
+ 1998 00d0 898201   		.uleb128 0x4109
+ 1999 00d3 00       		.byte	0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 39
+
+
+ 2000 00d4 11       		.uleb128 0x11
+ 2001 00d5 01       		.uleb128 0x1
+ 2002 00d6 31       		.uleb128 0x31
+ 2003 00d7 13       		.uleb128 0x13
+ 2004 00d8 00       		.byte	0
+ 2005 00d9 00       		.byte	0
+ 2006 00da 10       		.uleb128 0x10
+ 2007 00db 34       		.uleb128 0x34
+ 2008 00dc 00       		.byte	0
+ 2009 00dd 03       		.uleb128 0x3
+ 2010 00de 0E       		.uleb128 0xe
+ 2011 00df 3A       		.uleb128 0x3a
+ 2012 00e0 0B       		.uleb128 0xb
+ 2013 00e1 3B       		.uleb128 0x3b
+ 2014 00e2 05       		.uleb128 0x5
+ 2015 00e3 49       		.uleb128 0x49
+ 2016 00e4 13       		.uleb128 0x13
+ 2017 00e5 3F       		.uleb128 0x3f
+ 2018 00e6 19       		.uleb128 0x19
+ 2019 00e7 3C       		.uleb128 0x3c
+ 2020 00e8 19       		.uleb128 0x19
+ 2021 00e9 00       		.byte	0
+ 2022 00ea 00       		.byte	0
+ 2023 00eb 11       		.uleb128 0x11
+ 2024 00ec 35       		.uleb128 0x35
+ 2025 00ed 00       		.byte	0
+ 2026 00ee 49       		.uleb128 0x49
+ 2027 00ef 13       		.uleb128 0x13
+ 2028 00f0 00       		.byte	0
+ 2029 00f1 00       		.byte	0
+ 2030 00f2 12       		.uleb128 0x12
+ 2031 00f3 2E       		.uleb128 0x2e
+ 2032 00f4 01       		.byte	0x1
+ 2033 00f5 3F       		.uleb128 0x3f
+ 2034 00f6 19       		.uleb128 0x19
+ 2035 00f7 03       		.uleb128 0x3
+ 2036 00f8 0E       		.uleb128 0xe
+ 2037 00f9 3A       		.uleb128 0x3a
+ 2038 00fa 0B       		.uleb128 0xb
+ 2039 00fb 3B       		.uleb128 0x3b
+ 2040 00fc 0B       		.uleb128 0xb
+ 2041 00fd 27       		.uleb128 0x27
+ 2042 00fe 19       		.uleb128 0x19
+ 2043 00ff 3C       		.uleb128 0x3c
+ 2044 0100 19       		.uleb128 0x19
+ 2045 0101 01       		.uleb128 0x1
+ 2046 0102 13       		.uleb128 0x13
+ 2047 0103 00       		.byte	0
+ 2048 0104 00       		.byte	0
+ 2049 0105 13       		.uleb128 0x13
+ 2050 0106 05       		.uleb128 0x5
+ 2051 0107 00       		.byte	0
+ 2052 0108 49       		.uleb128 0x49
+ 2053 0109 13       		.uleb128 0x13
+ 2054 010a 00       		.byte	0
+ 2055 010b 00       		.byte	0
+ 2056 010c 14       		.uleb128 0x14
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 40
+
+
+ 2057 010d 2E       		.uleb128 0x2e
+ 2058 010e 01       		.byte	0x1
+ 2059 010f 3F       		.uleb128 0x3f
+ 2060 0110 19       		.uleb128 0x19
+ 2061 0111 03       		.uleb128 0x3
+ 2062 0112 0E       		.uleb128 0xe
+ 2063 0113 3A       		.uleb128 0x3a
+ 2064 0114 0B       		.uleb128 0xb
+ 2065 0115 3B       		.uleb128 0x3b
+ 2066 0116 0B       		.uleb128 0xb
+ 2067 0117 3C       		.uleb128 0x3c
+ 2068 0118 19       		.uleb128 0x19
+ 2069 0119 01       		.uleb128 0x1
+ 2070 011a 13       		.uleb128 0x13
+ 2071 011b 00       		.byte	0
+ 2072 011c 00       		.byte	0
+ 2073 011d 15       		.uleb128 0x15
+ 2074 011e 18       		.uleb128 0x18
+ 2075 011f 00       		.byte	0
+ 2076 0120 00       		.byte	0
+ 2077 0121 00       		.byte	0
+ 2078 0122 16       		.uleb128 0x16
+ 2079 0123 2E       		.uleb128 0x2e
+ 2080 0124 01       		.byte	0x1
+ 2081 0125 3F       		.uleb128 0x3f
+ 2082 0126 19       		.uleb128 0x19
+ 2083 0127 03       		.uleb128 0x3
+ 2084 0128 0E       		.uleb128 0xe
+ 2085 0129 3A       		.uleb128 0x3a
+ 2086 012a 0B       		.uleb128 0xb
+ 2087 012b 3B       		.uleb128 0x3b
+ 2088 012c 0B       		.uleb128 0xb
+ 2089 012d 27       		.uleb128 0x27
+ 2090 012e 19       		.uleb128 0x19
+ 2091 012f 3C       		.uleb128 0x3c
+ 2092 0130 19       		.uleb128 0x19
+ 2093 0131 00       		.byte	0
+ 2094 0132 00       		.byte	0
+ 2095 0133 00       		.byte	0
+ 2096              		.section	.debug_loc,"",%progbits
+ 2097              	.Ldebug_loc0:
+ 2098              	.LLST0:
+ 2099 0000 00000000 		.4byte	.LVL0
+ 2100 0004 09000000 		.4byte	.LVL1-1
+ 2101 0008 0100     		.2byte	0x1
+ 2102 000a 50       		.byte	0x50
+ 2103 000b 09000000 		.4byte	.LVL1-1
+ 2104 000f 44000000 		.4byte	.LFE63
+ 2105 0013 0100     		.2byte	0x1
+ 2106 0015 55       		.byte	0x55
+ 2107 0016 00000000 		.4byte	0
+ 2108 001a 00000000 		.4byte	0
+ 2109              	.LLST1:
+ 2110 001e 00000000 		.4byte	.LVL0
+ 2111 0022 09000000 		.4byte	.LVL1-1
+ 2112 0026 0100     		.2byte	0x1
+ 2113 0028 51       		.byte	0x51
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 41
+
+
+ 2114 0029 09000000 		.4byte	.LVL1-1
+ 2115 002d 44000000 		.4byte	.LFE63
+ 2116 0031 0400     		.2byte	0x4
+ 2117 0033 F3       		.byte	0xf3
+ 2118 0034 01       		.uleb128 0x1
+ 2119 0035 51       		.byte	0x51
+ 2120 0036 9F       		.byte	0x9f
+ 2121 0037 00000000 		.4byte	0
+ 2122 003b 00000000 		.4byte	0
+ 2123              	.LLST2:
+ 2124 003f 00000000 		.4byte	.LVL0
+ 2125 0043 09000000 		.4byte	.LVL1-1
+ 2126 0047 0100     		.2byte	0x1
+ 2127 0049 52       		.byte	0x52
+ 2128 004a 09000000 		.4byte	.LVL1-1
+ 2129 004e 44000000 		.4byte	.LFE63
+ 2130 0052 0100     		.2byte	0x1
+ 2131 0054 54       		.byte	0x54
+ 2132 0055 00000000 		.4byte	0
+ 2133 0059 00000000 		.4byte	0
+ 2134              		.section	.debug_aranges,"",%progbits
+ 2135 0000 24000000 		.4byte	0x24
+ 2136 0004 0200     		.2byte	0x2
+ 2137 0006 00000000 		.4byte	.Ldebug_info0
+ 2138 000a 04       		.byte	0x4
+ 2139 000b 00       		.byte	0
+ 2140 000c 0000     		.2byte	0
+ 2141 000e 0000     		.2byte	0
+ 2142 0010 00000000 		.4byte	.LFB63
+ 2143 0014 44000000 		.4byte	.LFE63-.LFB63
+ 2144 0018 00000000 		.4byte	.LFB64
+ 2145 001c 1A020000 		.4byte	.LFE64-.LFB64
+ 2146 0020 00000000 		.4byte	0
+ 2147 0024 00000000 		.4byte	0
+ 2148              		.section	.debug_ranges,"",%progbits
+ 2149              	.Ldebug_ranges0:
+ 2150 0000 00000000 		.4byte	.LFB63
+ 2151 0004 44000000 		.4byte	.LFE63
+ 2152 0008 00000000 		.4byte	.LFB64
+ 2153 000c 1A020000 		.4byte	.LFE64
+ 2154 0010 00000000 		.4byte	0
+ 2155 0014 00000000 		.4byte	0
+ 2156              		.section	.debug_line,"",%progbits
+ 2157              	.Ldebug_line0:
+ 2158 0000 FA010000 		.section	.debug_str,"MS",%progbits,1
+ 2158      02009601 
+ 2158      00000201 
+ 2158      FB0E0D00 
+ 2158      01010101 
+ 2159              	.LASF4:
+ 2160 0000 5F5F7569 		.ascii	"__uint8_t\000"
+ 2160      6E74385F 
+ 2160      7400
+ 2161              	.LASF31:
+ 2162 000a 433A5C55 		.ascii	"C:\\Users\\Nhan Phan\\Desktop\\CProjects\\Zumobot\\"
+ 2162      73657273 
+ 2162      5C4E6861 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 42
+
+
+ 2162      6E205068 
+ 2162      616E5C44 
+ 2163 0037 5A756D6F 		.ascii	"ZumoBot.cydsn\000"
+ 2163      426F742E 
+ 2163      63796473 
+ 2163      6E00
+ 2164              	.LASF5:
+ 2165 0045 5F5F696E 		.ascii	"__int32_t\000"
+ 2165      7433325F 
+ 2165      7400
+ 2166              	.LASF30:
+ 2167 004f 506C6179 		.ascii	"Playsound.c\000"
+ 2167      736F756E 
+ 2167      642E6300 
+ 2168              	.LASF25:
+ 2169 005b 6D6F746F 		.ascii	"motor_backward\000"
+ 2169      725F6261 
+ 2169      636B7761 
+ 2169      726400
+ 2170              	.LASF33:
+ 2171 006a 506C6179 		.ascii	"Playsound\000"
+ 2171      736F756E 
+ 2171      6400
+ 2172              	.LASF15:
+ 2173 0074 666C6F61 		.ascii	"float\000"
+ 2173      7400
+ 2174              	.LASF0:
+ 2175 007a 7369676E 		.ascii	"signed char\000"
+ 2175      65642063 
+ 2175      68617200 
+ 2176              	.LASF1:
+ 2177 0086 756E7369 		.ascii	"unsigned char\000"
+ 2177      676E6564 
+ 2177      20636861 
+ 2177      7200
+ 2178              	.LASF7:
+ 2179 0094 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2179      20756E73 
+ 2179      69676E65 
+ 2179      6420696E 
+ 2179      7400
+ 2180              	.LASF3:
+ 2181 00a6 73686F72 		.ascii	"short unsigned int\000"
+ 2181      7420756E 
+ 2181      7369676E 
+ 2181      65642069 
+ 2181      6E7400
+ 2182              	.LASF34:
+ 2183 00b9 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 2183      52784275 
+ 2183      66666572 
+ 2183      00
+ 2184              	.LASF24:
+ 2185 00c6 6D6F746F 		.ascii	"motor_forward\000"
+ 2185      725F666F 
+ 2185      72776172 
+ 2185      6400
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 43
+
+
+ 2186              	.LASF23:
+ 2187 00d4 49525F6C 		.ascii	"IR_led_Write\000"
+ 2187      65645F57 
+ 2187      72697465 
+ 2187      00
+ 2188              	.LASF16:
+ 2189 00e1 646F7562 		.ascii	"double\000"
+ 2189      6C6500
+ 2190              	.LASF14:
+ 2191 00e8 75696E74 		.ascii	"uint32\000"
+ 2191      333200
+ 2192              	.LASF29:
+ 2193 00ef 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 2193      4320342E 
+ 2193      392E3320 
+ 2193      32303135 
+ 2193      30333033 
+ 2194 0122 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 2194      20726576 
+ 2194      6973696F 
+ 2194      6E203232 
+ 2194      31323230 
+ 2195 0155 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 2195      66756E63 
+ 2195      74696F6E 
+ 2195      2D736563 
+ 2195      74696F6E 
+ 2196              	.LASF10:
+ 2197 017d 756E7369 		.ascii	"unsigned int\000"
+ 2197      676E6564 
+ 2197      20696E74 
+ 2197      00
+ 2198              	.LASF9:
+ 2199 018a 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2199      206C6F6E 
+ 2199      6720756E 
+ 2199      7369676E 
+ 2199      65642069 
+ 2200              	.LASF11:
+ 2201 01a1 75696E74 		.ascii	"uint8_t\000"
+ 2201      385F7400 
+ 2202              	.LASF21:
+ 2203 01a9 42656570 		.ascii	"Beep\000"
+ 2203      00
+ 2204              	.LASF12:
+ 2205 01ae 696E7433 		.ascii	"int32_t\000"
+ 2205      325F7400 
+ 2206              	.LASF18:
+ 2207 01b6 73697A65 		.ascii	"sizetype\000"
+ 2207      74797065 
+ 2207      00
+ 2208              	.LASF27:
+ 2209 01bf 6D6F746F 		.ascii	"motor_start\000"
+ 2209      725F7374 
+ 2209      61727400 
+ 2210              	.LASF8:
+ 2211 01cb 6C6F6E67 		.ascii	"long long int\000"
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccfnT07h.s 			page 44
+
+
+ 2211      206C6F6E 
+ 2211      6720696E 
+ 2211      7400
+ 2212              	.LASF22:
+ 2213 01d9 42617474 		.ascii	"BatteryLed_Write\000"
+ 2213      6572794C 
+ 2213      65645F57 
+ 2213      72697465 
+ 2213      00
+ 2214              	.LASF17:
+ 2215 01ea 63686172 		.ascii	"char\000"
+ 2215      00
+ 2216              	.LASF20:
+ 2217 01ef 70697463 		.ascii	"pitch\000"
+ 2217      6800
+ 2218              	.LASF2:
+ 2219 01f5 73686F72 		.ascii	"short int\000"
+ 2219      7420696E 
+ 2219      7400
+ 2220              	.LASF13:
+ 2221 01ff 75696E74 		.ascii	"uint8\000"
+ 2221      3800
+ 2222              	.LASF6:
+ 2223 0205 6C6F6E67 		.ascii	"long int\000"
+ 2223      20696E74 
+ 2223      00
+ 2224              	.LASF28:
+ 2225 020e 6D6F746F 		.ascii	"motor_turn\000"
+ 2225      725F7475 
+ 2225      726E00
+ 2226              	.LASF32:
+ 2227 0219 44616E63 		.ascii	"Dancing\000"
+ 2227      696E6700 
+ 2228              	.LASF19:
+ 2229 0221 6C656E67 		.ascii	"length\000"
+ 2229      746800
+ 2230              	.LASF26:
+ 2231 0228 43794465 		.ascii	"CyDelay\000"
+ 2231      6C617900 
+ 2232              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

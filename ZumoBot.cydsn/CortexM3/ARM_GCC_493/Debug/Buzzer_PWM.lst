@@ -1,0 +1,2277 @@
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"Buzzer_PWM.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text.Buzzer_PWM_Enable,"ax",%progbits
+  19              		.align	2
+  20              		.global	Buzzer_PWM_Enable
+  21              		.thumb
+  22              		.thumb_func
+  23              		.type	Buzzer_PWM_Enable, %function
+  24              	Buzzer_PWM_Enable:
+  25              	.LFB2:
+  26              		.file 1 "Generated_Source\\PSoC5\\Buzzer_PWM.c"
+   1:Generated_Source\PSoC5/Buzzer_PWM.c **** /*******************************************************************************
+   2:Generated_Source\PSoC5/Buzzer_PWM.c **** * File Name: Buzzer_PWM.c
+   3:Generated_Source\PSoC5/Buzzer_PWM.c **** * Version 3.30
+   4:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+   5:Generated_Source\PSoC5/Buzzer_PWM.c **** * Description:
+   6:Generated_Source\PSoC5/Buzzer_PWM.c **** *  The PWM User Module consist of an 8 or 16-bit counter with two 8 or 16-bit
+   7:Generated_Source\PSoC5/Buzzer_PWM.c **** *  comparitors. Each instance of this user module is capable of generating
+   8:Generated_Source\PSoC5/Buzzer_PWM.c **** *  two PWM outputs with the same period. The pulse width is selectable between
+   9:Generated_Source\PSoC5/Buzzer_PWM.c **** *  1 and 255/65535. The period is selectable between 2 and 255/65536 clocks.
+  10:Generated_Source\PSoC5/Buzzer_PWM.c **** *  The compare value output may be configured to be active when the present
+  11:Generated_Source\PSoC5/Buzzer_PWM.c **** *  counter is less than or less than/equal to the compare value.
+  12:Generated_Source\PSoC5/Buzzer_PWM.c **** *  A terminal count output is also provided. It generates a pulse one clock
+  13:Generated_Source\PSoC5/Buzzer_PWM.c **** *  width wide when the counter is equal to zero.
+  14:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+  15:Generated_Source\PSoC5/Buzzer_PWM.c **** * Note:
+  16:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+  17:Generated_Source\PSoC5/Buzzer_PWM.c **** *******************************************************************************
+  18:Generated_Source\PSoC5/Buzzer_PWM.c **** * Copyright 2008-2014, Cypress Semiconductor Corporation.  All rights reserved.
+  19:Generated_Source\PSoC5/Buzzer_PWM.c **** * You may use this file only in accordance with the license, terms, conditions,
+  20:Generated_Source\PSoC5/Buzzer_PWM.c **** * disclaimers, and limitations in the end user license agreement accompanying
+  21:Generated_Source\PSoC5/Buzzer_PWM.c **** * the software package with which this file was provided.
+  22:Generated_Source\PSoC5/Buzzer_PWM.c **** ********************************************************************************/
+  23:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+  24:Generated_Source\PSoC5/Buzzer_PWM.c **** #include "Buzzer_PWM.h"
+  25:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+  26:Generated_Source\PSoC5/Buzzer_PWM.c **** /* Error message for removed <resource> through optimization */
+  27:Generated_Source\PSoC5/Buzzer_PWM.c **** #ifdef Buzzer_PWM_PWMUDB_genblk1_ctrlreg__REMOVED
+  28:Generated_Source\PSoC5/Buzzer_PWM.c ****     #error PWM_v3_30 detected with a constant 0 for the enable or \
+  29:Generated_Source\PSoC5/Buzzer_PWM.c ****          constant 1 for reset. This will prevent the component from operating.
+  30:Generated_Source\PSoC5/Buzzer_PWM.c **** #endif /* Buzzer_PWM_PWMUDB_genblk1_ctrlreg__REMOVED */
+  31:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 2
+
+
+  32:Generated_Source\PSoC5/Buzzer_PWM.c **** uint8 Buzzer_PWM_initVar = 0u;
+  33:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+  34:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+  35:Generated_Source\PSoC5/Buzzer_PWM.c **** /*******************************************************************************
+  36:Generated_Source\PSoC5/Buzzer_PWM.c **** * Function Name: Buzzer_PWM_Start
+  37:Generated_Source\PSoC5/Buzzer_PWM.c **** ********************************************************************************
+  38:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+  39:Generated_Source\PSoC5/Buzzer_PWM.c **** * Summary:
+  40:Generated_Source\PSoC5/Buzzer_PWM.c **** *  The start function initializes the pwm with the default values, the
+  41:Generated_Source\PSoC5/Buzzer_PWM.c **** *  enables the counter to begin counting.  It does not enable interrupts,
+  42:Generated_Source\PSoC5/Buzzer_PWM.c **** *  the EnableInt command should be called if interrupt generation is required.
+  43:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+  44:Generated_Source\PSoC5/Buzzer_PWM.c **** * Parameters:
+  45:Generated_Source\PSoC5/Buzzer_PWM.c **** *  None
+  46:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+  47:Generated_Source\PSoC5/Buzzer_PWM.c **** * Return:
+  48:Generated_Source\PSoC5/Buzzer_PWM.c **** *  None
+  49:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+  50:Generated_Source\PSoC5/Buzzer_PWM.c **** * Global variables:
+  51:Generated_Source\PSoC5/Buzzer_PWM.c **** *  Buzzer_PWM_initVar: Is modified when this function is called for the
+  52:Generated_Source\PSoC5/Buzzer_PWM.c **** *   first time. Is used to ensure that initialization happens only once.
+  53:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+  54:Generated_Source\PSoC5/Buzzer_PWM.c **** *******************************************************************************/
+  55:Generated_Source\PSoC5/Buzzer_PWM.c **** void Buzzer_PWM_Start(void) 
+  56:Generated_Source\PSoC5/Buzzer_PWM.c **** {
+  57:Generated_Source\PSoC5/Buzzer_PWM.c ****     /* If not Initialized then initialize all required hardware and software */
+  58:Generated_Source\PSoC5/Buzzer_PWM.c ****     if(Buzzer_PWM_initVar == 0u)
+  59:Generated_Source\PSoC5/Buzzer_PWM.c ****     {
+  60:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_Init();
+  61:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_initVar = 1u;
+  62:Generated_Source\PSoC5/Buzzer_PWM.c ****     }
+  63:Generated_Source\PSoC5/Buzzer_PWM.c ****     Buzzer_PWM_Enable();
+  64:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+  65:Generated_Source\PSoC5/Buzzer_PWM.c **** }
+  66:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+  67:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+  68:Generated_Source\PSoC5/Buzzer_PWM.c **** /*******************************************************************************
+  69:Generated_Source\PSoC5/Buzzer_PWM.c **** * Function Name: Buzzer_PWM_Init
+  70:Generated_Source\PSoC5/Buzzer_PWM.c **** ********************************************************************************
+  71:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+  72:Generated_Source\PSoC5/Buzzer_PWM.c **** * Summary:
+  73:Generated_Source\PSoC5/Buzzer_PWM.c **** *  Initialize component's parameters to the parameters set by user in the
+  74:Generated_Source\PSoC5/Buzzer_PWM.c **** *  customizer of the component placed onto schematic. Usually called in
+  75:Generated_Source\PSoC5/Buzzer_PWM.c **** *  Buzzer_PWM_Start().
+  76:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+  77:Generated_Source\PSoC5/Buzzer_PWM.c **** * Parameters:
+  78:Generated_Source\PSoC5/Buzzer_PWM.c **** *  None
+  79:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+  80:Generated_Source\PSoC5/Buzzer_PWM.c **** * Return:
+  81:Generated_Source\PSoC5/Buzzer_PWM.c **** *  None
+  82:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+  83:Generated_Source\PSoC5/Buzzer_PWM.c **** *******************************************************************************/
+  84:Generated_Source\PSoC5/Buzzer_PWM.c **** void Buzzer_PWM_Init(void) 
+  85:Generated_Source\PSoC5/Buzzer_PWM.c **** {
+  86:Generated_Source\PSoC5/Buzzer_PWM.c ****     #if (Buzzer_PWM_UsingFixedFunction || Buzzer_PWM_UseControl)
+  87:Generated_Source\PSoC5/Buzzer_PWM.c ****         uint8 ctrl;
+  88:Generated_Source\PSoC5/Buzzer_PWM.c ****     #endif /* (Buzzer_PWM_UsingFixedFunction || Buzzer_PWM_UseControl) */
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 3
+
+
+  89:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+  90:Generated_Source\PSoC5/Buzzer_PWM.c ****     #if(!Buzzer_PWM_UsingFixedFunction)
+  91:Generated_Source\PSoC5/Buzzer_PWM.c ****         #if(Buzzer_PWM_UseStatus)
+  92:Generated_Source\PSoC5/Buzzer_PWM.c ****             /* Interrupt State Backup for Critical Region*/
+  93:Generated_Source\PSoC5/Buzzer_PWM.c ****             uint8 Buzzer_PWM_interruptState;
+  94:Generated_Source\PSoC5/Buzzer_PWM.c ****         #endif /* (Buzzer_PWM_UseStatus) */
+  95:Generated_Source\PSoC5/Buzzer_PWM.c ****     #endif /* (!Buzzer_PWM_UsingFixedFunction) */
+  96:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+  97:Generated_Source\PSoC5/Buzzer_PWM.c ****     #if (Buzzer_PWM_UsingFixedFunction)
+  98:Generated_Source\PSoC5/Buzzer_PWM.c ****         /* You are allowed to write the compare value (FF only) */
+  99:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_CONTROL |= Buzzer_PWM_CFG0_MODE;
+ 100:Generated_Source\PSoC5/Buzzer_PWM.c ****         #if (Buzzer_PWM_DeadBand2_4)
+ 101:Generated_Source\PSoC5/Buzzer_PWM.c ****             Buzzer_PWM_CONTROL |= Buzzer_PWM_CFG0_DB;
+ 102:Generated_Source\PSoC5/Buzzer_PWM.c ****         #endif /* (Buzzer_PWM_DeadBand2_4) */
+ 103:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 104:Generated_Source\PSoC5/Buzzer_PWM.c ****         ctrl = Buzzer_PWM_CONTROL3 & ((uint8 )(~Buzzer_PWM_CTRL_CMPMODE1_MASK));
+ 105:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_CONTROL3 = ctrl | Buzzer_PWM_DEFAULT_COMPARE1_MODE;
+ 106:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 107:Generated_Source\PSoC5/Buzzer_PWM.c ****          /* Clear and Set SYNCTC and SYNCCMP bits of RT1 register */
+ 108:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_RT1 &= ((uint8)(~Buzzer_PWM_RT1_MASK));
+ 109:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_RT1 |= Buzzer_PWM_SYNC;
+ 110:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 111:Generated_Source\PSoC5/Buzzer_PWM.c ****         /*Enable DSI Sync all all inputs of the PWM*/
+ 112:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_RT1 &= ((uint8)(~Buzzer_PWM_SYNCDSI_MASK));
+ 113:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_RT1 |= Buzzer_PWM_SYNCDSI_EN;
+ 114:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 115:Generated_Source\PSoC5/Buzzer_PWM.c ****     #elif (Buzzer_PWM_UseControl)
+ 116:Generated_Source\PSoC5/Buzzer_PWM.c ****         /* Set the default compare mode defined in the parameter */
+ 117:Generated_Source\PSoC5/Buzzer_PWM.c ****         ctrl = Buzzer_PWM_CONTROL & ((uint8)(~Buzzer_PWM_CTRL_CMPMODE2_MASK)) &
+ 118:Generated_Source\PSoC5/Buzzer_PWM.c ****                 ((uint8)(~Buzzer_PWM_CTRL_CMPMODE1_MASK));
+ 119:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_CONTROL = ctrl | Buzzer_PWM_DEFAULT_COMPARE2_MODE |
+ 120:Generated_Source\PSoC5/Buzzer_PWM.c ****                                    Buzzer_PWM_DEFAULT_COMPARE1_MODE;
+ 121:Generated_Source\PSoC5/Buzzer_PWM.c ****     #endif /* (Buzzer_PWM_UsingFixedFunction) */
+ 122:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 123:Generated_Source\PSoC5/Buzzer_PWM.c ****     #if (!Buzzer_PWM_UsingFixedFunction)
+ 124:Generated_Source\PSoC5/Buzzer_PWM.c ****         #if (Buzzer_PWM_Resolution == 8)
+ 125:Generated_Source\PSoC5/Buzzer_PWM.c ****             /* Set FIFO 0 to 1 byte register for period*/
+ 126:Generated_Source\PSoC5/Buzzer_PWM.c ****             Buzzer_PWM_AUX_CONTROLDP0 |= (Buzzer_PWM_AUX_CTRL_FIFO0_CLR);
+ 127:Generated_Source\PSoC5/Buzzer_PWM.c ****         #else /* (Buzzer_PWM_Resolution == 16)*/
+ 128:Generated_Source\PSoC5/Buzzer_PWM.c ****             /* Set FIFO 0 to 1 byte register for period */
+ 129:Generated_Source\PSoC5/Buzzer_PWM.c ****             Buzzer_PWM_AUX_CONTROLDP0 |= (Buzzer_PWM_AUX_CTRL_FIFO0_CLR);
+ 130:Generated_Source\PSoC5/Buzzer_PWM.c ****             Buzzer_PWM_AUX_CONTROLDP1 |= (Buzzer_PWM_AUX_CTRL_FIFO0_CLR);
+ 131:Generated_Source\PSoC5/Buzzer_PWM.c ****         #endif /* (Buzzer_PWM_Resolution == 8) */
+ 132:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 133:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_WriteCounter(Buzzer_PWM_INIT_PERIOD_VALUE);
+ 134:Generated_Source\PSoC5/Buzzer_PWM.c ****     #endif /* (!Buzzer_PWM_UsingFixedFunction) */
+ 135:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 136:Generated_Source\PSoC5/Buzzer_PWM.c ****     Buzzer_PWM_WritePeriod(Buzzer_PWM_INIT_PERIOD_VALUE);
+ 137:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 138:Generated_Source\PSoC5/Buzzer_PWM.c ****         #if (Buzzer_PWM_UseOneCompareMode)
+ 139:Generated_Source\PSoC5/Buzzer_PWM.c ****             Buzzer_PWM_WriteCompare(Buzzer_PWM_INIT_COMPARE_VALUE1);
+ 140:Generated_Source\PSoC5/Buzzer_PWM.c ****         #else
+ 141:Generated_Source\PSoC5/Buzzer_PWM.c ****             Buzzer_PWM_WriteCompare1(Buzzer_PWM_INIT_COMPARE_VALUE1);
+ 142:Generated_Source\PSoC5/Buzzer_PWM.c ****             Buzzer_PWM_WriteCompare2(Buzzer_PWM_INIT_COMPARE_VALUE2);
+ 143:Generated_Source\PSoC5/Buzzer_PWM.c ****         #endif /* (Buzzer_PWM_UseOneCompareMode) */
+ 144:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 145:Generated_Source\PSoC5/Buzzer_PWM.c ****         #if (Buzzer_PWM_KillModeMinTime)
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 4
+
+
+ 146:Generated_Source\PSoC5/Buzzer_PWM.c ****             Buzzer_PWM_WriteKillTime(Buzzer_PWM_MinimumKillTime);
+ 147:Generated_Source\PSoC5/Buzzer_PWM.c ****         #endif /* (Buzzer_PWM_KillModeMinTime) */
+ 148:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 149:Generated_Source\PSoC5/Buzzer_PWM.c ****         #if (Buzzer_PWM_DeadBandUsed)
+ 150:Generated_Source\PSoC5/Buzzer_PWM.c ****             Buzzer_PWM_WriteDeadTime(Buzzer_PWM_INIT_DEAD_TIME);
+ 151:Generated_Source\PSoC5/Buzzer_PWM.c ****         #endif /* (Buzzer_PWM_DeadBandUsed) */
+ 152:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 153:Generated_Source\PSoC5/Buzzer_PWM.c ****     #if (Buzzer_PWM_UseStatus || Buzzer_PWM_UsingFixedFunction)
+ 154:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_SetInterruptMode(Buzzer_PWM_INIT_INTERRUPTS_MODE);
+ 155:Generated_Source\PSoC5/Buzzer_PWM.c ****     #endif /* (Buzzer_PWM_UseStatus || Buzzer_PWM_UsingFixedFunction) */
+ 156:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 157:Generated_Source\PSoC5/Buzzer_PWM.c ****     #if (Buzzer_PWM_UsingFixedFunction)
+ 158:Generated_Source\PSoC5/Buzzer_PWM.c ****         /* Globally Enable the Fixed Function Block chosen */
+ 159:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_GLOBAL_ENABLE |= Buzzer_PWM_BLOCK_EN_MASK;
+ 160:Generated_Source\PSoC5/Buzzer_PWM.c ****         /* Set the Interrupt source to come from the status register */
+ 161:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_CONTROL2 |= Buzzer_PWM_CTRL2_IRQ_SEL;
+ 162:Generated_Source\PSoC5/Buzzer_PWM.c ****     #else
+ 163:Generated_Source\PSoC5/Buzzer_PWM.c ****         #if(Buzzer_PWM_UseStatus)
+ 164:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 165:Generated_Source\PSoC5/Buzzer_PWM.c ****             /* CyEnterCriticalRegion and CyExitCriticalRegion are used to mark following region cri
+ 166:Generated_Source\PSoC5/Buzzer_PWM.c ****             /* Enter Critical Region*/
+ 167:Generated_Source\PSoC5/Buzzer_PWM.c ****             Buzzer_PWM_interruptState = CyEnterCriticalSection();
+ 168:Generated_Source\PSoC5/Buzzer_PWM.c ****             /* Use the interrupt output of the status register for IRQ output */
+ 169:Generated_Source\PSoC5/Buzzer_PWM.c ****             Buzzer_PWM_STATUS_AUX_CTRL |= Buzzer_PWM_STATUS_ACTL_INT_EN_MASK;
+ 170:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 171:Generated_Source\PSoC5/Buzzer_PWM.c ****              /* Exit Critical Region*/
+ 172:Generated_Source\PSoC5/Buzzer_PWM.c ****             CyExitCriticalSection(Buzzer_PWM_interruptState);
+ 173:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 174:Generated_Source\PSoC5/Buzzer_PWM.c ****             /* Clear the FIFO to enable the Buzzer_PWM_STATUS_FIFOFULL
+ 175:Generated_Source\PSoC5/Buzzer_PWM.c ****                    bit to be set on FIFO full. */
+ 176:Generated_Source\PSoC5/Buzzer_PWM.c ****             Buzzer_PWM_ClearFIFO();
+ 177:Generated_Source\PSoC5/Buzzer_PWM.c ****         #endif /* (Buzzer_PWM_UseStatus) */
+ 178:Generated_Source\PSoC5/Buzzer_PWM.c ****     #endif /* (Buzzer_PWM_UsingFixedFunction) */
+ 179:Generated_Source\PSoC5/Buzzer_PWM.c **** }
+ 180:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 181:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 182:Generated_Source\PSoC5/Buzzer_PWM.c **** /*******************************************************************************
+ 183:Generated_Source\PSoC5/Buzzer_PWM.c **** * Function Name: Buzzer_PWM_Enable
+ 184:Generated_Source\PSoC5/Buzzer_PWM.c **** ********************************************************************************
+ 185:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+ 186:Generated_Source\PSoC5/Buzzer_PWM.c **** * Summary:
+ 187:Generated_Source\PSoC5/Buzzer_PWM.c **** *  Enables the PWM block operation
+ 188:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+ 189:Generated_Source\PSoC5/Buzzer_PWM.c **** * Parameters:
+ 190:Generated_Source\PSoC5/Buzzer_PWM.c **** *  None
+ 191:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+ 192:Generated_Source\PSoC5/Buzzer_PWM.c **** * Return:
+ 193:Generated_Source\PSoC5/Buzzer_PWM.c **** *  None
+ 194:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+ 195:Generated_Source\PSoC5/Buzzer_PWM.c **** * Side Effects:
+ 196:Generated_Source\PSoC5/Buzzer_PWM.c **** *  This works only if software enable mode is chosen
+ 197:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+ 198:Generated_Source\PSoC5/Buzzer_PWM.c **** *******************************************************************************/
+ 199:Generated_Source\PSoC5/Buzzer_PWM.c **** void Buzzer_PWM_Enable(void) 
+ 200:Generated_Source\PSoC5/Buzzer_PWM.c **** {
+  27              		.loc 1 200 0
+  28              		.cfi_startproc
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 5
+
+
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+ 201:Generated_Source\PSoC5/Buzzer_PWM.c ****     /* Globally Enable the Fixed Function Block chosen */
+ 202:Generated_Source\PSoC5/Buzzer_PWM.c ****     #if (Buzzer_PWM_UsingFixedFunction)
+ 203:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_GLOBAL_ENABLE |= Buzzer_PWM_BLOCK_EN_MASK;
+ 204:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_GLOBAL_STBY_ENABLE |= Buzzer_PWM_BLOCK_STBY_EN_MASK;
+ 205:Generated_Source\PSoC5/Buzzer_PWM.c ****     #endif /* (Buzzer_PWM_UsingFixedFunction) */
+ 206:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 207:Generated_Source\PSoC5/Buzzer_PWM.c ****     /* Enable the PWM from the control register  */
+ 208:Generated_Source\PSoC5/Buzzer_PWM.c ****     #if (Buzzer_PWM_UseControl || Buzzer_PWM_UsingFixedFunction)
+ 209:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_CONTROL |= Buzzer_PWM_CTRL_ENABLE;
+  32              		.loc 1 209 0
+  33 0000 024A     		ldr	r2, .L2
+  34 0002 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+  35 0004 43F08003 		orr	r3, r3, #128
+  36 0008 1370     		strb	r3, [r2]
+  37 000a 7047     		bx	lr
+  38              	.L3:
+  39              		.align	2
+  40              	.L2:
+  41 000c 76650040 		.word	1073767798
+  42              		.cfi_endproc
+  43              	.LFE2:
+  44              		.size	Buzzer_PWM_Enable, .-Buzzer_PWM_Enable
+  45              		.section	.text.Buzzer_PWM_Stop,"ax",%progbits
+  46              		.align	2
+  47              		.global	Buzzer_PWM_Stop
+  48              		.thumb
+  49              		.thumb_func
+  50              		.type	Buzzer_PWM_Stop, %function
+  51              	Buzzer_PWM_Stop:
+  52              	.LFB3:
+ 210:Generated_Source\PSoC5/Buzzer_PWM.c ****     #endif /* (Buzzer_PWM_UseControl || Buzzer_PWM_UsingFixedFunction) */
+ 211:Generated_Source\PSoC5/Buzzer_PWM.c **** }
+ 212:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 213:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 214:Generated_Source\PSoC5/Buzzer_PWM.c **** /*******************************************************************************
+ 215:Generated_Source\PSoC5/Buzzer_PWM.c **** * Function Name: Buzzer_PWM_Stop
+ 216:Generated_Source\PSoC5/Buzzer_PWM.c **** ********************************************************************************
+ 217:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+ 218:Generated_Source\PSoC5/Buzzer_PWM.c **** * Summary:
+ 219:Generated_Source\PSoC5/Buzzer_PWM.c **** *  The stop function halts the PWM, but does not change any modes or disable
+ 220:Generated_Source\PSoC5/Buzzer_PWM.c **** *  interrupts.
+ 221:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+ 222:Generated_Source\PSoC5/Buzzer_PWM.c **** * Parameters:
+ 223:Generated_Source\PSoC5/Buzzer_PWM.c **** *  None
+ 224:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+ 225:Generated_Source\PSoC5/Buzzer_PWM.c **** * Return:
+ 226:Generated_Source\PSoC5/Buzzer_PWM.c **** *  None
+ 227:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+ 228:Generated_Source\PSoC5/Buzzer_PWM.c **** * Side Effects:
+ 229:Generated_Source\PSoC5/Buzzer_PWM.c **** *  If the Enable mode is set to Hardware only then this function
+ 230:Generated_Source\PSoC5/Buzzer_PWM.c **** *  has no effect on the operation of the PWM
+ 231:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+ 232:Generated_Source\PSoC5/Buzzer_PWM.c **** *******************************************************************************/
+ 233:Generated_Source\PSoC5/Buzzer_PWM.c **** void Buzzer_PWM_Stop(void) 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 6
+
+
+ 234:Generated_Source\PSoC5/Buzzer_PWM.c **** {
+  53              		.loc 1 234 0
+  54              		.cfi_startproc
+  55              		@ args = 0, pretend = 0, frame = 0
+  56              		@ frame_needed = 0, uses_anonymous_args = 0
+  57              		@ link register save eliminated.
+ 235:Generated_Source\PSoC5/Buzzer_PWM.c ****     #if (Buzzer_PWM_UseControl || Buzzer_PWM_UsingFixedFunction)
+ 236:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_CONTROL &= ((uint8)(~Buzzer_PWM_CTRL_ENABLE));
+  58              		.loc 1 236 0
+  59 0000 024A     		ldr	r2, .L5
+  60 0002 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+  61 0004 03F07F03 		and	r3, r3, #127
+  62 0008 1370     		strb	r3, [r2]
+  63 000a 7047     		bx	lr
+  64              	.L6:
+  65              		.align	2
+  66              	.L5:
+  67 000c 76650040 		.word	1073767798
+  68              		.cfi_endproc
+  69              	.LFE3:
+  70              		.size	Buzzer_PWM_Stop, .-Buzzer_PWM_Stop
+  71              		.section	.text.Buzzer_PWM_WriteCounter,"ax",%progbits
+  72              		.align	2
+  73              		.global	Buzzer_PWM_WriteCounter
+  74              		.thumb
+  75              		.thumb_func
+  76              		.type	Buzzer_PWM_WriteCounter, %function
+  77              	Buzzer_PWM_WriteCounter:
+  78              	.LFB4:
+ 237:Generated_Source\PSoC5/Buzzer_PWM.c ****     #endif /* (Buzzer_PWM_UseControl || Buzzer_PWM_UsingFixedFunction) */
+ 238:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 239:Generated_Source\PSoC5/Buzzer_PWM.c ****     /* Globally disable the Fixed Function Block chosen */
+ 240:Generated_Source\PSoC5/Buzzer_PWM.c ****     #if (Buzzer_PWM_UsingFixedFunction)
+ 241:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_GLOBAL_ENABLE &= ((uint8)(~Buzzer_PWM_BLOCK_EN_MASK));
+ 242:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_GLOBAL_STBY_ENABLE &= ((uint8)(~Buzzer_PWM_BLOCK_STBY_EN_MASK));
+ 243:Generated_Source\PSoC5/Buzzer_PWM.c ****     #endif /* (Buzzer_PWM_UsingFixedFunction) */
+ 244:Generated_Source\PSoC5/Buzzer_PWM.c **** }
+ 245:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 246:Generated_Source\PSoC5/Buzzer_PWM.c **** #if (Buzzer_PWM_UseOneCompareMode)
+ 247:Generated_Source\PSoC5/Buzzer_PWM.c ****     #if (Buzzer_PWM_CompareMode1SW)
+ 248:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 249:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 250:Generated_Source\PSoC5/Buzzer_PWM.c ****         /*******************************************************************************
+ 251:Generated_Source\PSoC5/Buzzer_PWM.c ****         * Function Name: Buzzer_PWM_SetCompareMode
+ 252:Generated_Source\PSoC5/Buzzer_PWM.c ****         ********************************************************************************
+ 253:Generated_Source\PSoC5/Buzzer_PWM.c ****         *
+ 254:Generated_Source\PSoC5/Buzzer_PWM.c ****         * Summary:
+ 255:Generated_Source\PSoC5/Buzzer_PWM.c ****         *  This function writes the Compare Mode for the pwm output when in Dither mode,
+ 256:Generated_Source\PSoC5/Buzzer_PWM.c ****         *  Center Align Mode or One Output Mode.
+ 257:Generated_Source\PSoC5/Buzzer_PWM.c ****         *
+ 258:Generated_Source\PSoC5/Buzzer_PWM.c ****         * Parameters:
+ 259:Generated_Source\PSoC5/Buzzer_PWM.c ****         *  comparemode:  The new compare mode for the PWM output. Use the compare types
+ 260:Generated_Source\PSoC5/Buzzer_PWM.c ****         *                defined in the H file as input arguments.
+ 261:Generated_Source\PSoC5/Buzzer_PWM.c ****         *
+ 262:Generated_Source\PSoC5/Buzzer_PWM.c ****         * Return:
+ 263:Generated_Source\PSoC5/Buzzer_PWM.c ****         *  None
+ 264:Generated_Source\PSoC5/Buzzer_PWM.c ****         *
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 7
+
+
+ 265:Generated_Source\PSoC5/Buzzer_PWM.c ****         *******************************************************************************/
+ 266:Generated_Source\PSoC5/Buzzer_PWM.c ****         void Buzzer_PWM_SetCompareMode(uint8 comparemode) 
+ 267:Generated_Source\PSoC5/Buzzer_PWM.c ****         {
+ 268:Generated_Source\PSoC5/Buzzer_PWM.c ****             #if(Buzzer_PWM_UsingFixedFunction)
+ 269:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 270:Generated_Source\PSoC5/Buzzer_PWM.c ****                 #if(0 != Buzzer_PWM_CTRL_CMPMODE1_SHIFT)
+ 271:Generated_Source\PSoC5/Buzzer_PWM.c ****                     uint8 comparemodemasked = ((uint8)((uint8)comparemode << Buzzer_PWM_CTRL_CMPMOD
+ 272:Generated_Source\PSoC5/Buzzer_PWM.c ****                 #else
+ 273:Generated_Source\PSoC5/Buzzer_PWM.c ****                     uint8 comparemodemasked = comparemode;
+ 274:Generated_Source\PSoC5/Buzzer_PWM.c ****                 #endif /* (0 != Buzzer_PWM_CTRL_CMPMODE1_SHIFT) */
+ 275:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 276:Generated_Source\PSoC5/Buzzer_PWM.c ****                 Buzzer_PWM_CONTROL3 &= ((uint8)(~Buzzer_PWM_CTRL_CMPMODE1_MASK)); /*Clear Existing 
+ 277:Generated_Source\PSoC5/Buzzer_PWM.c ****                 Buzzer_PWM_CONTROL3 |= comparemodemasked;
+ 278:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 279:Generated_Source\PSoC5/Buzzer_PWM.c ****             #elif (Buzzer_PWM_UseControl)
+ 280:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 281:Generated_Source\PSoC5/Buzzer_PWM.c ****                 #if(0 != Buzzer_PWM_CTRL_CMPMODE1_SHIFT)
+ 282:Generated_Source\PSoC5/Buzzer_PWM.c ****                     uint8 comparemode1masked = ((uint8)((uint8)comparemode << Buzzer_PWM_CTRL_CMPMO
+ 283:Generated_Source\PSoC5/Buzzer_PWM.c ****                                                 Buzzer_PWM_CTRL_CMPMODE1_MASK;
+ 284:Generated_Source\PSoC5/Buzzer_PWM.c ****                 #else
+ 285:Generated_Source\PSoC5/Buzzer_PWM.c ****                     uint8 comparemode1masked = comparemode & Buzzer_PWM_CTRL_CMPMODE1_MASK;
+ 286:Generated_Source\PSoC5/Buzzer_PWM.c ****                 #endif /* (0 != Buzzer_PWM_CTRL_CMPMODE1_SHIFT) */
+ 287:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 288:Generated_Source\PSoC5/Buzzer_PWM.c ****                 #if(0 != Buzzer_PWM_CTRL_CMPMODE2_SHIFT)
+ 289:Generated_Source\PSoC5/Buzzer_PWM.c ****                     uint8 comparemode2masked = ((uint8)((uint8)comparemode << Buzzer_PWM_CTRL_CMPMO
+ 290:Generated_Source\PSoC5/Buzzer_PWM.c ****                                                Buzzer_PWM_CTRL_CMPMODE2_MASK;
+ 291:Generated_Source\PSoC5/Buzzer_PWM.c ****                 #else
+ 292:Generated_Source\PSoC5/Buzzer_PWM.c ****                     uint8 comparemode2masked = comparemode & Buzzer_PWM_CTRL_CMPMODE2_MASK;
+ 293:Generated_Source\PSoC5/Buzzer_PWM.c ****                 #endif /* (0 != Buzzer_PWM_CTRL_CMPMODE2_SHIFT) */
+ 294:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 295:Generated_Source\PSoC5/Buzzer_PWM.c ****                 /*Clear existing mode */
+ 296:Generated_Source\PSoC5/Buzzer_PWM.c ****                 Buzzer_PWM_CONTROL &= ((uint8)(~(Buzzer_PWM_CTRL_CMPMODE1_MASK |
+ 297:Generated_Source\PSoC5/Buzzer_PWM.c ****                                             Buzzer_PWM_CTRL_CMPMODE2_MASK)));
+ 298:Generated_Source\PSoC5/Buzzer_PWM.c ****                 Buzzer_PWM_CONTROL |= (comparemode1masked | comparemode2masked);
+ 299:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 300:Generated_Source\PSoC5/Buzzer_PWM.c ****             #else
+ 301:Generated_Source\PSoC5/Buzzer_PWM.c ****                 uint8 temp = comparemode;
+ 302:Generated_Source\PSoC5/Buzzer_PWM.c ****             #endif /* (Buzzer_PWM_UsingFixedFunction) */
+ 303:Generated_Source\PSoC5/Buzzer_PWM.c ****         }
+ 304:Generated_Source\PSoC5/Buzzer_PWM.c ****     #endif /* Buzzer_PWM_CompareMode1SW */
+ 305:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 306:Generated_Source\PSoC5/Buzzer_PWM.c **** #else /* UseOneCompareMode */
+ 307:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 308:Generated_Source\PSoC5/Buzzer_PWM.c ****     #if (Buzzer_PWM_CompareMode1SW)
+ 309:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 310:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 311:Generated_Source\PSoC5/Buzzer_PWM.c ****         /*******************************************************************************
+ 312:Generated_Source\PSoC5/Buzzer_PWM.c ****         * Function Name: Buzzer_PWM_SetCompareMode1
+ 313:Generated_Source\PSoC5/Buzzer_PWM.c ****         ********************************************************************************
+ 314:Generated_Source\PSoC5/Buzzer_PWM.c ****         *
+ 315:Generated_Source\PSoC5/Buzzer_PWM.c ****         * Summary:
+ 316:Generated_Source\PSoC5/Buzzer_PWM.c ****         *  This function writes the Compare Mode for the pwm or pwm1 output
+ 317:Generated_Source\PSoC5/Buzzer_PWM.c ****         *
+ 318:Generated_Source\PSoC5/Buzzer_PWM.c ****         * Parameters:
+ 319:Generated_Source\PSoC5/Buzzer_PWM.c ****         *  comparemode:  The new compare mode for the PWM output. Use the compare types
+ 320:Generated_Source\PSoC5/Buzzer_PWM.c ****         *                defined in the H file as input arguments.
+ 321:Generated_Source\PSoC5/Buzzer_PWM.c ****         *
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 8
+
+
+ 322:Generated_Source\PSoC5/Buzzer_PWM.c ****         * Return:
+ 323:Generated_Source\PSoC5/Buzzer_PWM.c ****         *  None
+ 324:Generated_Source\PSoC5/Buzzer_PWM.c ****         *
+ 325:Generated_Source\PSoC5/Buzzer_PWM.c ****         *******************************************************************************/
+ 326:Generated_Source\PSoC5/Buzzer_PWM.c ****         void Buzzer_PWM_SetCompareMode1(uint8 comparemode) 
+ 327:Generated_Source\PSoC5/Buzzer_PWM.c ****         {
+ 328:Generated_Source\PSoC5/Buzzer_PWM.c ****             #if(0 != Buzzer_PWM_CTRL_CMPMODE1_SHIFT)
+ 329:Generated_Source\PSoC5/Buzzer_PWM.c ****                 uint8 comparemodemasked = ((uint8)((uint8)comparemode << Buzzer_PWM_CTRL_CMPMODE1_S
+ 330:Generated_Source\PSoC5/Buzzer_PWM.c ****                                            Buzzer_PWM_CTRL_CMPMODE1_MASK;
+ 331:Generated_Source\PSoC5/Buzzer_PWM.c ****             #else
+ 332:Generated_Source\PSoC5/Buzzer_PWM.c ****                 uint8 comparemodemasked = comparemode & Buzzer_PWM_CTRL_CMPMODE1_MASK;
+ 333:Generated_Source\PSoC5/Buzzer_PWM.c ****             #endif /* (0 != Buzzer_PWM_CTRL_CMPMODE1_SHIFT) */
+ 334:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 335:Generated_Source\PSoC5/Buzzer_PWM.c ****             #if (Buzzer_PWM_UseControl)
+ 336:Generated_Source\PSoC5/Buzzer_PWM.c ****                 Buzzer_PWM_CONTROL &= ((uint8)(~Buzzer_PWM_CTRL_CMPMODE1_MASK)); /*Clear existing m
+ 337:Generated_Source\PSoC5/Buzzer_PWM.c ****                 Buzzer_PWM_CONTROL |= comparemodemasked;
+ 338:Generated_Source\PSoC5/Buzzer_PWM.c ****             #endif /* (Buzzer_PWM_UseControl) */
+ 339:Generated_Source\PSoC5/Buzzer_PWM.c ****         }
+ 340:Generated_Source\PSoC5/Buzzer_PWM.c ****     #endif /* Buzzer_PWM_CompareMode1SW */
+ 341:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 342:Generated_Source\PSoC5/Buzzer_PWM.c **** #if (Buzzer_PWM_CompareMode2SW)
+ 343:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 344:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 345:Generated_Source\PSoC5/Buzzer_PWM.c ****     /*******************************************************************************
+ 346:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Function Name: Buzzer_PWM_SetCompareMode2
+ 347:Generated_Source\PSoC5/Buzzer_PWM.c ****     ********************************************************************************
+ 348:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 349:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Summary:
+ 350:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  This function writes the Compare Mode for the pwm or pwm2 output
+ 351:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 352:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Parameters:
+ 353:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  comparemode:  The new compare mode for the PWM output. Use the compare types
+ 354:Generated_Source\PSoC5/Buzzer_PWM.c ****     *                defined in the H file as input arguments.
+ 355:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 356:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Return:
+ 357:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  None
+ 358:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 359:Generated_Source\PSoC5/Buzzer_PWM.c ****     *******************************************************************************/
+ 360:Generated_Source\PSoC5/Buzzer_PWM.c ****     void Buzzer_PWM_SetCompareMode2(uint8 comparemode) 
+ 361:Generated_Source\PSoC5/Buzzer_PWM.c ****     {
+ 362:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 363:Generated_Source\PSoC5/Buzzer_PWM.c ****         #if(0 != Buzzer_PWM_CTRL_CMPMODE2_SHIFT)
+ 364:Generated_Source\PSoC5/Buzzer_PWM.c ****             uint8 comparemodemasked = ((uint8)((uint8)comparemode << Buzzer_PWM_CTRL_CMPMODE2_SHIFT
+ 365:Generated_Source\PSoC5/Buzzer_PWM.c ****                                                  Buzzer_PWM_CTRL_CMPMODE2_MASK;
+ 366:Generated_Source\PSoC5/Buzzer_PWM.c ****         #else
+ 367:Generated_Source\PSoC5/Buzzer_PWM.c ****             uint8 comparemodemasked = comparemode & Buzzer_PWM_CTRL_CMPMODE2_MASK;
+ 368:Generated_Source\PSoC5/Buzzer_PWM.c ****         #endif /* (0 != Buzzer_PWM_CTRL_CMPMODE2_SHIFT) */
+ 369:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 370:Generated_Source\PSoC5/Buzzer_PWM.c ****         #if (Buzzer_PWM_UseControl)
+ 371:Generated_Source\PSoC5/Buzzer_PWM.c ****             Buzzer_PWM_CONTROL &= ((uint8)(~Buzzer_PWM_CTRL_CMPMODE2_MASK)); /*Clear existing mode 
+ 372:Generated_Source\PSoC5/Buzzer_PWM.c ****             Buzzer_PWM_CONTROL |= comparemodemasked;
+ 373:Generated_Source\PSoC5/Buzzer_PWM.c ****         #endif /* (Buzzer_PWM_UseControl) */
+ 374:Generated_Source\PSoC5/Buzzer_PWM.c ****     }
+ 375:Generated_Source\PSoC5/Buzzer_PWM.c ****     #endif /*Buzzer_PWM_CompareMode2SW */
+ 376:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 377:Generated_Source\PSoC5/Buzzer_PWM.c **** #endif /* UseOneCompareMode */
+ 378:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 9
+
+
+ 379:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 380:Generated_Source\PSoC5/Buzzer_PWM.c **** #if (!Buzzer_PWM_UsingFixedFunction)
+ 381:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 382:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 383:Generated_Source\PSoC5/Buzzer_PWM.c ****     /*******************************************************************************
+ 384:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Function Name: Buzzer_PWM_WriteCounter
+ 385:Generated_Source\PSoC5/Buzzer_PWM.c ****     ********************************************************************************
+ 386:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 387:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Summary:
+ 388:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  Writes a new counter value directly to the counter register. This will be
+ 389:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  implemented for that currently running period and only that period. This API
+ 390:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  is valid only for UDB implementation and not available for fixed function
+ 391:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  PWM implementation.
+ 392:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 393:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Parameters:
+ 394:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  counter:  The period new period counter value.
+ 395:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 396:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Return:
+ 397:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  None
+ 398:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 399:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Side Effects:
+ 400:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  The PWM Period will be reloaded when a counter value will be a zero
+ 401:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 402:Generated_Source\PSoC5/Buzzer_PWM.c ****     *******************************************************************************/
+ 403:Generated_Source\PSoC5/Buzzer_PWM.c ****     void Buzzer_PWM_WriteCounter(uint8 counter) \
+ 404:Generated_Source\PSoC5/Buzzer_PWM.c ****                                        
+ 405:Generated_Source\PSoC5/Buzzer_PWM.c ****     {
+  79              		.loc 1 405 0
+  80              		.cfi_startproc
+  81              		@ args = 0, pretend = 0, frame = 0
+  82              		@ frame_needed = 0, uses_anonymous_args = 0
+  83              		@ link register save eliminated.
+  84              	.LVL0:
+ 406:Generated_Source\PSoC5/Buzzer_PWM.c ****         CY_SET_REG8(Buzzer_PWM_COUNTER_LSB_PTR, counter);
+  85              		.loc 1 406 0
+  86 0000 014B     		ldr	r3, .L8
+  87 0002 1870     		strb	r0, [r3]
+  88 0004 7047     		bx	lr
+  89              	.L9:
+  90 0006 00BF     		.align	2
+  91              	.L8:
+  92 0008 06650040 		.word	1073767686
+  93              		.cfi_endproc
+  94              	.LFE4:
+  95              		.size	Buzzer_PWM_WriteCounter, .-Buzzer_PWM_WriteCounter
+  96              		.section	.text.Buzzer_PWM_ReadCounter,"ax",%progbits
+  97              		.align	2
+  98              		.global	Buzzer_PWM_ReadCounter
+  99              		.thumb
+ 100              		.thumb_func
+ 101              		.type	Buzzer_PWM_ReadCounter, %function
+ 102              	Buzzer_PWM_ReadCounter:
+ 103              	.LFB5:
+ 407:Generated_Source\PSoC5/Buzzer_PWM.c ****     }
+ 408:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 409:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 410:Generated_Source\PSoC5/Buzzer_PWM.c ****     /*******************************************************************************
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 10
+
+
+ 411:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Function Name: Buzzer_PWM_ReadCounter
+ 412:Generated_Source\PSoC5/Buzzer_PWM.c ****     ********************************************************************************
+ 413:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 414:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Summary:
+ 415:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  This function returns the current value of the counter.  It doesn't matter
+ 416:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  if the counter is enabled or running.
+ 417:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 418:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Parameters:
+ 419:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  None
+ 420:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 421:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Return:
+ 422:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  The current value of the counter.
+ 423:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 424:Generated_Source\PSoC5/Buzzer_PWM.c ****     *******************************************************************************/
+ 425:Generated_Source\PSoC5/Buzzer_PWM.c ****     uint8 Buzzer_PWM_ReadCounter(void) 
+ 426:Generated_Source\PSoC5/Buzzer_PWM.c ****     {
+ 104              		.loc 1 426 0
+ 105              		.cfi_startproc
+ 106              		@ args = 0, pretend = 0, frame = 0
+ 107              		@ frame_needed = 0, uses_anonymous_args = 0
+ 108              		@ link register save eliminated.
+ 427:Generated_Source\PSoC5/Buzzer_PWM.c ****         /* Force capture by reading Accumulator */
+ 428:Generated_Source\PSoC5/Buzzer_PWM.c ****         /* Must first do a software capture to be able to read the counter */
+ 429:Generated_Source\PSoC5/Buzzer_PWM.c ****         /* It is up to the user code to make sure there isn't already captured data in the FIFO */
+ 430:Generated_Source\PSoC5/Buzzer_PWM.c ****           (void)CY_GET_REG8(Buzzer_PWM_COUNTERCAP_LSB_PTR_8BIT);
+ 109              		.loc 1 430 0
+ 110 0000 024B     		ldr	r3, .L11
+ 111 0002 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 431:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 432:Generated_Source\PSoC5/Buzzer_PWM.c ****         /* Read the data from the FIFO */
+ 433:Generated_Source\PSoC5/Buzzer_PWM.c ****         return (CY_GET_REG8(Buzzer_PWM_CAPTURE_LSB_PTR));
+ 112              		.loc 1 433 0
+ 113 0004 024B     		ldr	r3, .L11+4
+ 114 0006 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 434:Generated_Source\PSoC5/Buzzer_PWM.c ****     }
+ 115              		.loc 1 434 0
+ 116 0008 7047     		bx	lr
+ 117              	.L12:
+ 118 000a 00BF     		.align	2
+ 119              	.L11:
+ 120 000c 16650040 		.word	1073767702
+ 121 0010 56650040 		.word	1073767766
+ 122              		.cfi_endproc
+ 123              	.LFE5:
+ 124              		.size	Buzzer_PWM_ReadCounter, .-Buzzer_PWM_ReadCounter
+ 125              		.section	.text.Buzzer_PWM_WritePeriod,"ax",%progbits
+ 126              		.align	2
+ 127              		.global	Buzzer_PWM_WritePeriod
+ 128              		.thumb
+ 129              		.thumb_func
+ 130              		.type	Buzzer_PWM_WritePeriod, %function
+ 131              	Buzzer_PWM_WritePeriod:
+ 132              	.LFB6:
+ 435:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 436:Generated_Source\PSoC5/Buzzer_PWM.c ****     #if (Buzzer_PWM_UseStatus)
+ 437:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 438:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 11
+
+
+ 439:Generated_Source\PSoC5/Buzzer_PWM.c ****         /*******************************************************************************
+ 440:Generated_Source\PSoC5/Buzzer_PWM.c ****         * Function Name: Buzzer_PWM_ClearFIFO
+ 441:Generated_Source\PSoC5/Buzzer_PWM.c ****         ********************************************************************************
+ 442:Generated_Source\PSoC5/Buzzer_PWM.c ****         *
+ 443:Generated_Source\PSoC5/Buzzer_PWM.c ****         * Summary:
+ 444:Generated_Source\PSoC5/Buzzer_PWM.c ****         *  This function clears all capture data from the capture FIFO
+ 445:Generated_Source\PSoC5/Buzzer_PWM.c ****         *
+ 446:Generated_Source\PSoC5/Buzzer_PWM.c ****         * Parameters:
+ 447:Generated_Source\PSoC5/Buzzer_PWM.c ****         *  None
+ 448:Generated_Source\PSoC5/Buzzer_PWM.c ****         *
+ 449:Generated_Source\PSoC5/Buzzer_PWM.c ****         * Return:
+ 450:Generated_Source\PSoC5/Buzzer_PWM.c ****         *  None
+ 451:Generated_Source\PSoC5/Buzzer_PWM.c ****         *
+ 452:Generated_Source\PSoC5/Buzzer_PWM.c ****         *******************************************************************************/
+ 453:Generated_Source\PSoC5/Buzzer_PWM.c ****         void Buzzer_PWM_ClearFIFO(void) 
+ 454:Generated_Source\PSoC5/Buzzer_PWM.c ****         {
+ 455:Generated_Source\PSoC5/Buzzer_PWM.c ****             while(0u != (Buzzer_PWM_ReadStatusRegister() & Buzzer_PWM_STATUS_FIFONEMPTY))
+ 456:Generated_Source\PSoC5/Buzzer_PWM.c ****             {
+ 457:Generated_Source\PSoC5/Buzzer_PWM.c ****                 (void)Buzzer_PWM_ReadCapture();
+ 458:Generated_Source\PSoC5/Buzzer_PWM.c ****             }
+ 459:Generated_Source\PSoC5/Buzzer_PWM.c ****         }
+ 460:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 461:Generated_Source\PSoC5/Buzzer_PWM.c ****     #endif /* Buzzer_PWM_UseStatus */
+ 462:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 463:Generated_Source\PSoC5/Buzzer_PWM.c **** #endif /* !Buzzer_PWM_UsingFixedFunction */
+ 464:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 465:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 466:Generated_Source\PSoC5/Buzzer_PWM.c **** /*******************************************************************************
+ 467:Generated_Source\PSoC5/Buzzer_PWM.c **** * Function Name: Buzzer_PWM_WritePeriod
+ 468:Generated_Source\PSoC5/Buzzer_PWM.c **** ********************************************************************************
+ 469:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+ 470:Generated_Source\PSoC5/Buzzer_PWM.c **** * Summary:
+ 471:Generated_Source\PSoC5/Buzzer_PWM.c **** *  This function is used to change the period of the counter.  The new period
+ 472:Generated_Source\PSoC5/Buzzer_PWM.c **** *  will be loaded the next time terminal count is detected.
+ 473:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+ 474:Generated_Source\PSoC5/Buzzer_PWM.c **** * Parameters:
+ 475:Generated_Source\PSoC5/Buzzer_PWM.c **** *  period:  Period value. May be between 1 and (2^Resolution)-1.  A value of 0
+ 476:Generated_Source\PSoC5/Buzzer_PWM.c **** *           will result in the counter remaining at zero.
+ 477:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+ 478:Generated_Source\PSoC5/Buzzer_PWM.c **** * Return:
+ 479:Generated_Source\PSoC5/Buzzer_PWM.c **** *  None
+ 480:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+ 481:Generated_Source\PSoC5/Buzzer_PWM.c **** *******************************************************************************/
+ 482:Generated_Source\PSoC5/Buzzer_PWM.c **** void Buzzer_PWM_WritePeriod(uint8 period) 
+ 483:Generated_Source\PSoC5/Buzzer_PWM.c **** {
+ 133              		.loc 1 483 0
+ 134              		.cfi_startproc
+ 135              		@ args = 0, pretend = 0, frame = 0
+ 136              		@ frame_needed = 0, uses_anonymous_args = 0
+ 137              		@ link register save eliminated.
+ 138              	.LVL1:
+ 484:Generated_Source\PSoC5/Buzzer_PWM.c ****     #if(Buzzer_PWM_UsingFixedFunction)
+ 485:Generated_Source\PSoC5/Buzzer_PWM.c ****         CY_SET_REG16(Buzzer_PWM_PERIOD_LSB_PTR, (uint16)period);
+ 486:Generated_Source\PSoC5/Buzzer_PWM.c ****     #else
+ 487:Generated_Source\PSoC5/Buzzer_PWM.c ****         CY_SET_REG8(Buzzer_PWM_PERIOD_LSB_PTR, period);
+ 139              		.loc 1 487 0
+ 140 0000 014B     		ldr	r3, .L14
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 12
+
+
+ 141 0002 1870     		strb	r0, [r3]
+ 142 0004 7047     		bx	lr
+ 143              	.L15:
+ 144 0006 00BF     		.align	2
+ 145              	.L14:
+ 146 0008 46650040 		.word	1073767750
+ 147              		.cfi_endproc
+ 148              	.LFE6:
+ 149              		.size	Buzzer_PWM_WritePeriod, .-Buzzer_PWM_WritePeriod
+ 150              		.section	.text.Buzzer_PWM_WriteCompare,"ax",%progbits
+ 151              		.align	2
+ 152              		.global	Buzzer_PWM_WriteCompare
+ 153              		.thumb
+ 154              		.thumb_func
+ 155              		.type	Buzzer_PWM_WriteCompare, %function
+ 156              	Buzzer_PWM_WriteCompare:
+ 157              	.LFB7:
+ 488:Generated_Source\PSoC5/Buzzer_PWM.c ****     #endif /* (Buzzer_PWM_UsingFixedFunction) */
+ 489:Generated_Source\PSoC5/Buzzer_PWM.c **** }
+ 490:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 491:Generated_Source\PSoC5/Buzzer_PWM.c **** #if (Buzzer_PWM_UseOneCompareMode)
+ 492:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 493:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 494:Generated_Source\PSoC5/Buzzer_PWM.c ****     /*******************************************************************************
+ 495:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Function Name: Buzzer_PWM_WriteCompare
+ 496:Generated_Source\PSoC5/Buzzer_PWM.c ****     ********************************************************************************
+ 497:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 498:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Summary:
+ 499:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  This funtion is used to change the compare1 value when the PWM is in Dither
+ 500:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  mode. The compare output will reflect the new value on the next UDB clock.
+ 501:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  The compare output will be driven high when the present counter value is
+ 502:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  compared to the compare value based on the compare mode defined in
+ 503:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  Dither Mode.
+ 504:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 505:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Parameters:
+ 506:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  compare:  New compare value.
+ 507:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 508:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Return:
+ 509:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  None
+ 510:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 511:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Side Effects:
+ 512:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  This function is only available if the PWM mode parameter is set to
+ 513:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  Dither Mode, Center Aligned Mode or One Output Mode
+ 514:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 515:Generated_Source\PSoC5/Buzzer_PWM.c ****     *******************************************************************************/
+ 516:Generated_Source\PSoC5/Buzzer_PWM.c ****     void Buzzer_PWM_WriteCompare(uint8 compare) \
+ 517:Generated_Source\PSoC5/Buzzer_PWM.c ****                                        
+ 518:Generated_Source\PSoC5/Buzzer_PWM.c ****     {
+ 158              		.loc 1 518 0
+ 159              		.cfi_startproc
+ 160              		@ args = 0, pretend = 0, frame = 0
+ 161              		@ frame_needed = 0, uses_anonymous_args = 0
+ 162              		@ link register save eliminated.
+ 163              	.LVL2:
+ 519:Generated_Source\PSoC5/Buzzer_PWM.c ****         #if(Buzzer_PWM_UsingFixedFunction)
+ 520:Generated_Source\PSoC5/Buzzer_PWM.c ****             CY_SET_REG16(Buzzer_PWM_COMPARE1_LSB_PTR, (uint16)compare);
+ 521:Generated_Source\PSoC5/Buzzer_PWM.c ****         #else
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 13
+
+
+ 522:Generated_Source\PSoC5/Buzzer_PWM.c ****             CY_SET_REG8(Buzzer_PWM_COMPARE1_LSB_PTR, compare);
+ 164              		.loc 1 522 0
+ 165 0000 014B     		ldr	r3, .L17
+ 166 0002 1870     		strb	r0, [r3]
+ 167 0004 7047     		bx	lr
+ 168              	.L18:
+ 169 0006 00BF     		.align	2
+ 170              	.L17:
+ 171 0008 26650040 		.word	1073767718
+ 172              		.cfi_endproc
+ 173              	.LFE7:
+ 174              		.size	Buzzer_PWM_WriteCompare, .-Buzzer_PWM_WriteCompare
+ 175              		.section	.text.Buzzer_PWM_Init,"ax",%progbits
+ 176              		.align	2
+ 177              		.global	Buzzer_PWM_Init
+ 178              		.thumb
+ 179              		.thumb_func
+ 180              		.type	Buzzer_PWM_Init, %function
+ 181              	Buzzer_PWM_Init:
+ 182              	.LFB1:
+  85:Generated_Source\PSoC5/Buzzer_PWM.c ****     #if (Buzzer_PWM_UsingFixedFunction || Buzzer_PWM_UseControl)
+ 183              		.loc 1 85 0
+ 184              		.cfi_startproc
+ 185              		@ args = 0, pretend = 0, frame = 0
+ 186              		@ frame_needed = 0, uses_anonymous_args = 0
+ 187 0000 08B5     		push	{r3, lr}
+ 188              		.cfi_def_cfa_offset 8
+ 189              		.cfi_offset 3, -8
+ 190              		.cfi_offset 14, -4
+ 117:Generated_Source\PSoC5/Buzzer_PWM.c ****                 ((uint8)(~Buzzer_PWM_CTRL_CMPMODE1_MASK));
+ 191              		.loc 1 117 0
+ 192 0002 0B4A     		ldr	r2, .L21
+ 193 0004 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 194 0006 03F0C003 		and	r3, r3, #192
+ 195              	.LVL3:
+ 119:Generated_Source\PSoC5/Buzzer_PWM.c ****                                    Buzzer_PWM_DEFAULT_COMPARE1_MODE;
+ 196              		.loc 1 119 0
+ 197 000a 43F00903 		orr	r3, r3, #9
+ 198              	.LVL4:
+ 199 000e 1370     		strb	r3, [r2]
+ 126:Generated_Source\PSoC5/Buzzer_PWM.c ****         #else /* (Buzzer_PWM_Resolution == 16)*/
+ 200              		.loc 1 126 0
+ 201 0010 2032     		adds	r2, r2, #32
+ 202 0012 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 203 0014 43F00103 		orr	r3, r3, #1
+ 204 0018 1370     		strb	r3, [r2]
+ 133:Generated_Source\PSoC5/Buzzer_PWM.c ****     #endif /* (!Buzzer_PWM_UsingFixedFunction) */
+ 205              		.loc 1 133 0
+ 206 001a FF20     		movs	r0, #255
+ 207 001c FFF7FEFF 		bl	Buzzer_PWM_WriteCounter
+ 208              	.LVL5:
+ 136:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 209              		.loc 1 136 0
+ 210 0020 FF20     		movs	r0, #255
+ 211 0022 FFF7FEFF 		bl	Buzzer_PWM_WritePeriod
+ 212              	.LVL6:
+ 139:Generated_Source\PSoC5/Buzzer_PWM.c ****         #else
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 14
+
+
+ 213              		.loc 1 139 0
+ 214 0026 7F20     		movs	r0, #127
+ 215 0028 FFF7FEFF 		bl	Buzzer_PWM_WriteCompare
+ 216              	.LVL7:
+ 217 002c 08BD     		pop	{r3, pc}
+ 218              	.L22:
+ 219 002e 00BF     		.align	2
+ 220              	.L21:
+ 221 0030 76650040 		.word	1073767798
+ 222              		.cfi_endproc
+ 223              	.LFE1:
+ 224              		.size	Buzzer_PWM_Init, .-Buzzer_PWM_Init
+ 225              		.section	.text.Buzzer_PWM_Start,"ax",%progbits
+ 226              		.align	2
+ 227              		.global	Buzzer_PWM_Start
+ 228              		.thumb
+ 229              		.thumb_func
+ 230              		.type	Buzzer_PWM_Start, %function
+ 231              	Buzzer_PWM_Start:
+ 232              	.LFB0:
+  56:Generated_Source\PSoC5/Buzzer_PWM.c ****     /* If not Initialized then initialize all required hardware and software */
+ 233              		.loc 1 56 0
+ 234              		.cfi_startproc
+ 235              		@ args = 0, pretend = 0, frame = 0
+ 236              		@ frame_needed = 0, uses_anonymous_args = 0
+ 237 0000 08B5     		push	{r3, lr}
+ 238              		.cfi_def_cfa_offset 8
+ 239              		.cfi_offset 3, -8
+ 240              		.cfi_offset 14, -4
+  58:Generated_Source\PSoC5/Buzzer_PWM.c ****     {
+ 241              		.loc 1 58 0
+ 242 0002 054B     		ldr	r3, .L26
+ 243 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 244 0006 23B9     		cbnz	r3, .L24
+  60:Generated_Source\PSoC5/Buzzer_PWM.c ****         Buzzer_PWM_initVar = 1u;
+ 245              		.loc 1 60 0
+ 246 0008 FFF7FEFF 		bl	Buzzer_PWM_Init
+ 247              	.LVL8:
+  61:Generated_Source\PSoC5/Buzzer_PWM.c ****     }
+ 248              		.loc 1 61 0
+ 249 000c 0122     		movs	r2, #1
+ 250 000e 024B     		ldr	r3, .L26
+ 251 0010 1A70     		strb	r2, [r3]
+ 252              	.L24:
+  63:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 253              		.loc 1 63 0
+ 254 0012 FFF7FEFF 		bl	Buzzer_PWM_Enable
+ 255              	.LVL9:
+ 256 0016 08BD     		pop	{r3, pc}
+ 257              	.L27:
+ 258              		.align	2
+ 259              	.L26:
+ 260 0018 00000000 		.word	.LANCHOR0
+ 261              		.cfi_endproc
+ 262              	.LFE0:
+ 263              		.size	Buzzer_PWM_Start, .-Buzzer_PWM_Start
+ 264              		.section	.text.Buzzer_PWM_ReadControlRegister,"ax",%progbits
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 15
+
+
+ 265              		.align	2
+ 266              		.global	Buzzer_PWM_ReadControlRegister
+ 267              		.thumb
+ 268              		.thumb_func
+ 269              		.type	Buzzer_PWM_ReadControlRegister, %function
+ 270              	Buzzer_PWM_ReadControlRegister:
+ 271              	.LFB8:
+ 523:Generated_Source\PSoC5/Buzzer_PWM.c ****         #endif /* (Buzzer_PWM_UsingFixedFunction) */
+ 524:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 525:Generated_Source\PSoC5/Buzzer_PWM.c ****         #if (Buzzer_PWM_PWMMode == Buzzer_PWM__B_PWM__DITHER)
+ 526:Generated_Source\PSoC5/Buzzer_PWM.c ****             #if(Buzzer_PWM_UsingFixedFunction)
+ 527:Generated_Source\PSoC5/Buzzer_PWM.c ****                 CY_SET_REG16(Buzzer_PWM_COMPARE2_LSB_PTR, (uint16)(compare + 1u));
+ 528:Generated_Source\PSoC5/Buzzer_PWM.c ****             #else
+ 529:Generated_Source\PSoC5/Buzzer_PWM.c ****                 CY_SET_REG8(Buzzer_PWM_COMPARE2_LSB_PTR, (compare + 1u));
+ 530:Generated_Source\PSoC5/Buzzer_PWM.c ****             #endif /* (Buzzer_PWM_UsingFixedFunction) */
+ 531:Generated_Source\PSoC5/Buzzer_PWM.c ****         #endif /* (Buzzer_PWM_PWMMode == Buzzer_PWM__B_PWM__DITHER) */
+ 532:Generated_Source\PSoC5/Buzzer_PWM.c ****     }
+ 533:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 534:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 535:Generated_Source\PSoC5/Buzzer_PWM.c **** #else
+ 536:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 537:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 538:Generated_Source\PSoC5/Buzzer_PWM.c ****     /*******************************************************************************
+ 539:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Function Name: Buzzer_PWM_WriteCompare1
+ 540:Generated_Source\PSoC5/Buzzer_PWM.c ****     ********************************************************************************
+ 541:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 542:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Summary:
+ 543:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  This funtion is used to change the compare1 value.  The compare output will
+ 544:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  reflect the new value on the next UDB clock.  The compare output will be
+ 545:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  driven high when the present counter value is less than or less than or
+ 546:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  equal to the compare register, depending on the mode.
+ 547:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 548:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Parameters:
+ 549:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  compare:  New compare value.
+ 550:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 551:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Return:
+ 552:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  None
+ 553:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 554:Generated_Source\PSoC5/Buzzer_PWM.c ****     *******************************************************************************/
+ 555:Generated_Source\PSoC5/Buzzer_PWM.c ****     void Buzzer_PWM_WriteCompare1(uint8 compare) \
+ 556:Generated_Source\PSoC5/Buzzer_PWM.c ****                                         
+ 557:Generated_Source\PSoC5/Buzzer_PWM.c ****     {
+ 558:Generated_Source\PSoC5/Buzzer_PWM.c ****         #if(Buzzer_PWM_UsingFixedFunction)
+ 559:Generated_Source\PSoC5/Buzzer_PWM.c ****             CY_SET_REG16(Buzzer_PWM_COMPARE1_LSB_PTR, (uint16)compare);
+ 560:Generated_Source\PSoC5/Buzzer_PWM.c ****         #else
+ 561:Generated_Source\PSoC5/Buzzer_PWM.c ****             CY_SET_REG8(Buzzer_PWM_COMPARE1_LSB_PTR, compare);
+ 562:Generated_Source\PSoC5/Buzzer_PWM.c ****         #endif /* (Buzzer_PWM_UsingFixedFunction) */
+ 563:Generated_Source\PSoC5/Buzzer_PWM.c ****     }
+ 564:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 565:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 566:Generated_Source\PSoC5/Buzzer_PWM.c ****     /*******************************************************************************
+ 567:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Function Name: Buzzer_PWM_WriteCompare2
+ 568:Generated_Source\PSoC5/Buzzer_PWM.c ****     ********************************************************************************
+ 569:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 570:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Summary:
+ 571:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  This funtion is used to change the compare value, for compare1 output.
+ 572:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  The compare output will reflect the new value on the next UDB clock.
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 16
+
+
+ 573:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  The compare output will be driven high when the present counter value is
+ 574:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  less than or less than or equal to the compare register, depending on the
+ 575:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  mode.
+ 576:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 577:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Parameters:
+ 578:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  compare:  New compare value.
+ 579:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 580:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Return:
+ 581:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  None
+ 582:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 583:Generated_Source\PSoC5/Buzzer_PWM.c ****     *******************************************************************************/
+ 584:Generated_Source\PSoC5/Buzzer_PWM.c ****     void Buzzer_PWM_WriteCompare2(uint8 compare) \
+ 585:Generated_Source\PSoC5/Buzzer_PWM.c ****                                         
+ 586:Generated_Source\PSoC5/Buzzer_PWM.c ****     {
+ 587:Generated_Source\PSoC5/Buzzer_PWM.c ****         #if(Buzzer_PWM_UsingFixedFunction)
+ 588:Generated_Source\PSoC5/Buzzer_PWM.c ****             CY_SET_REG16(Buzzer_PWM_COMPARE2_LSB_PTR, compare);
+ 589:Generated_Source\PSoC5/Buzzer_PWM.c ****         #else
+ 590:Generated_Source\PSoC5/Buzzer_PWM.c ****             CY_SET_REG8(Buzzer_PWM_COMPARE2_LSB_PTR, compare);
+ 591:Generated_Source\PSoC5/Buzzer_PWM.c ****         #endif /* (Buzzer_PWM_UsingFixedFunction) */
+ 592:Generated_Source\PSoC5/Buzzer_PWM.c ****     }
+ 593:Generated_Source\PSoC5/Buzzer_PWM.c **** #endif /* UseOneCompareMode */
+ 594:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 595:Generated_Source\PSoC5/Buzzer_PWM.c **** #if (Buzzer_PWM_DeadBandUsed)
+ 596:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 597:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 598:Generated_Source\PSoC5/Buzzer_PWM.c ****     /*******************************************************************************
+ 599:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Function Name: Buzzer_PWM_WriteDeadTime
+ 600:Generated_Source\PSoC5/Buzzer_PWM.c ****     ********************************************************************************
+ 601:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 602:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Summary:
+ 603:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  This function writes the dead-band counts to the corresponding register
+ 604:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 605:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Parameters:
+ 606:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  deadtime:  Number of counts for dead time
+ 607:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 608:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Return:
+ 609:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  None
+ 610:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 611:Generated_Source\PSoC5/Buzzer_PWM.c ****     *******************************************************************************/
+ 612:Generated_Source\PSoC5/Buzzer_PWM.c ****     void Buzzer_PWM_WriteDeadTime(uint8 deadtime) 
+ 613:Generated_Source\PSoC5/Buzzer_PWM.c ****     {
+ 614:Generated_Source\PSoC5/Buzzer_PWM.c ****         /* If using the Dead Band 1-255 mode then just write the register */
+ 615:Generated_Source\PSoC5/Buzzer_PWM.c ****         #if(!Buzzer_PWM_DeadBand2_4)
+ 616:Generated_Source\PSoC5/Buzzer_PWM.c ****             CY_SET_REG8(Buzzer_PWM_DEADBAND_COUNT_PTR, deadtime);
+ 617:Generated_Source\PSoC5/Buzzer_PWM.c ****         #else
+ 618:Generated_Source\PSoC5/Buzzer_PWM.c ****             /* Otherwise the data has to be masked and offset */
+ 619:Generated_Source\PSoC5/Buzzer_PWM.c ****             /* Clear existing data */
+ 620:Generated_Source\PSoC5/Buzzer_PWM.c ****             Buzzer_PWM_DEADBAND_COUNT &= ((uint8)(~Buzzer_PWM_DEADBAND_COUNT_MASK));
+ 621:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 622:Generated_Source\PSoC5/Buzzer_PWM.c ****             /* Set new dead time */
+ 623:Generated_Source\PSoC5/Buzzer_PWM.c ****             #if(Buzzer_PWM_DEADBAND_COUNT_SHIFT)
+ 624:Generated_Source\PSoC5/Buzzer_PWM.c ****                 Buzzer_PWM_DEADBAND_COUNT |= ((uint8)((uint8)deadtime << Buzzer_PWM_DEADBAND_COUNT_
+ 625:Generated_Source\PSoC5/Buzzer_PWM.c ****                                                     Buzzer_PWM_DEADBAND_COUNT_MASK;
+ 626:Generated_Source\PSoC5/Buzzer_PWM.c ****             #else
+ 627:Generated_Source\PSoC5/Buzzer_PWM.c ****                 Buzzer_PWM_DEADBAND_COUNT |= deadtime & Buzzer_PWM_DEADBAND_COUNT_MASK;
+ 628:Generated_Source\PSoC5/Buzzer_PWM.c ****             #endif /* (Buzzer_PWM_DEADBAND_COUNT_SHIFT) */
+ 629:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 17
+
+
+ 630:Generated_Source\PSoC5/Buzzer_PWM.c ****         #endif /* (!Buzzer_PWM_DeadBand2_4) */
+ 631:Generated_Source\PSoC5/Buzzer_PWM.c ****     }
+ 632:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 633:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 634:Generated_Source\PSoC5/Buzzer_PWM.c ****     /*******************************************************************************
+ 635:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Function Name: Buzzer_PWM_ReadDeadTime
+ 636:Generated_Source\PSoC5/Buzzer_PWM.c ****     ********************************************************************************
+ 637:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 638:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Summary:
+ 639:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  This function reads the dead-band counts from the corresponding register
+ 640:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 641:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Parameters:
+ 642:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  None
+ 643:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 644:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Return:
+ 645:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  Dead Band Counts
+ 646:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 647:Generated_Source\PSoC5/Buzzer_PWM.c ****     *******************************************************************************/
+ 648:Generated_Source\PSoC5/Buzzer_PWM.c ****     uint8 Buzzer_PWM_ReadDeadTime(void) 
+ 649:Generated_Source\PSoC5/Buzzer_PWM.c ****     {
+ 650:Generated_Source\PSoC5/Buzzer_PWM.c ****         /* If using the Dead Band 1-255 mode then just read the register */
+ 651:Generated_Source\PSoC5/Buzzer_PWM.c ****         #if(!Buzzer_PWM_DeadBand2_4)
+ 652:Generated_Source\PSoC5/Buzzer_PWM.c ****             return (CY_GET_REG8(Buzzer_PWM_DEADBAND_COUNT_PTR));
+ 653:Generated_Source\PSoC5/Buzzer_PWM.c ****         #else
+ 654:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 655:Generated_Source\PSoC5/Buzzer_PWM.c ****             /* Otherwise the data has to be masked and offset */
+ 656:Generated_Source\PSoC5/Buzzer_PWM.c ****             #if(Buzzer_PWM_DEADBAND_COUNT_SHIFT)
+ 657:Generated_Source\PSoC5/Buzzer_PWM.c ****                 return ((uint8)(((uint8)(Buzzer_PWM_DEADBAND_COUNT & Buzzer_PWM_DEADBAND_COUNT_MASK
+ 658:Generated_Source\PSoC5/Buzzer_PWM.c ****                                                                            Buzzer_PWM_DEADBAND_COUN
+ 659:Generated_Source\PSoC5/Buzzer_PWM.c ****             #else
+ 660:Generated_Source\PSoC5/Buzzer_PWM.c ****                 return (Buzzer_PWM_DEADBAND_COUNT & Buzzer_PWM_DEADBAND_COUNT_MASK);
+ 661:Generated_Source\PSoC5/Buzzer_PWM.c ****             #endif /* (Buzzer_PWM_DEADBAND_COUNT_SHIFT) */
+ 662:Generated_Source\PSoC5/Buzzer_PWM.c ****         #endif /* (!Buzzer_PWM_DeadBand2_4) */
+ 663:Generated_Source\PSoC5/Buzzer_PWM.c ****     }
+ 664:Generated_Source\PSoC5/Buzzer_PWM.c **** #endif /* DeadBandUsed */
+ 665:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 666:Generated_Source\PSoC5/Buzzer_PWM.c **** #if (Buzzer_PWM_UseStatus || Buzzer_PWM_UsingFixedFunction)
+ 667:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 668:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 669:Generated_Source\PSoC5/Buzzer_PWM.c ****     /*******************************************************************************
+ 670:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Function Name: Buzzer_PWM_SetInterruptMode
+ 671:Generated_Source\PSoC5/Buzzer_PWM.c ****     ********************************************************************************
+ 672:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 673:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Summary:
+ 674:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  This function configures the interrupts mask control of theinterrupt
+ 675:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  source status register.
+ 676:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 677:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Parameters:
+ 678:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  uint8 interruptMode: Bit field containing the interrupt sources enabled
+ 679:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 680:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Return:
+ 681:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  None
+ 682:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 683:Generated_Source\PSoC5/Buzzer_PWM.c ****     *******************************************************************************/
+ 684:Generated_Source\PSoC5/Buzzer_PWM.c ****     void Buzzer_PWM_SetInterruptMode(uint8 interruptMode) 
+ 685:Generated_Source\PSoC5/Buzzer_PWM.c ****     {
+ 686:Generated_Source\PSoC5/Buzzer_PWM.c ****         CY_SET_REG8(Buzzer_PWM_STATUS_MASK_PTR, interruptMode);
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 18
+
+
+ 687:Generated_Source\PSoC5/Buzzer_PWM.c ****     }
+ 688:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 689:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 690:Generated_Source\PSoC5/Buzzer_PWM.c ****     /*******************************************************************************
+ 691:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Function Name: Buzzer_PWM_ReadStatusRegister
+ 692:Generated_Source\PSoC5/Buzzer_PWM.c ****     ********************************************************************************
+ 693:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 694:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Summary:
+ 695:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  This function returns the current state of the status register.
+ 696:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 697:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Parameters:
+ 698:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  None
+ 699:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 700:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Return:
+ 701:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  uint8 : Current status register value. The status register bits are:
+ 702:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  [7:6] : Unused(0)
+ 703:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  [5]   : Kill event output
+ 704:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  [4]   : FIFO not empty
+ 705:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  [3]   : FIFO full
+ 706:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  [2]   : Terminal count
+ 707:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  [1]   : Compare output 2
+ 708:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  [0]   : Compare output 1
+ 709:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 710:Generated_Source\PSoC5/Buzzer_PWM.c ****     *******************************************************************************/
+ 711:Generated_Source\PSoC5/Buzzer_PWM.c ****     uint8 Buzzer_PWM_ReadStatusRegister(void) 
+ 712:Generated_Source\PSoC5/Buzzer_PWM.c ****     {
+ 713:Generated_Source\PSoC5/Buzzer_PWM.c ****         return (CY_GET_REG8(Buzzer_PWM_STATUS_PTR));
+ 714:Generated_Source\PSoC5/Buzzer_PWM.c ****     }
+ 715:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 716:Generated_Source\PSoC5/Buzzer_PWM.c **** #endif /* (Buzzer_PWM_UseStatus || Buzzer_PWM_UsingFixedFunction) */
+ 717:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 718:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 719:Generated_Source\PSoC5/Buzzer_PWM.c **** #if (Buzzer_PWM_UseControl)
+ 720:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 721:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 722:Generated_Source\PSoC5/Buzzer_PWM.c ****     /*******************************************************************************
+ 723:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Function Name: Buzzer_PWM_ReadControlRegister
+ 724:Generated_Source\PSoC5/Buzzer_PWM.c ****     ********************************************************************************
+ 725:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 726:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Summary:
+ 727:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  Returns the current state of the control register. This API is available
+ 728:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  only if the control register is not removed.
+ 729:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 730:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Parameters:
+ 731:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  None
+ 732:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 733:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Return:
+ 734:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  uint8 : Current control register value
+ 735:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 736:Generated_Source\PSoC5/Buzzer_PWM.c ****     *******************************************************************************/
+ 737:Generated_Source\PSoC5/Buzzer_PWM.c ****     uint8 Buzzer_PWM_ReadControlRegister(void) 
+ 738:Generated_Source\PSoC5/Buzzer_PWM.c ****     {
+ 272              		.loc 1 738 0
+ 273              		.cfi_startproc
+ 274              		@ args = 0, pretend = 0, frame = 0
+ 275              		@ frame_needed = 0, uses_anonymous_args = 0
+ 276              		@ link register save eliminated.
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 19
+
+
+ 739:Generated_Source\PSoC5/Buzzer_PWM.c ****         uint8 result;
+ 740:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 741:Generated_Source\PSoC5/Buzzer_PWM.c ****         result = CY_GET_REG8(Buzzer_PWM_CONTROL_PTR);
+ 277              		.loc 1 741 0
+ 278 0000 014B     		ldr	r3, .L29
+ 279 0002 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 280              	.LVL10:
+ 742:Generated_Source\PSoC5/Buzzer_PWM.c ****         return (result);
+ 743:Generated_Source\PSoC5/Buzzer_PWM.c ****     }
+ 281              		.loc 1 743 0
+ 282 0004 7047     		bx	lr
+ 283              	.L30:
+ 284 0006 00BF     		.align	2
+ 285              	.L29:
+ 286 0008 76650040 		.word	1073767798
+ 287              		.cfi_endproc
+ 288              	.LFE8:
+ 289              		.size	Buzzer_PWM_ReadControlRegister, .-Buzzer_PWM_ReadControlRegister
+ 290              		.section	.text.Buzzer_PWM_WriteControlRegister,"ax",%progbits
+ 291              		.align	2
+ 292              		.global	Buzzer_PWM_WriteControlRegister
+ 293              		.thumb
+ 294              		.thumb_func
+ 295              		.type	Buzzer_PWM_WriteControlRegister, %function
+ 296              	Buzzer_PWM_WriteControlRegister:
+ 297              	.LFB9:
+ 744:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 745:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 746:Generated_Source\PSoC5/Buzzer_PWM.c ****     /*******************************************************************************
+ 747:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Function Name: Buzzer_PWM_WriteControlRegister
+ 748:Generated_Source\PSoC5/Buzzer_PWM.c ****     ********************************************************************************
+ 749:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 750:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Summary:
+ 751:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  Sets the bit field of the control register. This API is available only if
+ 752:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  the control register is not removed.
+ 753:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 754:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Parameters:
+ 755:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  uint8 control: Control register bit field, The status register bits are:
+ 756:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  [7]   : PWM Enable
+ 757:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  [6]   : Reset
+ 758:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  [5:3] : Compare Mode2
+ 759:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  [2:0] : Compare Mode2
+ 760:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 761:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Return:
+ 762:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  None
+ 763:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 764:Generated_Source\PSoC5/Buzzer_PWM.c ****     *******************************************************************************/
+ 765:Generated_Source\PSoC5/Buzzer_PWM.c ****     void Buzzer_PWM_WriteControlRegister(uint8 control) 
+ 766:Generated_Source\PSoC5/Buzzer_PWM.c ****     {
+ 298              		.loc 1 766 0
+ 299              		.cfi_startproc
+ 300              		@ args = 0, pretend = 0, frame = 0
+ 301              		@ frame_needed = 0, uses_anonymous_args = 0
+ 302              		@ link register save eliminated.
+ 303              	.LVL11:
+ 767:Generated_Source\PSoC5/Buzzer_PWM.c ****         CY_SET_REG8(Buzzer_PWM_CONTROL_PTR, control);
+ 304              		.loc 1 767 0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 20
+
+
+ 305 0000 014B     		ldr	r3, .L32
+ 306 0002 1870     		strb	r0, [r3]
+ 307 0004 7047     		bx	lr
+ 308              	.L33:
+ 309 0006 00BF     		.align	2
+ 310              	.L32:
+ 311 0008 76650040 		.word	1073767798
+ 312              		.cfi_endproc
+ 313              	.LFE9:
+ 314              		.size	Buzzer_PWM_WriteControlRegister, .-Buzzer_PWM_WriteControlRegister
+ 315              		.section	.text.Buzzer_PWM_ReadCapture,"ax",%progbits
+ 316              		.align	2
+ 317              		.global	Buzzer_PWM_ReadCapture
+ 318              		.thumb
+ 319              		.thumb_func
+ 320              		.type	Buzzer_PWM_ReadCapture, %function
+ 321              	Buzzer_PWM_ReadCapture:
+ 322              	.LFB10:
+ 768:Generated_Source\PSoC5/Buzzer_PWM.c ****     }
+ 769:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 770:Generated_Source\PSoC5/Buzzer_PWM.c **** #endif /* (Buzzer_PWM_UseControl) */
+ 771:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 772:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 773:Generated_Source\PSoC5/Buzzer_PWM.c **** #if (!Buzzer_PWM_UsingFixedFunction)
+ 774:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 775:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 776:Generated_Source\PSoC5/Buzzer_PWM.c ****     /*******************************************************************************
+ 777:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Function Name: Buzzer_PWM_ReadCapture
+ 778:Generated_Source\PSoC5/Buzzer_PWM.c ****     ********************************************************************************
+ 779:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 780:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Summary:
+ 781:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  Reads the capture value from the capture FIFO.
+ 782:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 783:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Parameters:
+ 784:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  None
+ 785:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 786:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Return:
+ 787:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  uint8/uint16: The current capture value
+ 788:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 789:Generated_Source\PSoC5/Buzzer_PWM.c ****     *******************************************************************************/
+ 790:Generated_Source\PSoC5/Buzzer_PWM.c ****     uint8 Buzzer_PWM_ReadCapture(void) 
+ 791:Generated_Source\PSoC5/Buzzer_PWM.c ****     {
+ 323              		.loc 1 791 0
+ 324              		.cfi_startproc
+ 325              		@ args = 0, pretend = 0, frame = 0
+ 326              		@ frame_needed = 0, uses_anonymous_args = 0
+ 327              		@ link register save eliminated.
+ 792:Generated_Source\PSoC5/Buzzer_PWM.c ****         return (CY_GET_REG8(Buzzer_PWM_CAPTURE_LSB_PTR));
+ 328              		.loc 1 792 0
+ 329 0000 014B     		ldr	r3, .L35
+ 330 0002 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 793:Generated_Source\PSoC5/Buzzer_PWM.c ****     }
+ 331              		.loc 1 793 0
+ 332 0004 7047     		bx	lr
+ 333              	.L36:
+ 334 0006 00BF     		.align	2
+ 335              	.L35:
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 21
+
+
+ 336 0008 56650040 		.word	1073767766
+ 337              		.cfi_endproc
+ 338              	.LFE10:
+ 339              		.size	Buzzer_PWM_ReadCapture, .-Buzzer_PWM_ReadCapture
+ 340              		.section	.text.Buzzer_PWM_ReadCompare,"ax",%progbits
+ 341              		.align	2
+ 342              		.global	Buzzer_PWM_ReadCompare
+ 343              		.thumb
+ 344              		.thumb_func
+ 345              		.type	Buzzer_PWM_ReadCompare, %function
+ 346              	Buzzer_PWM_ReadCompare:
+ 347              	.LFB11:
+ 794:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 795:Generated_Source\PSoC5/Buzzer_PWM.c **** #endif /* (!Buzzer_PWM_UsingFixedFunction) */
+ 796:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 797:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 798:Generated_Source\PSoC5/Buzzer_PWM.c **** #if (Buzzer_PWM_UseOneCompareMode)
+ 799:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 800:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 801:Generated_Source\PSoC5/Buzzer_PWM.c ****     /*******************************************************************************
+ 802:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Function Name: Buzzer_PWM_ReadCompare
+ 803:Generated_Source\PSoC5/Buzzer_PWM.c ****     ********************************************************************************
+ 804:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 805:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Summary:
+ 806:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  Reads the compare value for the compare output when the PWM Mode parameter is
+ 807:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  set to Dither mode, Center Aligned mode, or One Output mode.
+ 808:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 809:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Parameters:
+ 810:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  None
+ 811:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 812:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Return:
+ 813:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  uint8/uint16: Current compare value
+ 814:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 815:Generated_Source\PSoC5/Buzzer_PWM.c ****     *******************************************************************************/
+ 816:Generated_Source\PSoC5/Buzzer_PWM.c ****     uint8 Buzzer_PWM_ReadCompare(void) 
+ 817:Generated_Source\PSoC5/Buzzer_PWM.c ****     {
+ 348              		.loc 1 817 0
+ 349              		.cfi_startproc
+ 350              		@ args = 0, pretend = 0, frame = 0
+ 351              		@ frame_needed = 0, uses_anonymous_args = 0
+ 352              		@ link register save eliminated.
+ 818:Generated_Source\PSoC5/Buzzer_PWM.c ****         #if(Buzzer_PWM_UsingFixedFunction)
+ 819:Generated_Source\PSoC5/Buzzer_PWM.c ****             return ((uint8)CY_GET_REG16(Buzzer_PWM_COMPARE1_LSB_PTR));
+ 820:Generated_Source\PSoC5/Buzzer_PWM.c ****         #else
+ 821:Generated_Source\PSoC5/Buzzer_PWM.c ****             return (CY_GET_REG8(Buzzer_PWM_COMPARE1_LSB_PTR));
+ 353              		.loc 1 821 0
+ 354 0000 014B     		ldr	r3, .L38
+ 355 0002 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 822:Generated_Source\PSoC5/Buzzer_PWM.c ****         #endif /* (Buzzer_PWM_UsingFixedFunction) */
+ 823:Generated_Source\PSoC5/Buzzer_PWM.c ****     }
+ 356              		.loc 1 823 0
+ 357 0004 7047     		bx	lr
+ 358              	.L39:
+ 359 0006 00BF     		.align	2
+ 360              	.L38:
+ 361 0008 26650040 		.word	1073767718
+ 362              		.cfi_endproc
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 22
+
+
+ 363              	.LFE11:
+ 364              		.size	Buzzer_PWM_ReadCompare, .-Buzzer_PWM_ReadCompare
+ 365              		.section	.text.Buzzer_PWM_ReadPeriod,"ax",%progbits
+ 366              		.align	2
+ 367              		.global	Buzzer_PWM_ReadPeriod
+ 368              		.thumb
+ 369              		.thumb_func
+ 370              		.type	Buzzer_PWM_ReadPeriod, %function
+ 371              	Buzzer_PWM_ReadPeriod:
+ 372              	.LFB12:
+ 824:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 825:Generated_Source\PSoC5/Buzzer_PWM.c **** #else
+ 826:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 827:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 828:Generated_Source\PSoC5/Buzzer_PWM.c ****     /*******************************************************************************
+ 829:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Function Name: Buzzer_PWM_ReadCompare1
+ 830:Generated_Source\PSoC5/Buzzer_PWM.c ****     ********************************************************************************
+ 831:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 832:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Summary:
+ 833:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  Reads the compare value for the compare1 output.
+ 834:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 835:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Parameters:
+ 836:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  None
+ 837:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 838:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Return:
+ 839:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  uint8/uint16: Current compare value.
+ 840:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 841:Generated_Source\PSoC5/Buzzer_PWM.c ****     *******************************************************************************/
+ 842:Generated_Source\PSoC5/Buzzer_PWM.c ****     uint8 Buzzer_PWM_ReadCompare1(void) 
+ 843:Generated_Source\PSoC5/Buzzer_PWM.c ****     {
+ 844:Generated_Source\PSoC5/Buzzer_PWM.c ****         return (CY_GET_REG8(Buzzer_PWM_COMPARE1_LSB_PTR));
+ 845:Generated_Source\PSoC5/Buzzer_PWM.c ****     }
+ 846:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 847:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 848:Generated_Source\PSoC5/Buzzer_PWM.c ****     /*******************************************************************************
+ 849:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Function Name: Buzzer_PWM_ReadCompare2
+ 850:Generated_Source\PSoC5/Buzzer_PWM.c ****     ********************************************************************************
+ 851:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 852:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Summary:
+ 853:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  Reads the compare value for the compare2 output.
+ 854:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 855:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Parameters:
+ 856:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  None
+ 857:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 858:Generated_Source\PSoC5/Buzzer_PWM.c ****     * Return:
+ 859:Generated_Source\PSoC5/Buzzer_PWM.c ****     *  uint8/uint16: Current compare value.
+ 860:Generated_Source\PSoC5/Buzzer_PWM.c ****     *
+ 861:Generated_Source\PSoC5/Buzzer_PWM.c ****     *******************************************************************************/
+ 862:Generated_Source\PSoC5/Buzzer_PWM.c ****     uint8 Buzzer_PWM_ReadCompare2(void) 
+ 863:Generated_Source\PSoC5/Buzzer_PWM.c ****     {
+ 864:Generated_Source\PSoC5/Buzzer_PWM.c ****         return (CY_GET_REG8(Buzzer_PWM_COMPARE2_LSB_PTR));
+ 865:Generated_Source\PSoC5/Buzzer_PWM.c ****     }
+ 866:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 867:Generated_Source\PSoC5/Buzzer_PWM.c **** #endif /* (Buzzer_PWM_UseOneCompareMode) */
+ 868:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 869:Generated_Source\PSoC5/Buzzer_PWM.c **** 
+ 870:Generated_Source\PSoC5/Buzzer_PWM.c **** /*******************************************************************************
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 23
+
+
+ 871:Generated_Source\PSoC5/Buzzer_PWM.c **** * Function Name: Buzzer_PWM_ReadPeriod
+ 872:Generated_Source\PSoC5/Buzzer_PWM.c **** ********************************************************************************
+ 873:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+ 874:Generated_Source\PSoC5/Buzzer_PWM.c **** * Summary:
+ 875:Generated_Source\PSoC5/Buzzer_PWM.c **** *  Reads the period value used by the PWM hardware.
+ 876:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+ 877:Generated_Source\PSoC5/Buzzer_PWM.c **** * Parameters:
+ 878:Generated_Source\PSoC5/Buzzer_PWM.c **** *  None
+ 879:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+ 880:Generated_Source\PSoC5/Buzzer_PWM.c **** * Return:
+ 881:Generated_Source\PSoC5/Buzzer_PWM.c **** *  uint8/16: Period value
+ 882:Generated_Source\PSoC5/Buzzer_PWM.c **** *
+ 883:Generated_Source\PSoC5/Buzzer_PWM.c **** *******************************************************************************/
+ 884:Generated_Source\PSoC5/Buzzer_PWM.c **** uint8 Buzzer_PWM_ReadPeriod(void) 
+ 885:Generated_Source\PSoC5/Buzzer_PWM.c **** {
+ 373              		.loc 1 885 0
+ 374              		.cfi_startproc
+ 375              		@ args = 0, pretend = 0, frame = 0
+ 376              		@ frame_needed = 0, uses_anonymous_args = 0
+ 377              		@ link register save eliminated.
+ 886:Generated_Source\PSoC5/Buzzer_PWM.c ****     #if(Buzzer_PWM_UsingFixedFunction)
+ 887:Generated_Source\PSoC5/Buzzer_PWM.c ****         return ((uint8)CY_GET_REG16(Buzzer_PWM_PERIOD_LSB_PTR));
+ 888:Generated_Source\PSoC5/Buzzer_PWM.c ****     #else
+ 889:Generated_Source\PSoC5/Buzzer_PWM.c ****         return (CY_GET_REG8(Buzzer_PWM_PERIOD_LSB_PTR));
+ 378              		.loc 1 889 0
+ 379 0000 014B     		ldr	r3, .L41
+ 380 0002 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 890:Generated_Source\PSoC5/Buzzer_PWM.c ****     #endif /* (Buzzer_PWM_UsingFixedFunction) */
+ 891:Generated_Source\PSoC5/Buzzer_PWM.c **** }
+ 381              		.loc 1 891 0
+ 382 0004 7047     		bx	lr
+ 383              	.L42:
+ 384 0006 00BF     		.align	2
+ 385              	.L41:
+ 386 0008 46650040 		.word	1073767750
+ 387              		.cfi_endproc
+ 388              	.LFE12:
+ 389              		.size	Buzzer_PWM_ReadPeriod, .-Buzzer_PWM_ReadPeriod
+ 390              		.global	Buzzer_PWM_initVar
+ 391              		.bss
+ 392              		.set	.LANCHOR0,. + 0
+ 393              		.type	Buzzer_PWM_initVar, %object
+ 394              		.size	Buzzer_PWM_initVar, 1
+ 395              	Buzzer_PWM_initVar:
+ 396 0000 00       		.space	1
+ 397              		.text
+ 398              	.Letext0:
+ 399              		.file 2 "Generated_Source\\PSoC5\\cytypes.h"
+ 400              		.section	.debug_info,"",%progbits
+ 401              	.Ldebug_info0:
+ 402 0000 6E020000 		.4byte	0x26e
+ 403 0004 0400     		.2byte	0x4
+ 404 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 405 000a 04       		.byte	0x4
+ 406 000b 01       		.uleb128 0x1
+ 407 000c 72010000 		.4byte	.LASF33
+ 408 0010 01       		.byte	0x1
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 24
+
+
+ 409 0011 05010000 		.4byte	.LASF34
+ 410 0015 18000000 		.4byte	.LASF35
+ 411 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 412 001d 00000000 		.4byte	0
+ 413 0021 00000000 		.4byte	.Ldebug_line0
+ 414 0025 02       		.uleb128 0x2
+ 415 0026 01       		.byte	0x1
+ 416 0027 06       		.byte	0x6
+ 417 0028 E5020000 		.4byte	.LASF0
+ 418 002c 02       		.uleb128 0x2
+ 419 002d 01       		.byte	0x1
+ 420 002e 08       		.byte	0x8
+ 421 002f B8000000 		.4byte	.LASF1
+ 422 0033 02       		.uleb128 0x2
+ 423 0034 02       		.byte	0x2
+ 424 0035 05       		.byte	0x5
+ 425 0036 7C020000 		.4byte	.LASF2
+ 426 003a 02       		.uleb128 0x2
+ 427 003b 02       		.byte	0x2
+ 428 003c 07       		.byte	0x7
+ 429 003d 71000000 		.4byte	.LASF3
+ 430 0041 02       		.uleb128 0x2
+ 431 0042 04       		.byte	0x4
+ 432 0043 05       		.byte	0x5
+ 433 0044 A5020000 		.4byte	.LASF4
+ 434 0048 02       		.uleb128 0x2
+ 435 0049 04       		.byte	0x4
+ 436 004a 07       		.byte	0x7
+ 437 004b DB000000 		.4byte	.LASF5
+ 438 004f 02       		.uleb128 0x2
+ 439 0050 08       		.byte	0x8
+ 440 0051 05       		.byte	0x5
+ 441 0052 69020000 		.4byte	.LASF6
+ 442 0056 02       		.uleb128 0x2
+ 443 0057 08       		.byte	0x8
+ 444 0058 07       		.byte	0x7
+ 445 0059 0D020000 		.4byte	.LASF7
+ 446 005d 03       		.uleb128 0x3
+ 447 005e 04       		.byte	0x4
+ 448 005f 05       		.byte	0x5
+ 449 0060 696E7400 		.ascii	"int\000"
+ 450 0064 02       		.uleb128 0x2
+ 451 0065 04       		.byte	0x4
+ 452 0066 07       		.byte	0x7
+ 453 0067 00020000 		.4byte	.LASF8
+ 454 006b 04       		.uleb128 0x4
+ 455 006c FF000000 		.4byte	.LASF12
+ 456 0070 02       		.byte	0x2
+ 457 0071 9201     		.2byte	0x192
+ 458 0073 2C000000 		.4byte	0x2c
+ 459 0077 02       		.uleb128 0x2
+ 460 0078 04       		.byte	0x4
+ 461 0079 04       		.byte	0x4
+ 462 007a AA000000 		.4byte	.LASF9
+ 463 007e 02       		.uleb128 0x2
+ 464 007f 08       		.byte	0x8
+ 465 0080 04       		.byte	0x4
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 25
+
+
+ 466 0081 41010000 		.4byte	.LASF10
+ 467 0085 02       		.uleb128 0x2
+ 468 0086 01       		.byte	0x1
+ 469 0087 08       		.byte	0x8
+ 470 0088 77020000 		.4byte	.LASF11
+ 471 008c 04       		.uleb128 0x4
+ 472 008d C6000000 		.4byte	.LASF13
+ 473 0091 02       		.byte	0x2
+ 474 0092 3C02     		.2byte	0x23c
+ 475 0094 98000000 		.4byte	0x98
+ 476 0098 05       		.uleb128 0x5
+ 477 0099 6B000000 		.4byte	0x6b
+ 478 009d 02       		.uleb128 0x2
+ 479 009e 04       		.byte	0x4
+ 480 009f 07       		.byte	0x7
+ 481 00a0 60020000 		.4byte	.LASF14
+ 482 00a4 06       		.uleb128 0x6
+ 483 00a5 ED000000 		.4byte	.LASF15
+ 484 00a9 01       		.byte	0x1
+ 485 00aa C7       		.byte	0xc7
+ 486 00ab 00000000 		.4byte	.LFB2
+ 487 00af 10000000 		.4byte	.LFE2-.LFB2
+ 488 00b3 01       		.uleb128 0x1
+ 489 00b4 9C       		.byte	0x9c
+ 490 00b5 06       		.uleb128 0x6
+ 491 00b6 CB000000 		.4byte	.LASF16
+ 492 00ba 01       		.byte	0x1
+ 493 00bb E9       		.byte	0xe9
+ 494 00bc 00000000 		.4byte	.LFB3
+ 495 00c0 10000000 		.4byte	.LFE3-.LFB3
+ 496 00c4 01       		.uleb128 0x1
+ 497 00c5 9C       		.byte	0x9c
+ 498 00c6 07       		.uleb128 0x7
+ 499 00c7 29010000 		.4byte	.LASF17
+ 500 00cb 01       		.byte	0x1
+ 501 00cc 9301     		.2byte	0x193
+ 502 00ce 00000000 		.4byte	.LFB4
+ 503 00d2 0C000000 		.4byte	.LFE4-.LFB4
+ 504 00d6 01       		.uleb128 0x1
+ 505 00d7 9C       		.byte	0x9c
+ 506 00d8 EB000000 		.4byte	0xeb
+ 507 00dc 08       		.uleb128 0x8
+ 508 00dd B0000000 		.4byte	.LASF19
+ 509 00e1 01       		.byte	0x1
+ 510 00e2 9301     		.2byte	0x193
+ 511 00e4 6B000000 		.4byte	0x6b
+ 512 00e8 01       		.uleb128 0x1
+ 513 00e9 50       		.byte	0x50
+ 514 00ea 00       		.byte	0
+ 515 00eb 09       		.uleb128 0x9
+ 516 00ec 86020000 		.4byte	.LASF29
+ 517 00f0 01       		.byte	0x1
+ 518 00f1 A901     		.2byte	0x1a9
+ 519 00f3 6B000000 		.4byte	0x6b
+ 520 00f7 00000000 		.4byte	.LFB5
+ 521 00fb 14000000 		.4byte	.LFE5-.LFB5
+ 522 00ff 01       		.uleb128 0x1
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 26
+
+
+ 523 0100 9C       		.byte	0x9c
+ 524 0101 07       		.uleb128 0x7
+ 525 0102 5A000000 		.4byte	.LASF18
+ 526 0106 01       		.byte	0x1
+ 527 0107 E201     		.2byte	0x1e2
+ 528 0109 00000000 		.4byte	.LFB6
+ 529 010d 0C000000 		.4byte	.LFE6-.LFB6
+ 530 0111 01       		.uleb128 0x1
+ 531 0112 9C       		.byte	0x9c
+ 532 0113 26010000 		.4byte	0x126
+ 533 0117 08       		.uleb128 0x8
+ 534 0118 53000000 		.4byte	.LASF20
+ 535 011c 01       		.byte	0x1
+ 536 011d E201     		.2byte	0x1e2
+ 537 011f 6B000000 		.4byte	0x6b
+ 538 0123 01       		.uleb128 0x1
+ 539 0124 50       		.byte	0x50
+ 540 0125 00       		.byte	0
+ 541 0126 07       		.uleb128 0x7
+ 542 0127 00000000 		.4byte	.LASF21
+ 543 012b 01       		.byte	0x1
+ 544 012c 0402     		.2byte	0x204
+ 545 012e 00000000 		.4byte	.LFB7
+ 546 0132 0C000000 		.4byte	.LFE7-.LFB7
+ 547 0136 01       		.uleb128 0x1
+ 548 0137 9C       		.byte	0x9c
+ 549 0138 4B010000 		.4byte	0x14b
+ 550 013c 08       		.uleb128 0x8
+ 551 013d F1020000 		.4byte	.LASF22
+ 552 0141 01       		.byte	0x1
+ 553 0142 0402     		.2byte	0x204
+ 554 0144 6B000000 		.4byte	0x6b
+ 555 0148 01       		.uleb128 0x1
+ 556 0149 50       		.byte	0x50
+ 557 014a 00       		.byte	0
+ 558 014b 0A       		.uleb128 0xa
+ 559 014c 9A000000 		.4byte	.LASF23
+ 560 0150 01       		.byte	0x1
+ 561 0151 54       		.byte	0x54
+ 562 0152 00000000 		.4byte	.LFB1
+ 563 0156 34000000 		.4byte	.LFE1-.LFB1
+ 564 015a 01       		.uleb128 0x1
+ 565 015b 9C       		.byte	0x9c
+ 566 015c A8010000 		.4byte	0x1a8
+ 567 0160 0B       		.uleb128 0xb
+ 568 0161 3C020000 		.4byte	.LASF25
+ 569 0165 01       		.byte	0x1
+ 570 0166 57       		.byte	0x57
+ 571 0167 6B000000 		.4byte	0x6b
+ 572 016b 00000000 		.4byte	.LLST0
+ 573 016f 0C       		.uleb128 0xc
+ 574 0170 20000000 		.4byte	.LVL5
+ 575 0174 C6000000 		.4byte	0xc6
+ 576 0178 83010000 		.4byte	0x183
+ 577 017c 0D       		.uleb128 0xd
+ 578 017d 01       		.uleb128 0x1
+ 579 017e 50       		.byte	0x50
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 27
+
+
+ 580 017f 02       		.uleb128 0x2
+ 581 0180 09       		.byte	0x9
+ 582 0181 FF       		.byte	0xff
+ 583 0182 00       		.byte	0
+ 584 0183 0C       		.uleb128 0xc
+ 585 0184 26000000 		.4byte	.LVL6
+ 586 0188 01010000 		.4byte	0x101
+ 587 018c 97010000 		.4byte	0x197
+ 588 0190 0D       		.uleb128 0xd
+ 589 0191 01       		.uleb128 0x1
+ 590 0192 50       		.byte	0x50
+ 591 0193 02       		.uleb128 0x2
+ 592 0194 09       		.byte	0x9
+ 593 0195 FF       		.byte	0xff
+ 594 0196 00       		.byte	0
+ 595 0197 0E       		.uleb128 0xe
+ 596 0198 2C000000 		.4byte	.LVL7
+ 597 019c 26010000 		.4byte	0x126
+ 598 01a0 0D       		.uleb128 0xd
+ 599 01a1 01       		.uleb128 0x1
+ 600 01a2 50       		.byte	0x50
+ 601 01a3 02       		.uleb128 0x2
+ 602 01a4 08       		.byte	0x8
+ 603 01a5 7F       		.byte	0x7f
+ 604 01a6 00       		.byte	0
+ 605 01a7 00       		.byte	0
+ 606 01a8 0A       		.uleb128 0xa
+ 607 01a9 2B020000 		.4byte	.LASF24
+ 608 01ad 01       		.byte	0x1
+ 609 01ae 37       		.byte	0x37
+ 610 01af 00000000 		.4byte	.LFB0
+ 611 01b3 1C000000 		.4byte	.LFE0-.LFB0
+ 612 01b7 01       		.uleb128 0x1
+ 613 01b8 9C       		.byte	0x9c
+ 614 01b9 D0010000 		.4byte	0x1d0
+ 615 01bd 0F       		.uleb128 0xf
+ 616 01be 0C000000 		.4byte	.LVL8
+ 617 01c2 4B010000 		.4byte	0x14b
+ 618 01c6 0F       		.uleb128 0xf
+ 619 01c7 16000000 		.4byte	.LVL9
+ 620 01cb A4000000 		.4byte	0xa4
+ 621 01cf 00       		.byte	0
+ 622 01d0 10       		.uleb128 0x10
+ 623 01d1 41020000 		.4byte	.LASF36
+ 624 01d5 01       		.byte	0x1
+ 625 01d6 E102     		.2byte	0x2e1
+ 626 01d8 6B000000 		.4byte	0x6b
+ 627 01dc 00000000 		.4byte	.LFB8
+ 628 01e0 0C000000 		.4byte	.LFE8-.LFB8
+ 629 01e4 01       		.uleb128 0x1
+ 630 01e5 9C       		.byte	0x9c
+ 631 01e6 F9010000 		.4byte	0x1f9
+ 632 01ea 11       		.uleb128 0x11
+ 633 01eb 24020000 		.4byte	.LASF26
+ 634 01ef 01       		.byte	0x1
+ 635 01f0 E302     		.2byte	0x2e3
+ 636 01f2 6B000000 		.4byte	0x6b
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 28
+
+
+ 637 01f6 01       		.uleb128 0x1
+ 638 01f7 50       		.byte	0x50
+ 639 01f8 00       		.byte	0
+ 640 01f9 07       		.uleb128 0x7
+ 641 01fa C5020000 		.4byte	.LASF27
+ 642 01fe 01       		.byte	0x1
+ 643 01ff FD02     		.2byte	0x2fd
+ 644 0201 00000000 		.4byte	.LFB9
+ 645 0205 0C000000 		.4byte	.LFE9-.LFB9
+ 646 0209 01       		.uleb128 0x1
+ 647 020a 9C       		.byte	0x9c
+ 648 020b 1E020000 		.4byte	0x21e
+ 649 020f 08       		.uleb128 0x8
+ 650 0210 9D020000 		.4byte	.LASF28
+ 651 0214 01       		.byte	0x1
+ 652 0215 FD02     		.2byte	0x2fd
+ 653 0217 6B000000 		.4byte	0x6b
+ 654 021b 01       		.uleb128 0x1
+ 655 021c 50       		.byte	0x50
+ 656 021d 00       		.byte	0
+ 657 021e 09       		.uleb128 0x9
+ 658 021f AE020000 		.4byte	.LASF30
+ 659 0223 01       		.byte	0x1
+ 660 0224 1603     		.2byte	0x316
+ 661 0226 6B000000 		.4byte	0x6b
+ 662 022a 00000000 		.4byte	.LFB10
+ 663 022e 0C000000 		.4byte	.LFE10-.LFB10
+ 664 0232 01       		.uleb128 0x1
+ 665 0233 9C       		.byte	0x9c
+ 666 0234 09       		.uleb128 0x9
+ 667 0235 48010000 		.4byte	.LASF31
+ 668 0239 01       		.byte	0x1
+ 669 023a 3003     		.2byte	0x330
+ 670 023c 6B000000 		.4byte	0x6b
+ 671 0240 00000000 		.4byte	.LFB11
+ 672 0244 0C000000 		.4byte	.LFE11-.LFB11
+ 673 0248 01       		.uleb128 0x1
+ 674 0249 9C       		.byte	0x9c
+ 675 024a 09       		.uleb128 0x9
+ 676 024b 84000000 		.4byte	.LASF32
+ 677 024f 01       		.byte	0x1
+ 678 0250 7403     		.2byte	0x374
+ 679 0252 6B000000 		.4byte	0x6b
+ 680 0256 00000000 		.4byte	.LFB12
+ 681 025a 0C000000 		.4byte	.LFE12-.LFB12
+ 682 025e 01       		.uleb128 0x1
+ 683 025f 9C       		.byte	0x9c
+ 684 0260 12       		.uleb128 0x12
+ 685 0261 5F010000 		.4byte	.LASF37
+ 686 0265 01       		.byte	0x1
+ 687 0266 20       		.byte	0x20
+ 688 0267 6B000000 		.4byte	0x6b
+ 689 026b 05       		.uleb128 0x5
+ 690 026c 03       		.byte	0x3
+ 691 026d 00000000 		.4byte	Buzzer_PWM_initVar
+ 692 0271 00       		.byte	0
+ 693              		.section	.debug_abbrev,"",%progbits
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 29
+
+
+ 694              	.Ldebug_abbrev0:
+ 695 0000 01       		.uleb128 0x1
+ 696 0001 11       		.uleb128 0x11
+ 697 0002 01       		.byte	0x1
+ 698 0003 25       		.uleb128 0x25
+ 699 0004 0E       		.uleb128 0xe
+ 700 0005 13       		.uleb128 0x13
+ 701 0006 0B       		.uleb128 0xb
+ 702 0007 03       		.uleb128 0x3
+ 703 0008 0E       		.uleb128 0xe
+ 704 0009 1B       		.uleb128 0x1b
+ 705 000a 0E       		.uleb128 0xe
+ 706 000b 55       		.uleb128 0x55
+ 707 000c 17       		.uleb128 0x17
+ 708 000d 11       		.uleb128 0x11
+ 709 000e 01       		.uleb128 0x1
+ 710 000f 10       		.uleb128 0x10
+ 711 0010 17       		.uleb128 0x17
+ 712 0011 00       		.byte	0
+ 713 0012 00       		.byte	0
+ 714 0013 02       		.uleb128 0x2
+ 715 0014 24       		.uleb128 0x24
+ 716 0015 00       		.byte	0
+ 717 0016 0B       		.uleb128 0xb
+ 718 0017 0B       		.uleb128 0xb
+ 719 0018 3E       		.uleb128 0x3e
+ 720 0019 0B       		.uleb128 0xb
+ 721 001a 03       		.uleb128 0x3
+ 722 001b 0E       		.uleb128 0xe
+ 723 001c 00       		.byte	0
+ 724 001d 00       		.byte	0
+ 725 001e 03       		.uleb128 0x3
+ 726 001f 24       		.uleb128 0x24
+ 727 0020 00       		.byte	0
+ 728 0021 0B       		.uleb128 0xb
+ 729 0022 0B       		.uleb128 0xb
+ 730 0023 3E       		.uleb128 0x3e
+ 731 0024 0B       		.uleb128 0xb
+ 732 0025 03       		.uleb128 0x3
+ 733 0026 08       		.uleb128 0x8
+ 734 0027 00       		.byte	0
+ 735 0028 00       		.byte	0
+ 736 0029 04       		.uleb128 0x4
+ 737 002a 16       		.uleb128 0x16
+ 738 002b 00       		.byte	0
+ 739 002c 03       		.uleb128 0x3
+ 740 002d 0E       		.uleb128 0xe
+ 741 002e 3A       		.uleb128 0x3a
+ 742 002f 0B       		.uleb128 0xb
+ 743 0030 3B       		.uleb128 0x3b
+ 744 0031 05       		.uleb128 0x5
+ 745 0032 49       		.uleb128 0x49
+ 746 0033 13       		.uleb128 0x13
+ 747 0034 00       		.byte	0
+ 748 0035 00       		.byte	0
+ 749 0036 05       		.uleb128 0x5
+ 750 0037 35       		.uleb128 0x35
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 30
+
+
+ 751 0038 00       		.byte	0
+ 752 0039 49       		.uleb128 0x49
+ 753 003a 13       		.uleb128 0x13
+ 754 003b 00       		.byte	0
+ 755 003c 00       		.byte	0
+ 756 003d 06       		.uleb128 0x6
+ 757 003e 2E       		.uleb128 0x2e
+ 758 003f 00       		.byte	0
+ 759 0040 3F       		.uleb128 0x3f
+ 760 0041 19       		.uleb128 0x19
+ 761 0042 03       		.uleb128 0x3
+ 762 0043 0E       		.uleb128 0xe
+ 763 0044 3A       		.uleb128 0x3a
+ 764 0045 0B       		.uleb128 0xb
+ 765 0046 3B       		.uleb128 0x3b
+ 766 0047 0B       		.uleb128 0xb
+ 767 0048 27       		.uleb128 0x27
+ 768 0049 19       		.uleb128 0x19
+ 769 004a 11       		.uleb128 0x11
+ 770 004b 01       		.uleb128 0x1
+ 771 004c 12       		.uleb128 0x12
+ 772 004d 06       		.uleb128 0x6
+ 773 004e 40       		.uleb128 0x40
+ 774 004f 18       		.uleb128 0x18
+ 775 0050 9742     		.uleb128 0x2117
+ 776 0052 19       		.uleb128 0x19
+ 777 0053 00       		.byte	0
+ 778 0054 00       		.byte	0
+ 779 0055 07       		.uleb128 0x7
+ 780 0056 2E       		.uleb128 0x2e
+ 781 0057 01       		.byte	0x1
+ 782 0058 3F       		.uleb128 0x3f
+ 783 0059 19       		.uleb128 0x19
+ 784 005a 03       		.uleb128 0x3
+ 785 005b 0E       		.uleb128 0xe
+ 786 005c 3A       		.uleb128 0x3a
+ 787 005d 0B       		.uleb128 0xb
+ 788 005e 3B       		.uleb128 0x3b
+ 789 005f 05       		.uleb128 0x5
+ 790 0060 27       		.uleb128 0x27
+ 791 0061 19       		.uleb128 0x19
+ 792 0062 11       		.uleb128 0x11
+ 793 0063 01       		.uleb128 0x1
+ 794 0064 12       		.uleb128 0x12
+ 795 0065 06       		.uleb128 0x6
+ 796 0066 40       		.uleb128 0x40
+ 797 0067 18       		.uleb128 0x18
+ 798 0068 9742     		.uleb128 0x2117
+ 799 006a 19       		.uleb128 0x19
+ 800 006b 01       		.uleb128 0x1
+ 801 006c 13       		.uleb128 0x13
+ 802 006d 00       		.byte	0
+ 803 006e 00       		.byte	0
+ 804 006f 08       		.uleb128 0x8
+ 805 0070 05       		.uleb128 0x5
+ 806 0071 00       		.byte	0
+ 807 0072 03       		.uleb128 0x3
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 31
+
+
+ 808 0073 0E       		.uleb128 0xe
+ 809 0074 3A       		.uleb128 0x3a
+ 810 0075 0B       		.uleb128 0xb
+ 811 0076 3B       		.uleb128 0x3b
+ 812 0077 05       		.uleb128 0x5
+ 813 0078 49       		.uleb128 0x49
+ 814 0079 13       		.uleb128 0x13
+ 815 007a 02       		.uleb128 0x2
+ 816 007b 18       		.uleb128 0x18
+ 817 007c 00       		.byte	0
+ 818 007d 00       		.byte	0
+ 819 007e 09       		.uleb128 0x9
+ 820 007f 2E       		.uleb128 0x2e
+ 821 0080 00       		.byte	0
+ 822 0081 3F       		.uleb128 0x3f
+ 823 0082 19       		.uleb128 0x19
+ 824 0083 03       		.uleb128 0x3
+ 825 0084 0E       		.uleb128 0xe
+ 826 0085 3A       		.uleb128 0x3a
+ 827 0086 0B       		.uleb128 0xb
+ 828 0087 3B       		.uleb128 0x3b
+ 829 0088 05       		.uleb128 0x5
+ 830 0089 27       		.uleb128 0x27
+ 831 008a 19       		.uleb128 0x19
+ 832 008b 49       		.uleb128 0x49
+ 833 008c 13       		.uleb128 0x13
+ 834 008d 11       		.uleb128 0x11
+ 835 008e 01       		.uleb128 0x1
+ 836 008f 12       		.uleb128 0x12
+ 837 0090 06       		.uleb128 0x6
+ 838 0091 40       		.uleb128 0x40
+ 839 0092 18       		.uleb128 0x18
+ 840 0093 9742     		.uleb128 0x2117
+ 841 0095 19       		.uleb128 0x19
+ 842 0096 00       		.byte	0
+ 843 0097 00       		.byte	0
+ 844 0098 0A       		.uleb128 0xa
+ 845 0099 2E       		.uleb128 0x2e
+ 846 009a 01       		.byte	0x1
+ 847 009b 3F       		.uleb128 0x3f
+ 848 009c 19       		.uleb128 0x19
+ 849 009d 03       		.uleb128 0x3
+ 850 009e 0E       		.uleb128 0xe
+ 851 009f 3A       		.uleb128 0x3a
+ 852 00a0 0B       		.uleb128 0xb
+ 853 00a1 3B       		.uleb128 0x3b
+ 854 00a2 0B       		.uleb128 0xb
+ 855 00a3 27       		.uleb128 0x27
+ 856 00a4 19       		.uleb128 0x19
+ 857 00a5 11       		.uleb128 0x11
+ 858 00a6 01       		.uleb128 0x1
+ 859 00a7 12       		.uleb128 0x12
+ 860 00a8 06       		.uleb128 0x6
+ 861 00a9 40       		.uleb128 0x40
+ 862 00aa 18       		.uleb128 0x18
+ 863 00ab 9742     		.uleb128 0x2117
+ 864 00ad 19       		.uleb128 0x19
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 32
+
+
+ 865 00ae 01       		.uleb128 0x1
+ 866 00af 13       		.uleb128 0x13
+ 867 00b0 00       		.byte	0
+ 868 00b1 00       		.byte	0
+ 869 00b2 0B       		.uleb128 0xb
+ 870 00b3 34       		.uleb128 0x34
+ 871 00b4 00       		.byte	0
+ 872 00b5 03       		.uleb128 0x3
+ 873 00b6 0E       		.uleb128 0xe
+ 874 00b7 3A       		.uleb128 0x3a
+ 875 00b8 0B       		.uleb128 0xb
+ 876 00b9 3B       		.uleb128 0x3b
+ 877 00ba 0B       		.uleb128 0xb
+ 878 00bb 49       		.uleb128 0x49
+ 879 00bc 13       		.uleb128 0x13
+ 880 00bd 02       		.uleb128 0x2
+ 881 00be 17       		.uleb128 0x17
+ 882 00bf 00       		.byte	0
+ 883 00c0 00       		.byte	0
+ 884 00c1 0C       		.uleb128 0xc
+ 885 00c2 898201   		.uleb128 0x4109
+ 886 00c5 01       		.byte	0x1
+ 887 00c6 11       		.uleb128 0x11
+ 888 00c7 01       		.uleb128 0x1
+ 889 00c8 31       		.uleb128 0x31
+ 890 00c9 13       		.uleb128 0x13
+ 891 00ca 01       		.uleb128 0x1
+ 892 00cb 13       		.uleb128 0x13
+ 893 00cc 00       		.byte	0
+ 894 00cd 00       		.byte	0
+ 895 00ce 0D       		.uleb128 0xd
+ 896 00cf 8A8201   		.uleb128 0x410a
+ 897 00d2 00       		.byte	0
+ 898 00d3 02       		.uleb128 0x2
+ 899 00d4 18       		.uleb128 0x18
+ 900 00d5 9142     		.uleb128 0x2111
+ 901 00d7 18       		.uleb128 0x18
+ 902 00d8 00       		.byte	0
+ 903 00d9 00       		.byte	0
+ 904 00da 0E       		.uleb128 0xe
+ 905 00db 898201   		.uleb128 0x4109
+ 906 00de 01       		.byte	0x1
+ 907 00df 11       		.uleb128 0x11
+ 908 00e0 01       		.uleb128 0x1
+ 909 00e1 31       		.uleb128 0x31
+ 910 00e2 13       		.uleb128 0x13
+ 911 00e3 00       		.byte	0
+ 912 00e4 00       		.byte	0
+ 913 00e5 0F       		.uleb128 0xf
+ 914 00e6 898201   		.uleb128 0x4109
+ 915 00e9 00       		.byte	0
+ 916 00ea 11       		.uleb128 0x11
+ 917 00eb 01       		.uleb128 0x1
+ 918 00ec 31       		.uleb128 0x31
+ 919 00ed 13       		.uleb128 0x13
+ 920 00ee 00       		.byte	0
+ 921 00ef 00       		.byte	0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 33
+
+
+ 922 00f0 10       		.uleb128 0x10
+ 923 00f1 2E       		.uleb128 0x2e
+ 924 00f2 01       		.byte	0x1
+ 925 00f3 3F       		.uleb128 0x3f
+ 926 00f4 19       		.uleb128 0x19
+ 927 00f5 03       		.uleb128 0x3
+ 928 00f6 0E       		.uleb128 0xe
+ 929 00f7 3A       		.uleb128 0x3a
+ 930 00f8 0B       		.uleb128 0xb
+ 931 00f9 3B       		.uleb128 0x3b
+ 932 00fa 05       		.uleb128 0x5
+ 933 00fb 27       		.uleb128 0x27
+ 934 00fc 19       		.uleb128 0x19
+ 935 00fd 49       		.uleb128 0x49
+ 936 00fe 13       		.uleb128 0x13
+ 937 00ff 11       		.uleb128 0x11
+ 938 0100 01       		.uleb128 0x1
+ 939 0101 12       		.uleb128 0x12
+ 940 0102 06       		.uleb128 0x6
+ 941 0103 40       		.uleb128 0x40
+ 942 0104 18       		.uleb128 0x18
+ 943 0105 9742     		.uleb128 0x2117
+ 944 0107 19       		.uleb128 0x19
+ 945 0108 01       		.uleb128 0x1
+ 946 0109 13       		.uleb128 0x13
+ 947 010a 00       		.byte	0
+ 948 010b 00       		.byte	0
+ 949 010c 11       		.uleb128 0x11
+ 950 010d 34       		.uleb128 0x34
+ 951 010e 00       		.byte	0
+ 952 010f 03       		.uleb128 0x3
+ 953 0110 0E       		.uleb128 0xe
+ 954 0111 3A       		.uleb128 0x3a
+ 955 0112 0B       		.uleb128 0xb
+ 956 0113 3B       		.uleb128 0x3b
+ 957 0114 05       		.uleb128 0x5
+ 958 0115 49       		.uleb128 0x49
+ 959 0116 13       		.uleb128 0x13
+ 960 0117 02       		.uleb128 0x2
+ 961 0118 18       		.uleb128 0x18
+ 962 0119 00       		.byte	0
+ 963 011a 00       		.byte	0
+ 964 011b 12       		.uleb128 0x12
+ 965 011c 34       		.uleb128 0x34
+ 966 011d 00       		.byte	0
+ 967 011e 03       		.uleb128 0x3
+ 968 011f 0E       		.uleb128 0xe
+ 969 0120 3A       		.uleb128 0x3a
+ 970 0121 0B       		.uleb128 0xb
+ 971 0122 3B       		.uleb128 0x3b
+ 972 0123 0B       		.uleb128 0xb
+ 973 0124 49       		.uleb128 0x49
+ 974 0125 13       		.uleb128 0x13
+ 975 0126 3F       		.uleb128 0x3f
+ 976 0127 19       		.uleb128 0x19
+ 977 0128 02       		.uleb128 0x2
+ 978 0129 18       		.uleb128 0x18
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 34
+
+
+ 979 012a 00       		.byte	0
+ 980 012b 00       		.byte	0
+ 981 012c 00       		.byte	0
+ 982              		.section	.debug_loc,"",%progbits
+ 983              	.Ldebug_loc0:
+ 984              	.LLST0:
+ 985 0000 0A000000 		.4byte	.LVL3
+ 986 0004 0E000000 		.4byte	.LVL4
+ 987 0008 0100     		.2byte	0x1
+ 988 000a 53       		.byte	0x53
+ 989 000b 00000000 		.4byte	0
+ 990 000f 00000000 		.4byte	0
+ 991              		.section	.debug_aranges,"",%progbits
+ 992 0000 7C000000 		.4byte	0x7c
+ 993 0004 0200     		.2byte	0x2
+ 994 0006 00000000 		.4byte	.Ldebug_info0
+ 995 000a 04       		.byte	0x4
+ 996 000b 00       		.byte	0
+ 997 000c 0000     		.2byte	0
+ 998 000e 0000     		.2byte	0
+ 999 0010 00000000 		.4byte	.LFB2
+ 1000 0014 10000000 		.4byte	.LFE2-.LFB2
+ 1001 0018 00000000 		.4byte	.LFB3
+ 1002 001c 10000000 		.4byte	.LFE3-.LFB3
+ 1003 0020 00000000 		.4byte	.LFB4
+ 1004 0024 0C000000 		.4byte	.LFE4-.LFB4
+ 1005 0028 00000000 		.4byte	.LFB5
+ 1006 002c 14000000 		.4byte	.LFE5-.LFB5
+ 1007 0030 00000000 		.4byte	.LFB6
+ 1008 0034 0C000000 		.4byte	.LFE6-.LFB6
+ 1009 0038 00000000 		.4byte	.LFB7
+ 1010 003c 0C000000 		.4byte	.LFE7-.LFB7
+ 1011 0040 00000000 		.4byte	.LFB1
+ 1012 0044 34000000 		.4byte	.LFE1-.LFB1
+ 1013 0048 00000000 		.4byte	.LFB0
+ 1014 004c 1C000000 		.4byte	.LFE0-.LFB0
+ 1015 0050 00000000 		.4byte	.LFB8
+ 1016 0054 0C000000 		.4byte	.LFE8-.LFB8
+ 1017 0058 00000000 		.4byte	.LFB9
+ 1018 005c 0C000000 		.4byte	.LFE9-.LFB9
+ 1019 0060 00000000 		.4byte	.LFB10
+ 1020 0064 0C000000 		.4byte	.LFE10-.LFB10
+ 1021 0068 00000000 		.4byte	.LFB11
+ 1022 006c 0C000000 		.4byte	.LFE11-.LFB11
+ 1023 0070 00000000 		.4byte	.LFB12
+ 1024 0074 0C000000 		.4byte	.LFE12-.LFB12
+ 1025 0078 00000000 		.4byte	0
+ 1026 007c 00000000 		.4byte	0
+ 1027              		.section	.debug_ranges,"",%progbits
+ 1028              	.Ldebug_ranges0:
+ 1029 0000 00000000 		.4byte	.LFB2
+ 1030 0004 10000000 		.4byte	.LFE2
+ 1031 0008 00000000 		.4byte	.LFB3
+ 1032 000c 10000000 		.4byte	.LFE3
+ 1033 0010 00000000 		.4byte	.LFB4
+ 1034 0014 0C000000 		.4byte	.LFE4
+ 1035 0018 00000000 		.4byte	.LFB5
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 35
+
+
+ 1036 001c 14000000 		.4byte	.LFE5
+ 1037 0020 00000000 		.4byte	.LFB6
+ 1038 0024 0C000000 		.4byte	.LFE6
+ 1039 0028 00000000 		.4byte	.LFB7
+ 1040 002c 0C000000 		.4byte	.LFE7
+ 1041 0030 00000000 		.4byte	.LFB1
+ 1042 0034 34000000 		.4byte	.LFE1
+ 1043 0038 00000000 		.4byte	.LFB0
+ 1044 003c 1C000000 		.4byte	.LFE0
+ 1045 0040 00000000 		.4byte	.LFB8
+ 1046 0044 0C000000 		.4byte	.LFE8
+ 1047 0048 00000000 		.4byte	.LFB9
+ 1048 004c 0C000000 		.4byte	.LFE9
+ 1049 0050 00000000 		.4byte	.LFB10
+ 1050 0054 0C000000 		.4byte	.LFE10
+ 1051 0058 00000000 		.4byte	.LFB11
+ 1052 005c 0C000000 		.4byte	.LFE11
+ 1053 0060 00000000 		.4byte	.LFB12
+ 1054 0064 0C000000 		.4byte	.LFE12
+ 1055 0068 00000000 		.4byte	0
+ 1056 006c 00000000 		.4byte	0
+ 1057              		.section	.debug_line,"",%progbits
+ 1058              	.Ldebug_line0:
+ 1059 0000 3B010000 		.section	.debug_str,"MS",%progbits,1
+ 1059      02004700 
+ 1059      00000201 
+ 1059      FB0E0D00 
+ 1059      01010101 
+ 1060              	.LASF21:
+ 1061 0000 42757A7A 		.ascii	"Buzzer_PWM_WriteCompare\000"
+ 1061      65725F50 
+ 1061      574D5F57 
+ 1061      72697465 
+ 1061      436F6D70 
+ 1062              	.LASF35:
+ 1063 0018 433A5C55 		.ascii	"C:\\Users\\Nhan Phan\\Desktop\\CProjects\\Zumobot\\"
+ 1063      73657273 
+ 1063      5C4E6861 
+ 1063      6E205068 
+ 1063      616E5C44 
+ 1064 0045 5A756D6F 		.ascii	"ZumoBot.cydsn\000"
+ 1064      426F742E 
+ 1064      63796473 
+ 1064      6E00
+ 1065              	.LASF20:
+ 1066 0053 70657269 		.ascii	"period\000"
+ 1066      6F6400
+ 1067              	.LASF18:
+ 1068 005a 42757A7A 		.ascii	"Buzzer_PWM_WritePeriod\000"
+ 1068      65725F50 
+ 1068      574D5F57 
+ 1068      72697465 
+ 1068      50657269 
+ 1069              	.LASF3:
+ 1070 0071 73686F72 		.ascii	"short unsigned int\000"
+ 1070      7420756E 
+ 1070      7369676E 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 36
+
+
+ 1070      65642069 
+ 1070      6E7400
+ 1071              	.LASF32:
+ 1072 0084 42757A7A 		.ascii	"Buzzer_PWM_ReadPeriod\000"
+ 1072      65725F50 
+ 1072      574D5F52 
+ 1072      65616450 
+ 1072      6572696F 
+ 1073              	.LASF23:
+ 1074 009a 42757A7A 		.ascii	"Buzzer_PWM_Init\000"
+ 1074      65725F50 
+ 1074      574D5F49 
+ 1074      6E697400 
+ 1075              	.LASF9:
+ 1076 00aa 666C6F61 		.ascii	"float\000"
+ 1076      7400
+ 1077              	.LASF19:
+ 1078 00b0 636F756E 		.ascii	"counter\000"
+ 1078      74657200 
+ 1079              	.LASF1:
+ 1080 00b8 756E7369 		.ascii	"unsigned char\000"
+ 1080      676E6564 
+ 1080      20636861 
+ 1080      7200
+ 1081              	.LASF13:
+ 1082 00c6 72656738 		.ascii	"reg8\000"
+ 1082      00
+ 1083              	.LASF16:
+ 1084 00cb 42757A7A 		.ascii	"Buzzer_PWM_Stop\000"
+ 1084      65725F50 
+ 1084      574D5F53 
+ 1084      746F7000 
+ 1085              	.LASF5:
+ 1086 00db 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1086      20756E73 
+ 1086      69676E65 
+ 1086      6420696E 
+ 1086      7400
+ 1087              	.LASF15:
+ 1088 00ed 42757A7A 		.ascii	"Buzzer_PWM_Enable\000"
+ 1088      65725F50 
+ 1088      574D5F45 
+ 1088      6E61626C 
+ 1088      6500
+ 1089              	.LASF12:
+ 1090 00ff 75696E74 		.ascii	"uint8\000"
+ 1090      3800
+ 1091              	.LASF34:
+ 1092 0105 47656E65 		.ascii	"Generated_Source\\PSoC5\\Buzzer_PWM.c\000"
+ 1092      72617465 
+ 1092      645F536F 
+ 1092      75726365 
+ 1092      5C50536F 
+ 1093              	.LASF17:
+ 1094 0129 42757A7A 		.ascii	"Buzzer_PWM_WriteCounter\000"
+ 1094      65725F50 
+ 1094      574D5F57 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 37
+
+
+ 1094      72697465 
+ 1094      436F756E 
+ 1095              	.LASF10:
+ 1096 0141 646F7562 		.ascii	"double\000"
+ 1096      6C6500
+ 1097              	.LASF31:
+ 1098 0148 42757A7A 		.ascii	"Buzzer_PWM_ReadCompare\000"
+ 1098      65725F50 
+ 1098      574D5F52 
+ 1098      65616443 
+ 1098      6F6D7061 
+ 1099              	.LASF37:
+ 1100 015f 42757A7A 		.ascii	"Buzzer_PWM_initVar\000"
+ 1100      65725F50 
+ 1100      574D5F69 
+ 1100      6E697456 
+ 1100      617200
+ 1101              	.LASF33:
+ 1102 0172 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 1102      4320342E 
+ 1102      392E3320 
+ 1102      32303135 
+ 1102      30333033 
+ 1103 01a5 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 1103      20726576 
+ 1103      6973696F 
+ 1103      6E203232 
+ 1103      31323230 
+ 1104 01d8 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1104      66756E63 
+ 1104      74696F6E 
+ 1104      2D736563 
+ 1104      74696F6E 
+ 1105              	.LASF8:
+ 1106 0200 756E7369 		.ascii	"unsigned int\000"
+ 1106      676E6564 
+ 1106      20696E74 
+ 1106      00
+ 1107              	.LASF7:
+ 1108 020d 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1108      206C6F6E 
+ 1108      6720756E 
+ 1108      7369676E 
+ 1108      65642069 
+ 1109              	.LASF26:
+ 1110 0224 72657375 		.ascii	"result\000"
+ 1110      6C7400
+ 1111              	.LASF24:
+ 1112 022b 42757A7A 		.ascii	"Buzzer_PWM_Start\000"
+ 1112      65725F50 
+ 1112      574D5F53 
+ 1112      74617274 
+ 1112      00
+ 1113              	.LASF25:
+ 1114 023c 6374726C 		.ascii	"ctrl\000"
+ 1114      00
+ 1115              	.LASF36:
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchDbn02.s 			page 38
+
+
+ 1116 0241 42757A7A 		.ascii	"Buzzer_PWM_ReadControlRegister\000"
+ 1116      65725F50 
+ 1116      574D5F52 
+ 1116      65616443 
+ 1116      6F6E7472 
+ 1117              	.LASF14:
+ 1118 0260 73697A65 		.ascii	"sizetype\000"
+ 1118      74797065 
+ 1118      00
+ 1119              	.LASF6:
+ 1120 0269 6C6F6E67 		.ascii	"long long int\000"
+ 1120      206C6F6E 
+ 1120      6720696E 
+ 1120      7400
+ 1121              	.LASF11:
+ 1122 0277 63686172 		.ascii	"char\000"
+ 1122      00
+ 1123              	.LASF2:
+ 1124 027c 73686F72 		.ascii	"short int\000"
+ 1124      7420696E 
+ 1124      7400
+ 1125              	.LASF29:
+ 1126 0286 42757A7A 		.ascii	"Buzzer_PWM_ReadCounter\000"
+ 1126      65725F50 
+ 1126      574D5F52 
+ 1126      65616443 
+ 1126      6F756E74 
+ 1127              	.LASF28:
+ 1128 029d 636F6E74 		.ascii	"control\000"
+ 1128      726F6C00 
+ 1129              	.LASF4:
+ 1130 02a5 6C6F6E67 		.ascii	"long int\000"
+ 1130      20696E74 
+ 1130      00
+ 1131              	.LASF30:
+ 1132 02ae 42757A7A 		.ascii	"Buzzer_PWM_ReadCapture\000"
+ 1132      65725F50 
+ 1132      574D5F52 
+ 1132      65616443 
+ 1132      61707475 
+ 1133              	.LASF27:
+ 1134 02c5 42757A7A 		.ascii	"Buzzer_PWM_WriteControlRegister\000"
+ 1134      65725F50 
+ 1134      574D5F57 
+ 1134      72697465 
+ 1134      436F6E74 
+ 1135              	.LASF0:
+ 1136 02e5 7369676E 		.ascii	"signed char\000"
+ 1136      65642063 
+ 1136      68617200 
+ 1137              	.LASF22:
+ 1138 02f1 636F6D70 		.ascii	"compare\000"
+ 1138      61726500 
+ 1139              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

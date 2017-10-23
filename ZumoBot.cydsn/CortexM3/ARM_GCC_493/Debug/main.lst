@@ -1,0 +1,2883 @@
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"main.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.global	__aeabi_fmul
+  19              		.global	__aeabi_f2d
+  20              		.global	__aeabi_fcmple
+  21              		.global	__aeabi_dcmpge
+  22              		.section	.text.batteryAlert,"ax",%progbits
+  23              		.align	2
+  24              		.global	batteryAlert
+  25              		.thumb
+  26              		.thumb_func
+  27              		.type	batteryAlert, %function
+  28              	batteryAlert:
+  29              	.LFB64:
+  30              		.file 1 "main.c"
+   1:main.c        **** /**
+   2:main.c        **** * @mainpage ZumoBot Project
+   3:main.c        **** * @brief    You can make your own ZumoBot with various sensors.
+   4:main.c        **** * @details  <br><br>
+   5:main.c        ****     <p>
+   6:main.c        ****     <B>General</B><br>
+   7:main.c        ****     You will use Pololu Zumo Shields for your robot project with CY8CKIT-059(PSoC 5LP) from Cypress
+   8:main.c        ****     library has basic methods of various sensors and communications so that you can make what you w
+   9:main.c        ****     <br><br>
+  10:main.c        ****     </p>
+  11:main.c        ****     
+  12:main.c        ****     <p>
+  13:main.c        ****     <B>Sensors</B><br>
+  14:main.c        ****     &nbsp;Included: <br>
+  15:main.c        ****         &nbsp;&nbsp;&nbsp;&nbsp;LSM303D: Accelerometer & Magnetometer<br>
+  16:main.c        ****         &nbsp;&nbsp;&nbsp;&nbsp;L3GD20H: Gyroscope<br>
+  17:main.c        ****         &nbsp;&nbsp;&nbsp;&nbsp;Reflectance sensor<br>
+  18:main.c        ****         &nbsp;&nbsp;&nbsp;&nbsp;Motors
+  19:main.c        ****     &nbsp;Wii nunchuck<br>
+  20:main.c        ****     &nbsp;TSOP-2236: IR Receiver<br>
+  21:main.c        ****     &nbsp;HC-SR04: Ultrasonic sensor<br>
+  22:main.c        ****     &nbsp;APDS-9301: Ambient light sensor<br>
+  23:main.c        ****     &nbsp;IR LED <br><br><br>
+  24:main.c        ****     </p>
+  25:main.c        ****     
+  26:main.c        ****     <p>
+  27:main.c        ****     <B>Communication</B><br>
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 2
+
+
+  28:main.c        ****     I2C, UART, Serial<br>
+  29:main.c        ****     </p>
+  30:main.c        **** */
+  31:main.c        **** 
+  32:main.c        **** #include <project.h>
+  33:main.c        **** #include <stdio.h>
+  34:main.c        **** #include "Motor.h"
+  35:main.c        **** #include "Ultra.h"
+  36:main.c        **** #include "Nunchuk.h"
+  37:main.c        **** #include "Reflectance.h"
+  38:main.c        **** #include "I2C_made.h"
+  39:main.c        **** #include "Gyro.h"
+  40:main.c        **** #include "Accel_magnet.h"
+  41:main.c        **** #include "IR.h"
+  42:main.c        **** #include "Ambient.h"
+  43:main.c        **** #include "Beep.h"
+  44:main.c        **** #include "Pathfinding.h"
+  45:main.c        **** #include "Sumoing.h"
+  46:main.c        **** 
+  47:main.c        **** #define SENSOR_TH 11000
+  48:main.c        **** 
+  49:main.c        **** void batteryAlert(void);
+  50:main.c        **** int rread(void);
+  51:main.c        **** 
+  52:main.c        **** /**
+  53:main.c        ****  * @file    main.c
+  54:main.c        ****  * @brief   
+  55:main.c        ****  * @details  ** You should enable global interrupt for operating properly. **<br>&nbsp;&nbsp;&nbsp;
+  56:main.c        **** */
+  57:main.c        **** 
+  58:main.c        **** int main()
+  59:main.c        **** {
+  60:main.c        ****     CyGlobalIntEnable; 
+  61:main.c        ****     UART_1_Start();       
+  62:main.c        ****     
+  63:main.c        ****     
+  64:main.c        ****     //Battery declaration
+  65:main.c        ****     
+  66:main.c        ****     struct sensors_ ref;
+  67:main.c        ****     struct sensors_ dig;  
+  68:main.c        ****     uint8_t detect = 0, countdown = 100, checkStop = 0, lastBlack = 0;
+  69:main.c        ****         
+  70:main.c        ****     IR_led_Write(1);
+  71:main.c        ****     motor_start();
+  72:main.c        ****     
+  73:main.c        ****     //Ultra_Start();                          // Ultra Sonic Start function    
+  74:main.c        ****     
+  75:main.c        ****     sensor_isr_StartEx(sensor_isr_handler);   
+  76:main.c        ****     
+  77:main.c        ****     reflectance_start();
+  78:main.c        ****     
+  79:main.c        ****     // Robot start running and stop at the first black line
+  80:main.c        ****     uint8_t initialRun = 0;    
+  81:main.c        ****     motor_forward(100,0);
+  82:main.c        ****     while (initialRun != 2) {
+  83:main.c        ****         reflectance_read(&ref);
+  84:main.c        ****         printf("%d %d %d %d \r\n", ref.l3, ref.l1, ref.r1, ref.r3);
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 3
+
+
+  85:main.c        ****         // If it reached the first black line it will count to 1
+  86:main.c        ****         // if the robot is in our hand then do nothing.
+  87:main.c        ****         // (if 1111 then it is in our hand)
+  88:main.c        ****         // If it is put on the track then initiate state
+  89:main.c        ****         // if 0110
+  90:main.c        ****         if (ref.r1>SENSOR_TH&&ref.l1>SENSOR_TH&&ref.r3<SENSOR_TH&&ref.l3<SENSOR_TH) {
+  91:main.c        ****             initialRun = 1;
+  92:main.c        ****         }
+  93:main.c        ****         
+  94:main.c        ****         // if the robot not in our hand (inititalRun = 1)
+  95:main.c        ****         // Then it still move forward, so if it go out of the black line it will stop
+  96:main.c        ****         if (initialRun ==1 && ref.r3>=SENSOR_TH&&ref.l3>=SENSOR_TH) {
+  97:main.c        ****             initialRun = 2;
+  98:main.c        ****         }
+  99:main.c        ****     }
+ 100:main.c        ****     
+ 101:main.c        ****     // move forward a little bit
+ 102:main.c        ****     motor_forward(100,50);
+ 103:main.c        ****     motor_stop();
+ 104:main.c        ****     
+ 105:main.c        ****     int button = 1;
+ 106:main.c        ****     
+ 107:main.c        ****     while (button == 1) {
+ 108:main.c        ****     button = get_IR();
+ 109:main.c        ****     }
+ 110:main.c        ****     
+ 111:main.c        ****     motor_start();
+ 112:main.c        ****     //Sumo mode move forward a little bit
+ 113:main.c        ****     //Pathfinding should also move forward to avoid read the first black line
+ 114:main.c        ****     motor_forward(255,300);
+ 115:main.c        ****     
+ 116:main.c        ****     for(;;)
+ 117:main.c        ****     {   
+ 118:main.c        ****         // always check for the battery alert
+ 119:main.c        ****         batteryAlert();
+ 120:main.c        ****         
+ 121:main.c        ****         // path finding program     
+ 122:main.c        ****         reflectance_read(&ref);
+ 123:main.c        ****         //print out each period of reflectance sensors
+ 124:main.c        ****         printf("%d %d %d %d \r\n", ref.l3, ref.l1, ref.r1, ref.r3);
+ 125:main.c        ****         //print out 0 or 1 according to results of reflectance period
+ 126:main.c        ****         reflectance_digital(&dig);
+ 127:main.c        ****         //print out 0 or 1 according to results of reflectance period
+ 128:main.c        ****         printf("%d %d %d %d \r\n", dig.l3, dig.l1, dig.r1, dig.r3);       
+ 129:main.c        ****         
+ 130:main.c        ****                 
+ 131:main.c        ****         Sumoing(ref.r1, ref.r3, ref.l1, ref.l3);        
+ 132:main.c        ****         //PathfindingAdv(ref.r1, ref.r3, ref.l1, ref.l3, &checkStop, &lastBlack);
+ 133:main.c        ****         //CyDelay(100);
+ 134:main.c        ****     }
+ 135:main.c        **** }   
+ 136:main.c        **** 
+ 137:main.c        **** // alert the users by make a non stop beep sound and stop motor
+ 138:main.c        **** // if the battery level is low
+ 139:main.c        **** void batteryAlert() {
+  31              		.loc 1 139 0
+  32              		.cfi_startproc
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 4
+
+
+  33              		@ args = 0, pretend = 0, frame = 0
+  34              		@ frame_needed = 0, uses_anonymous_args = 0
+  35 0000 70B5     		push	{r4, r5, r6, lr}
+  36              		.cfi_def_cfa_offset 16
+  37              		.cfi_offset 4, -16
+  38              		.cfi_offset 5, -12
+  39              		.cfi_offset 6, -8
+  40              		.cfi_offset 14, -4
+ 140:main.c        ****     // function to alert here
+ 141:main.c        ****     ADC_Battery_Start();        
+  41              		.loc 1 141 0
+  42 0002 FFF7FEFF 		bl	ADC_Battery_Start
+  43              	.LVL0:
+ 142:main.c        ****     int16 adcresult =0;
+ 143:main.c        ****     float volts = 0.0;
+ 144:main.c        ****     ADC_Battery_StartConvert();
+  44              		.loc 1 144 0
+  45 0006 FFF7FEFF 		bl	ADC_Battery_StartConvert
+  46              	.LVL1:
+ 145:main.c        ****         if(ADC_Battery_IsEndConversion(ADC_Battery_WAIT_FOR_RESULT)) {   
+  47              		.loc 1 145 0
+  48 000a 0020     		movs	r0, #0
+  49 000c FFF7FEFF 		bl	ADC_Battery_IsEndConversion
+  50              	.LVL2:
+  51 0010 40B3     		cbz	r0, .L1
+ 146:main.c        ****             adcresult = ADC_Battery_GetResult16();
+  52              		.loc 1 146 0
+  53 0012 FFF7FEFF 		bl	ADC_Battery_GetResult16
+  54              	.LVL3:
+ 147:main.c        ****             volts = ADC_Battery_CountsTo_Volts(adcresult)*1.5;
+  55              		.loc 1 147 0
+  56 0016 FFF7FEFF 		bl	ADC_Battery_CountsTo_Volts
+  57              	.LVL4:
+  58 001a 4FF07F51 		mov	r1, #1069547520
+  59 001e FFF7FEFF 		bl	__aeabi_fmul
+  60              	.LVL5:
+  61 0022 0646     		mov	r6, r0
+  62              	.LVL6:
+ 148:main.c        ****             printf("Volts: %f\n", volts);
+  63              		.loc 1 148 0
+  64 0024 FFF7FEFF 		bl	__aeabi_f2d
+  65              	.LVL7:
+  66 0028 0446     		mov	r4, r0
+  67 002a 0D46     		mov	r5, r1
+  68 002c 1048     		ldr	r0, .L8+8
+  69 002e 2246     		mov	r2, r4
+  70 0030 0B46     		mov	r3, r1
+  71 0032 FFF7FEFF 		bl	printf
+  72              	.LVL8:
+ 149:main.c        ****             if(volts<=4.0 && volts >=1.6){
+  73              		.loc 1 149 0
+  74 0036 3046     		mov	r0, r6
+  75 0038 4FF08141 		mov	r1, #1082130432
+  76 003c FFF7FEFF 		bl	__aeabi_fcmple
+  77              	.LVL9:
+  78 0040 80B1     		cbz	r0, .L1
+  79              		.loc 1 149 0 is_stmt 0 discriminator 1
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 5
+
+
+  80 0042 2046     		mov	r0, r4
+  81 0044 2946     		mov	r1, r5
+  82 0046 08A3     		adr	r3, .L8
+  83 0048 D3E90023 		ldrd	r2, [r3]
+  84 004c FFF7FEFF 		bl	__aeabi_dcmpge
+  85              	.LVL10:
+  86 0050 40B1     		cbz	r0, .L1
+ 150:main.c        ****                 Beep(500,200);
+  87              		.loc 1 150 0 is_stmt 1
+  88 0052 4FF4FA70 		mov	r0, #500
+  89 0056 C821     		movs	r1, #200
+  90 0058 FFF7FEFF 		bl	Beep
+  91              	.LVL11:
+ 151:main.c        ****                 CyDelay(2000);
+  92              		.loc 1 151 0
+  93 005c 4FF4FA60 		mov	r0, #2000
+  94 0060 FFF7FEFF 		bl	CyDelay
+  95              	.LVL12:
+  96              	.L1:
+  97 0064 70BD     		pop	{r4, r5, r6, pc}
+  98              	.L9:
+  99 0066 00BF     		.align	3
+ 100              	.L8:
+ 101 0068 9A999999 		.word	-1717986918
+ 102 006c 9999F93F 		.word	1073322393
+ 103 0070 00000000 		.word	.LC0
+ 104              		.cfi_endproc
+ 105              	.LFE64:
+ 106              		.size	batteryAlert, .-batteryAlert
+ 107 0074 AFF30080 		.section	.text.main,"ax",%progbits
+ 108              		.align	2
+ 109              		.global	main
+ 110              		.thumb
+ 111              		.thumb_func
+ 112              		.type	main, %function
+ 113              	main:
+ 114              	.LFB63:
+  59:main.c        ****     CyGlobalIntEnable; 
+ 115              		.loc 1 59 0
+ 116              		.cfi_startproc
+ 117              		@ args = 0, pretend = 0, frame = 16
+ 118              		@ frame_needed = 0, uses_anonymous_args = 0
+ 119 0000 10B5     		push	{r4, lr}
+ 120              		.cfi_def_cfa_offset 8
+ 121              		.cfi_offset 4, -8
+ 122              		.cfi_offset 14, -4
+ 123 0002 86B0     		sub	sp, sp, #24
+ 124              		.cfi_def_cfa_offset 32
+  60:main.c        ****     UART_1_Start();       
+ 125              		.loc 1 60 0
+ 126              	@ 60 "main.c" 1
+ 127 0004 62B6     		CPSIE   i
+ 128              	@ 0 "" 2
+  61:main.c        ****     
+ 129              		.loc 1 61 0
+ 130              		.thumb
+ 131 0006 FFF7FEFF 		bl	UART_1_Start
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 6
+
+
+ 132              	.LVL13:
+  70:main.c        ****     motor_start();
+ 133              		.loc 1 70 0
+ 134 000a 0120     		movs	r0, #1
+ 135 000c FFF7FEFF 		bl	IR_led_Write
+ 136              	.LVL14:
+  71:main.c        ****     
+ 137              		.loc 1 71 0
+ 138 0010 FFF7FEFF 		bl	motor_start
+ 139              	.LVL15:
+  75:main.c        ****     
+ 140              		.loc 1 75 0
+ 141 0014 3E48     		ldr	r0, .L21
+ 142 0016 FFF7FEFF 		bl	sensor_isr_StartEx
+ 143              	.LVL16:
+  77:main.c        ****     
+ 144              		.loc 1 77 0
+ 145 001a FFF7FEFF 		bl	reflectance_start
+ 146              	.LVL17:
+  81:main.c        ****     while (initialRun != 2) {
+ 147              		.loc 1 81 0
+ 148 001e 6420     		movs	r0, #100
+ 149 0020 0021     		movs	r1, #0
+ 150 0022 FFF7FEFF 		bl	motor_forward
+ 151              	.LVL18:
+  80:main.c        ****     motor_forward(100,0);
+ 152              		.loc 1 80 0
+ 153 0026 0024     		movs	r4, #0
+  82:main.c        ****         reflectance_read(&ref);
+ 154              		.loc 1 82 0
+ 155 0028 30E0     		b	.L11
+ 156              	.LVL19:
+ 157              	.L14:
+  83:main.c        ****         printf("%d %d %d %d \r\n", ref.l3, ref.l1, ref.r1, ref.r3);
+ 158              		.loc 1 83 0
+ 159 002a 04A8     		add	r0, sp, #16
+ 160 002c FFF7FEFF 		bl	reflectance_read
+ 161              	.LVL20:
+  84:main.c        ****         // If it reached the first black line it will count to 1
+ 162              		.loc 1 84 0
+ 163 0030 BDF81010 		ldrh	r1, [sp, #16]
+ 164 0034 BDF81220 		ldrh	r2, [sp, #18]
+ 165 0038 BDF81430 		ldrh	r3, [sp, #20]
+ 166 003c BDF81600 		ldrh	r0, [sp, #22]
+ 167 0040 0090     		str	r0, [sp]
+ 168 0042 3448     		ldr	r0, .L21+4
+ 169 0044 FFF7FEFF 		bl	printf
+ 170              	.LVL21:
+  90:main.c        ****             initialRun = 1;
+ 171              		.loc 1 90 0
+ 172 0048 BDF81420 		ldrh	r2, [sp, #20]
+ 173 004c 42F6F823 		movw	r3, #11000
+ 174 0050 9A42     		cmp	r2, r3
+ 175 0052 0ED9     		bls	.L12
+  90:main.c        ****             initialRun = 1;
+ 176              		.loc 1 90 0 is_stmt 0 discriminator 1
+ 177 0054 BDF81220 		ldrh	r2, [sp, #18]
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 7
+
+
+ 178 0058 9A42     		cmp	r2, r3
+ 179 005a 0AD9     		bls	.L12
+  90:main.c        ****             initialRun = 1;
+ 180              		.loc 1 90 0 discriminator 2
+ 181 005c BDF81620 		ldrh	r2, [sp, #22]
+ 182 0060 42F6F723 		movw	r3, #10999
+ 183 0064 9A42     		cmp	r2, r3
+ 184 0066 04D8     		bhi	.L12
+  90:main.c        ****             initialRun = 1;
+ 185              		.loc 1 90 0 discriminator 3
+ 186 0068 BDF81020 		ldrh	r2, [sp, #16]
+ 187 006c 9A42     		cmp	r2, r3
+ 188 006e 00D8     		bhi	.L12
+  91:main.c        ****         }
+ 189              		.loc 1 91 0 is_stmt 1
+ 190 0070 0124     		movs	r4, #1
+ 191              	.LVL22:
+ 192              	.L12:
+  96:main.c        ****             initialRun = 2;
+ 193              		.loc 1 96 0
+ 194 0072 012C     		cmp	r4, #1
+ 195 0074 0AD1     		bne	.L11
+  96:main.c        ****             initialRun = 2;
+ 196              		.loc 1 96 0 is_stmt 0 discriminator 1
+ 197 0076 BDF81620 		ldrh	r2, [sp, #22]
+ 198 007a 42F6F723 		movw	r3, #10999
+ 199 007e 9A42     		cmp	r2, r3
+ 200 0080 04D9     		bls	.L11
+  96:main.c        ****             initialRun = 2;
+ 201              		.loc 1 96 0 discriminator 2
+ 202 0082 BDF81020 		ldrh	r2, [sp, #16]
+ 203 0086 9A42     		cmp	r2, r3
+ 204 0088 00D9     		bls	.L11
+  97:main.c        ****         }
+ 205              		.loc 1 97 0 is_stmt 1
+ 206 008a 0224     		movs	r4, #2
+ 207              	.LVL23:
+ 208              	.L11:
+  82:main.c        ****         reflectance_read(&ref);
+ 209              		.loc 1 82 0
+ 210 008c 022C     		cmp	r4, #2
+ 211 008e CCD1     		bne	.L14
+ 102:main.c        ****     motor_stop();
+ 212              		.loc 1 102 0
+ 213 0090 6420     		movs	r0, #100
+ 214 0092 3221     		movs	r1, #50
+ 215 0094 FFF7FEFF 		bl	motor_forward
+ 216              	.LVL24:
+ 103:main.c        ****     
+ 217              		.loc 1 103 0
+ 218 0098 FFF7FEFF 		bl	motor_stop
+ 219              	.LVL25:
+ 105:main.c        ****     
+ 220              		.loc 1 105 0
+ 221 009c 0120     		movs	r0, #1
+ 107:main.c        ****     button = get_IR();
+ 222              		.loc 1 107 0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 8
+
+
+ 223 009e 01E0     		b	.L15
+ 224              	.LVL26:
+ 225              	.L16:
+ 108:main.c        ****     }
+ 226              		.loc 1 108 0
+ 227 00a0 FFF7FEFF 		bl	get_IR
+ 228              	.LVL27:
+ 229              	.L15:
+ 107:main.c        ****     button = get_IR();
+ 230              		.loc 1 107 0
+ 231 00a4 0128     		cmp	r0, #1
+ 232 00a6 FBD0     		beq	.L16
+ 111:main.c        ****     //Sumo mode move forward a little bit
+ 233              		.loc 1 111 0
+ 234 00a8 FFF7FEFF 		bl	motor_start
+ 235              	.LVL28:
+ 114:main.c        ****     
+ 236              		.loc 1 114 0
+ 237 00ac FF20     		movs	r0, #255
+ 238 00ae 4FF49671 		mov	r1, #300
+ 239 00b2 FFF7FEFF 		bl	motor_forward
+ 240              	.LVL29:
+ 241              	.L17:
+ 119:main.c        ****         
+ 242              		.loc 1 119 0 discriminator 1
+ 243 00b6 FFF7FEFF 		bl	batteryAlert
+ 244              	.LVL30:
+ 122:main.c        ****         //print out each period of reflectance sensors
+ 245              		.loc 1 122 0 discriminator 1
+ 246 00ba 04A8     		add	r0, sp, #16
+ 247 00bc FFF7FEFF 		bl	reflectance_read
+ 248              	.LVL31:
+ 124:main.c        ****         //print out 0 or 1 according to results of reflectance period
+ 249              		.loc 1 124 0 discriminator 1
+ 250 00c0 BDF81010 		ldrh	r1, [sp, #16]
+ 251 00c4 BDF81220 		ldrh	r2, [sp, #18]
+ 252 00c8 BDF81430 		ldrh	r3, [sp, #20]
+ 253 00cc BDF81600 		ldrh	r0, [sp, #22]
+ 254 00d0 104C     		ldr	r4, .L21+4
+ 255 00d2 0090     		str	r0, [sp]
+ 256 00d4 2046     		mov	r0, r4
+ 257 00d6 FFF7FEFF 		bl	printf
+ 258              	.LVL32:
+ 126:main.c        ****         //print out 0 or 1 according to results of reflectance period
+ 259              		.loc 1 126 0 discriminator 1
+ 260 00da 02A8     		add	r0, sp, #8
+ 261 00dc FFF7FEFF 		bl	reflectance_digital
+ 262              	.LVL33:
+ 128:main.c        ****         
+ 263              		.loc 1 128 0 discriminator 1
+ 264 00e0 BDF80810 		ldrh	r1, [sp, #8]
+ 265 00e4 BDF80A20 		ldrh	r2, [sp, #10]
+ 266 00e8 BDF80C30 		ldrh	r3, [sp, #12]
+ 267 00ec BDF80E00 		ldrh	r0, [sp, #14]
+ 268 00f0 0090     		str	r0, [sp]
+ 269 00f2 2046     		mov	r0, r4
+ 270 00f4 FFF7FEFF 		bl	printf
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 9
+
+
+ 271              	.LVL34:
+ 131:main.c        ****         //PathfindingAdv(ref.r1, ref.r3, ref.l1, ref.l3, &checkStop, &lastBlack);
+ 272              		.loc 1 131 0 discriminator 1
+ 273 00f8 BDF81400 		ldrh	r0, [sp, #20]
+ 274 00fc BDF81610 		ldrh	r1, [sp, #22]
+ 275 0100 BDF81220 		ldrh	r2, [sp, #18]
+ 276 0104 BDF81030 		ldrh	r3, [sp, #16]
+ 277 0108 FFF7FEFF 		bl	Sumoing
+ 278              	.LVL35:
+ 134:main.c        **** }   
+ 279              		.loc 1 134 0 discriminator 1
+ 280 010c D3E7     		b	.L17
+ 281              	.L22:
+ 282 010e 00BF     		.align	2
+ 283              	.L21:
+ 284 0110 00000000 		.word	sensor_isr_handler
+ 285 0114 0C000000 		.word	.LC1
+ 286              		.cfi_endproc
+ 287              	.LFE63:
+ 288              		.size	main, .-main
+ 289              		.section	.text._write,"ax",%progbits
+ 290              		.align	2
+ 291              		.global	_write
+ 292              		.thumb
+ 293              		.thumb_func
+ 294              		.type	_write, %function
+ 295              	_write:
+ 296              	.LFB65:
+ 152:main.c        ****             }
+ 153:main.c        ****         }
+ 154:main.c        **** }
+ 155:main.c        **** 
+ 156:main.c        **** /*//battery level//
+ 157:main.c        **** int main()
+ 158:main.c        **** {
+ 159:main.c        ****     CyGlobalIntEnable; 
+ 160:main.c        ****     UART_1_Start();
+ 161:main.c        ****     ADC_Battery_Start();        
+ 162:main.c        ****     int16 adcresult =0;
+ 163:main.c        ****     float volts = 0.0;
+ 164:main.c        **** 
+ 165:main.c        ****     printf("\nBoot\n");
+ 166:main.c        ****     //BatteryLed_Write(1); // Switch led on 
+ 167:main.c        ****     BatteryLed_Write(0); // Switch led off 
+ 168:main.c        ****     //uint8 button;
+ 169:main.c        ****     //button = SW1_Read(); // read SW1 on pSoC board
+ 170:main.c        **** 
+ 171:main.c        ****     for(;;)
+ 172:main.c        ****     {
+ 173:main.c        ****         
+ 174:main.c        ****         ADC_Battery_StartConvert();
+ 175:main.c        ****         if(ADC_Battery_IsEndConversion(ADC_Battery_WAIT_FOR_RESULT)) {   // wait for get ADC conver
+ 176:main.c        ****             adcresult = ADC_Battery_GetResult16();
+ 177:main.c        ****             // Convert by multiple by 1.5 (big Timo)
+ 178:main.c        ****             volts = ADC_Battery_CountsTo_Volts(adcresult)*1.5;                  // convert value to
+ 179:main.c        ****         
+ 180:main.c        ****             // If you want to print value
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 10
+
+
+ 181:main.c        ****             printf("%d %f\r\n",adcresult, volts);
+ 182:main.c        ****         }
+ 183:main.c        ****         CyDelay(500);
+ 184:main.c        ****         
+ 185:main.c        ****     }
+ 186:main.c        ****  }   
+ 187:main.c        **** //*/
+ 188:main.c        **** 
+ 189:main.c        **** 
+ 190:main.c        **** /*//ultra sonic sensor//
+ 191:main.c        **** int main()
+ 192:main.c        **** {
+ 193:main.c        ****     CyGlobalIntEnable; 
+ 194:main.c        ****     UART_1_Start();
+ 195:main.c        ****     Ultra_Start();                          // Ultra Sonic Start function
+ 196:main.c        ****     while(1) {
+ 197:main.c        ****         //If you want to print out the value  
+ 198:main.c        ****         printf("distance = %5.0f\r\n", Ultra_GetDistance());
+ 199:main.c        ****         CyDelay(1000);
+ 200:main.c        ****     }
+ 201:main.c        **** }   
+ 202:main.c        **** //*/
+ 203:main.c        **** 
+ 204:main.c        **** 
+ 205:main.c        **** /*//nunchuk//
+ 206:main.c        **** int main()
+ 207:main.c        **** {
+ 208:main.c        ****     CyGlobalIntEnable; 
+ 209:main.c        ****     UART_1_Start();
+ 210:main.c        ****   
+ 211:main.c        ****     nunchuk_start();
+ 212:main.c        ****     nunchuk_init();
+ 213:main.c        ****     
+ 214:main.c        ****     for(;;)
+ 215:main.c        ****     {    
+ 216:main.c        ****         nunchuk_read();
+ 217:main.c        ****     }
+ 218:main.c        **** }   
+ 219:main.c        **** //*/
+ 220:main.c        **** 
+ 221:main.c        **** 
+ 222:main.c        **** /*//IR receiver//
+ 223:main.c        **** int main()
+ 224:main.c        **** {
+ 225:main.c        ****     CyGlobalIntEnable; 
+ 226:main.c        ****     UART_1_Start();
+ 227:main.c        ****     
+ 228:main.c        ****     unsigned int IR_val; 
+ 229:main.c        ****     
+ 230:main.c        ****     for(;;)
+ 231:main.c        ****     {
+ 232:main.c        ****        IR_val = get_IR();
+ 233:main.c        ****        printf("%x\r\n\n",IR_val);
+ 234:main.c        ****     }    
+ 235:main.c        ****  }   
+ 236:main.c        **** //*/
+ 237:main.c        **** 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 11
+
+
+ 238:main.c        **** 
+ 239:main.c        **** /*//Ambient light sensor//
+ 240:main.c        **** int main()
+ 241:main.c        **** {
+ 242:main.c        ****     CyGlobalIntEnable; 
+ 243:main.c        ****     UART_1_Start();
+ 244:main.c        ****     
+ 245:main.c        ****     I2C_Start();
+ 246:main.c        ****     
+ 247:main.c        ****     I2C_write(0x29,0x80,0x00);          // set to power down
+ 248:main.c        ****     I2C_write(0x29,0x80,0x03);          // set to power on
+ 249:main.c        ****     
+ 250:main.c        ****     for(;;)
+ 251:main.c        ****     {    
+ 252:main.c        ****         uint8 Data0Low,Data0High,Data1Low,Data1High;
+ 253:main.c        ****         Data0Low = I2C_read(0x29,CH0_L);
+ 254:main.c        ****         Data0High = I2C_read(0x29,CH0_H);
+ 255:main.c        ****         Data1Low = I2C_read(0x29,CH1_L);
+ 256:main.c        ****         Data1High = I2C_read(0x29,CH1_H);
+ 257:main.c        ****         
+ 258:main.c        ****         uint8 CH0, CH1;
+ 259:main.c        ****         CH0 = convert_raw(Data0Low,Data0High);      // combine Data0
+ 260:main.c        ****         CH1 = convert_raw(Data1Low,Data1High);      // combine Data1
+ 261:main.c        **** 
+ 262:main.c        ****         double Ch0 = CH0;
+ 263:main.c        ****         double Ch1 = CH1;
+ 264:main.c        ****         
+ 265:main.c        ****         double data = 0;
+ 266:main.c        ****         data = getLux(Ch0,Ch1);
+ 267:main.c        ****         
+ 268:main.c        ****         // If you want to print out data
+ 269:main.c        ****         //printf("%lf\r\n",data);    
+ 270:main.c        ****     }    
+ 271:main.c        ****  }   
+ 272:main.c        **** //*/
+ 273:main.c        **** 
+ 274:main.c        **** 
+ 275:main.c        **** /*//accelerometer//
+ 276:main.c        **** int main()
+ 277:main.c        **** {
+ 278:main.c        ****     CyGlobalIntEnable; 
+ 279:main.c        ****     UART_1_Start();
+ 280:main.c        ****   
+ 281:main.c        ****     I2C_Start();
+ 282:main.c        ****   
+ 283:main.c        ****     uint8 X_L_A, X_H_A, Y_L_A, Y_H_A, Z_L_A, Z_H_A;
+ 284:main.c        ****     int16 X_AXIS_A, Y_AXIS_A, Z_AXIS_A;
+ 285:main.c        ****     
+ 286:main.c        ****     I2C_write(ACCEL_MAG_ADDR, ACCEL_CTRL1_REG, 0x37);           // set accelerometer & magnetometer
+ 287:main.c        ****     I2C_write(ACCEL_MAG_ADDR, ACCEL_CTRL7_REG, 0x22);
+ 288:main.c        ****     
+ 289:main.c        ****     
+ 290:main.c        ****     for(;;)
+ 291:main.c        ****     {
+ 292:main.c        ****         //print out accelerometer output
+ 293:main.c        ****         X_L_A = I2C_read(ACCEL_MAG_ADDR, OUT_X_L_A);
+ 294:main.c        ****         X_H_A = I2C_read(ACCEL_MAG_ADDR, OUT_X_H_A);
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 12
+
+
+ 295:main.c        ****         X_AXIS_A = convert_raw(X_L_A, X_H_A);
+ 296:main.c        ****         
+ 297:main.c        ****         Y_L_A = I2C_read(ACCEL_MAG_ADDR, OUT_Y_L_A);
+ 298:main.c        ****         Y_H_A = I2C_read(ACCEL_MAG_ADDR, OUT_Y_H_A);
+ 299:main.c        ****         Y_AXIS_A = convert_raw(Y_L_A, Y_H_A);
+ 300:main.c        ****         
+ 301:main.c        ****         Z_L_A = I2C_read(ACCEL_MAG_ADDR, OUT_Z_L_A);
+ 302:main.c        ****         Z_H_A = I2C_read(ACCEL_MAG_ADDR, OUT_Z_H_A);
+ 303:main.c        ****         Z_AXIS_A = convert_raw(Z_L_A, Z_H_A);
+ 304:main.c        ****         
+ 305:main.c        ****         printf("ACCEL: %d %d %d %d %d %d \r\n", X_L_A, X_H_A, Y_L_A, Y_H_A, Z_L_A, Z_H_A);
+ 306:main.c        ****         value_convert_accel(X_AXIS_A, Y_AXIS_A, Z_AXIS_A);
+ 307:main.c        ****         printf("\n");
+ 308:main.c        ****         
+ 309:main.c        ****         CyDelay(50);
+ 310:main.c        ****     }
+ 311:main.c        **** }   
+ 312:main.c        **** //*/
+ 313:main.c        **** 
+ 314:main.c        **** 
+ 315:main.c        **** /*//reflectance//
+ 316:main.c        **** int main()
+ 317:main.c        **** {
+ 318:main.c        ****     struct sensors_ ref;
+ 319:main.c        ****     struct sensors_ dig;
+ 320:main.c        ****     CyGlobalIntEnable; 
+ 321:main.c        ****     UART_1_Start();
+ 322:main.c        ****   
+ 323:main.c        ****     sensor_isr_StartEx(sensor_isr_handler);
+ 324:main.c        ****     
+ 325:main.c        ****     reflectance_start();
+ 326:main.c        **** 
+ 327:main.c        ****     IR_led_Write(1);
+ 328:main.c        ****     for(;;)
+ 329:main.c        ****     {
+ 330:main.c        ****         reflectance_read(&ref);
+ 331:main.c        ****         printf("%d %d %d %d \r\n", ref.l3, ref.l1, ref.r1, ref.r3);       //print out each period o
+ 332:main.c        ****         reflectance_digital(&dig);      //print out 0 or 1 according to results of reflectance peri
+ 333:main.c        ****         printf("%d %d %d %d \r\n", dig.l3, dig.l1, dig.r1, dig.r3);        //print out 0 or 1 accor
+ 334:main.c        ****         
+ 335:main.c        ****         CyDelay(500);
+ 336:main.c        ****     }
+ 337:main.c        **** }   
+ 338:main.c        **** //*/
+ 339:main.c        **** 
+ 340:main.c        ****  /* //motor//
+ 341:main.c        **** int main()
+ 342:main.c        **** {
+ 343:main.c        ****     CyGlobalIntEnable; 
+ 344:main.c        ****     UART_1_Start();
+ 345:main.c        **** 
+ 346:main.c        ****     motor_start();              // motor start
+ 347:main.c        **** 
+ 348:main.c        ****     motor_forward(100,2000);     // moving forward
+ 349:main.c        ****     motor_turn(200,50,2000);     // turn
+ 350:main.c        ****     motor_turn(50,200,2000);     // turn
+ 351:main.c        ****     motor_backward(100,2000);    // movinb backward
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 13
+
+
+ 352:main.c        ****        
+ 353:main.c        ****     motor_stop();               // motor stop
+ 354:main.c        ****     
+ 355:main.c        ****     for(;;)
+ 356:main.c        ****     {
+ 357:main.c        **** 
+ 358:main.c        ****     }
+ 359:main.c        **** }
+ 360:main.c        **** //*/
+ 361:main.c        ****     
+ 362:main.c        **** 
+ 363:main.c        **** /*//gyroscope//
+ 364:main.c        **** int main()
+ 365:main.c        **** {
+ 366:main.c        ****     CyGlobalIntEnable; 
+ 367:main.c        ****     UART_1_Start();
+ 368:main.c        ****   
+ 369:main.c        ****     I2C_Start();
+ 370:main.c        ****   
+ 371:main.c        ****     uint8 X_L_G, X_H_G, Y_L_G, Y_H_G, Z_L_G, Z_H_G;
+ 372:main.c        ****     int16 X_AXIS_G, Y_AXIS_G, Z_AXIS_G;
+ 373:main.c        ****     
+ 374:main.c        ****     I2C_write(GYRO_ADDR, GYRO_CTRL1_REG, 0x0F);             // set gyroscope into active mode
+ 375:main.c        ****     I2C_write(GYRO_ADDR, GYRO_CTRL4_REG, 0x30);             // set full scale selection to 2000dps 
+ 376:main.c        ****     
+ 377:main.c        ****     for(;;)
+ 378:main.c        ****     {
+ 379:main.c        ****         //print out gyroscope output
+ 380:main.c        ****         X_L_G = I2C_read(GYRO_ADDR, OUT_X_AXIS_L);
+ 381:main.c        ****         X_H_G = I2C_read(GYRO_ADDR, OUT_X_AXIS_H);
+ 382:main.c        ****         X_AXIS_G = convert_raw(X_H_G, X_L_G);
+ 383:main.c        ****         
+ 384:main.c        ****         
+ 385:main.c        ****         Y_L_G = I2C_read(GYRO_ADDR, OUT_Y_AXIS_L);
+ 386:main.c        ****         Y_H_G = I2C_read(GYRO_ADDR, OUT_Y_AXIS_H);
+ 387:main.c        ****         Y_AXIS_G = convert_raw(Y_H_G, Y_L_G);
+ 388:main.c        ****         
+ 389:main.c        ****         
+ 390:main.c        ****         Z_L_G = I2C_read(GYRO_ADDR, OUT_Z_AXIS_L);
+ 391:main.c        ****         Z_H_G = I2C_read(GYRO_ADDR, OUT_Z_AXIS_H);
+ 392:main.c        ****         Z_AXIS_G = convert_raw(Z_H_G, Z_L_G);
+ 393:main.c        ****      
+ 394:main.c        ****         // If you want to print value
+ 395:main.c        ****         printf("%d %d %d \r\n", X_AXIS_G, Y_AXIS_G, Z_AXIS_G);
+ 396:main.c        ****         CyDelay(50);
+ 397:main.c        ****     }
+ 398:main.c        **** }   
+ 399:main.c        **** //*/
+ 400:main.c        **** 
+ 401:main.c        **** 
+ 402:main.c        **** /*//magnetometer//
+ 403:main.c        **** int main()
+ 404:main.c        **** {
+ 405:main.c        ****     CyGlobalIntEnable; 
+ 406:main.c        ****     UART_1_Start();
+ 407:main.c        ****   
+ 408:main.c        ****     I2C_Start();
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 14
+
+
+ 409:main.c        ****    
+ 410:main.c        ****     uint8 X_L_M, X_H_M, Y_L_M, Y_H_M, Z_L_M, Z_H_M;
+ 411:main.c        ****     int16 X_AXIS, Y_AXIS, Z_AXIS;
+ 412:main.c        ****     
+ 413:main.c        ****     I2C_write(GYRO_ADDR, GYRO_CTRL1_REG, 0x0F);             // set gyroscope into active mode
+ 414:main.c        ****     I2C_write(GYRO_ADDR, GYRO_CTRL4_REG, 0x30);             // set full scale selection to 2000dps
+ 415:main.c        ****     I2C_write(ACCEL_MAG_ADDR, ACCEL_CTRL1_REG, 0x37);           // set accelerometer & magnetometer
+ 416:main.c        ****     I2C_write(ACCEL_MAG_ADDR, ACCEL_CTRL7_REG, 0x22);
+ 417:main.c        ****     
+ 418:main.c        ****     
+ 419:main.c        ****     for(;;)
+ 420:main.c        ****     {
+ 421:main.c        ****         X_L_M = I2C_read(ACCEL_MAG_ADDR, OUT_X_L_M);
+ 422:main.c        ****         X_H_M = I2C_read(ACCEL_MAG_ADDR, OUT_X_H_M);
+ 423:main.c        ****         X_AXIS = convert_raw(X_L_M, X_H_M);
+ 424:main.c        ****         
+ 425:main.c        ****         Y_L_M = I2C_read(ACCEL_MAG_ADDR, OUT_Y_L_M);
+ 426:main.c        ****         Y_H_M = I2C_read(ACCEL_MAG_ADDR, OUT_Y_H_M);
+ 427:main.c        ****         Y_AXIS = convert_raw(Y_L_M, Y_H_M);
+ 428:main.c        ****         
+ 429:main.c        ****         Z_L_M = I2C_read(ACCEL_MAG_ADDR, OUT_Z_L_M);
+ 430:main.c        ****         Z_H_M = I2C_read(ACCEL_MAG_ADDR, OUT_Z_H_M);
+ 431:main.c        ****         Z_AXIS = convert_raw(Z_L_M, Z_H_M);
+ 432:main.c        ****         
+ 433:main.c        ****         heading(X_AXIS, Y_AXIS);
+ 434:main.c        ****         printf("MAGNET: %d %d %d %d %d %d \r\n", X_L_M, X_H_M, Y_L_M, Y_H_M, Z_L_M, Z_H_M);
+ 435:main.c        ****         printf("%d %d %d \r\n", X_AXIS,Y_AXIS, Z_AXIS);
+ 436:main.c        ****         CyDelay(50);      
+ 437:main.c        ****     }
+ 438:main.c        **** }   
+ 439:main.c        **** //*/
+ 440:main.c        **** 
+ 441:main.c        **** 
+ 442:main.c        **** #if 0
+ 443:main.c        **** int rread(void)
+ 444:main.c        **** {
+ 445:main.c        ****     SC0_SetDriveMode(PIN_DM_STRONG);
+ 446:main.c        ****     SC0_Write(1);
+ 447:main.c        ****     CyDelayUs(10);
+ 448:main.c        ****     SC0_SetDriveMode(PIN_DM_DIG_HIZ);
+ 449:main.c        ****     Timer_1_Start();
+ 450:main.c        ****     uint16_t start = Timer_1_ReadCounter();
+ 451:main.c        ****     uint16_t end = 0;
+ 452:main.c        ****     while(!(Timer_1_ReadStatusRegister() & Timer_1_STATUS_TC)) {
+ 453:main.c        ****         if(SC0_Read() == 0 && end == 0) {
+ 454:main.c        ****             end = Timer_1_ReadCounter();
+ 455:main.c        ****         }
+ 456:main.c        ****     }
+ 457:main.c        ****     Timer_1_Stop();
+ 458:main.c        ****     
+ 459:main.c        ****     return (start - end);
+ 460:main.c        **** }
+ 461:main.c        **** #endif
+ 462:main.c        **** 
+ 463:main.c        **** /* Don't remove the functions below */
+ 464:main.c        **** int _write(int file, char *ptr, int len)
+ 465:main.c        **** {
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 15
+
+
+ 297              		.loc 1 465 0
+ 298              		.cfi_startproc
+ 299              		@ args = 0, pretend = 0, frame = 0
+ 300              		@ frame_needed = 0, uses_anonymous_args = 0
+ 301              	.LVL36:
+ 302 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 303              		.cfi_def_cfa_offset 24
+ 304              		.cfi_offset 3, -24
+ 305              		.cfi_offset 4, -20
+ 306              		.cfi_offset 5, -16
+ 307              		.cfi_offset 6, -12
+ 308              		.cfi_offset 7, -8
+ 309              		.cfi_offset 14, -4
+ 310 0002 0C46     		mov	r4, r1
+ 311 0004 1746     		mov	r7, r2
+ 312              	.LVL37:
+ 466:main.c        ****     (void)file; /* Parameter is not used, suppress unused argument warning */
+ 467:main.c        **** 	int n;
+ 468:main.c        **** 	for(n = 0; n < len; n++) {
+ 313              		.loc 1 468 0
+ 314 0006 0025     		movs	r5, #0
+ 315 0008 0BE0     		b	.L24
+ 316              	.LVL38:
+ 317              	.L26:
+ 469:main.c        ****         if(*ptr == '\n') UART_1_PutChar('\r');
+ 318              		.loc 1 469 0
+ 319 000a 2378     		ldrb	r3, [r4]	@ zero_extendqisi2
+ 320 000c 0A2B     		cmp	r3, #10
+ 321 000e 02D1     		bne	.L25
+ 322              		.loc 1 469 0 is_stmt 0 discriminator 1
+ 323 0010 0D20     		movs	r0, #13
+ 324 0012 FFF7FEFF 		bl	UART_1_PutChar
+ 325              	.LVL39:
+ 326              	.L25:
+ 470:main.c        **** 		UART_1_PutChar(*ptr++);
+ 327              		.loc 1 470 0 is_stmt 1 discriminator 2
+ 328 0016 661C     		adds	r6, r4, #1
+ 329              	.LVL40:
+ 330 0018 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+ 331 001a FFF7FEFF 		bl	UART_1_PutChar
+ 332              	.LVL41:
+ 468:main.c        ****         if(*ptr == '\n') UART_1_PutChar('\r');
+ 333              		.loc 1 468 0 discriminator 2
+ 334 001e 0135     		adds	r5, r5, #1
+ 335              	.LVL42:
+ 336              		.loc 1 470 0 discriminator 2
+ 337 0020 3446     		mov	r4, r6
+ 338              	.LVL43:
+ 339              	.L24:
+ 468:main.c        ****         if(*ptr == '\n') UART_1_PutChar('\r');
+ 340              		.loc 1 468 0 discriminator 1
+ 341 0022 BD42     		cmp	r5, r7
+ 342 0024 F1DB     		blt	.L26
+ 471:main.c        **** 	}
+ 472:main.c        **** 	return len;
+ 473:main.c        **** }
+ 343              		.loc 1 473 0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 16
+
+
+ 344 0026 3846     		mov	r0, r7
+ 345 0028 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 346              		.cfi_endproc
+ 347              	.LFE65:
+ 348              		.size	_write, .-_write
+ 349 002a 00BF     		.section	.text._read,"ax",%progbits
+ 350              		.align	2
+ 351              		.global	_read
+ 352              		.thumb
+ 353              		.thumb_func
+ 354              		.type	_read, %function
+ 355              	_read:
+ 356              	.LFB66:
+ 474:main.c        **** 
+ 475:main.c        **** int _read (int file, char *ptr, int count)
+ 476:main.c        **** {
+ 357              		.loc 1 476 0
+ 358              		.cfi_startproc
+ 359              		@ args = 0, pretend = 0, frame = 0
+ 360              		@ frame_needed = 0, uses_anonymous_args = 0
+ 361              	.LVL44:
+ 362 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 363              		.cfi_def_cfa_offset 24
+ 364              		.cfi_offset 3, -24
+ 365              		.cfi_offset 4, -20
+ 366              		.cfi_offset 5, -16
+ 367              		.cfi_offset 6, -12
+ 368              		.cfi_offset 7, -8
+ 369              		.cfi_offset 14, -4
+ 370 0002 0F46     		mov	r7, r1
+ 371 0004 1446     		mov	r4, r2
+ 372              	.LVL45:
+ 477:main.c        ****     int chs = 0;
+ 373              		.loc 1 477 0
+ 374 0006 0026     		movs	r6, #0
+ 478:main.c        ****     char ch;
+ 479:main.c        ****  
+ 480:main.c        ****     (void)file; /* Parameter is not used, suppress unused argument warning */
+ 481:main.c        ****     while(count > 0) {
+ 375              		.loc 1 481 0
+ 376 0008 12E0     		b	.L30
+ 377              	.LVL46:
+ 378              	.L33:
+ 482:main.c        ****         ch = UART_1_GetChar();
+ 379              		.loc 1 482 0
+ 380 000a FFF7FEFF 		bl	UART_1_GetChar
+ 381              	.LVL47:
+ 483:main.c        ****         if(ch != 0) {
+ 382              		.loc 1 483 0
+ 383 000e 0546     		mov	r5, r0
+ 384 0010 70B1     		cbz	r0, .L30
+ 484:main.c        ****             UART_1_PutChar(ch);
+ 385              		.loc 1 484 0
+ 386 0012 FFF7FEFF 		bl	UART_1_PutChar
+ 387              	.LVL48:
+ 485:main.c        ****             chs++;
+ 388              		.loc 1 485 0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 17
+
+
+ 389 0016 0136     		adds	r6, r6, #1
+ 390              	.LVL49:
+ 486:main.c        ****             if(ch == '\r') {
+ 391              		.loc 1 486 0
+ 392 0018 0D2D     		cmp	r5, #13
+ 393 001a 03D1     		bne	.L31
+ 394              	.LVL50:
+ 487:main.c        ****                 ch = '\n';
+ 488:main.c        ****                 UART_1_PutChar(ch);
+ 395              		.loc 1 488 0
+ 396 001c 0A20     		movs	r0, #10
+ 397 001e FFF7FEFF 		bl	UART_1_PutChar
+ 398              	.LVL51:
+ 487:main.c        ****                 ch = '\n';
+ 399              		.loc 1 487 0
+ 400 0022 0A25     		movs	r5, #10
+ 401              	.LVL52:
+ 402              	.L31:
+ 489:main.c        ****             }
+ 490:main.c        ****             *ptr++ = ch;
+ 403              		.loc 1 490 0
+ 404 0024 7B1C     		adds	r3, r7, #1
+ 405              	.LVL53:
+ 406 0026 3D70     		strb	r5, [r7]
+ 491:main.c        ****             count--;
+ 407              		.loc 1 491 0
+ 408 0028 013C     		subs	r4, r4, #1
+ 409              	.LVL54:
+ 492:main.c        ****             if(ch == '\n') break;
+ 410              		.loc 1 492 0
+ 411 002a 0A2D     		cmp	r5, #10
+ 412 002c 02D0     		beq	.L32
+ 490:main.c        ****             count--;
+ 413              		.loc 1 490 0
+ 414 002e 1F46     		mov	r7, r3
+ 415              	.LVL55:
+ 416              	.L30:
+ 481:main.c        ****         ch = UART_1_GetChar();
+ 417              		.loc 1 481 0
+ 418 0030 002C     		cmp	r4, #0
+ 419 0032 EADC     		bgt	.L33
+ 420              	.LVL56:
+ 421              	.L32:
+ 493:main.c        ****         }
+ 494:main.c        ****     }
+ 495:main.c        ****     return chs;
+ 496:main.c        **** }
+ 422              		.loc 1 496 0
+ 423 0034 3046     		mov	r0, r6
+ 424 0036 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 425              		.cfi_endproc
+ 426              	.LFE66:
+ 427              		.size	_read, .-_read
+ 428              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 429              		.align	2
+ 430              	.LC0:
+ 431 0000 566F6C74 		.ascii	"Volts: %f\012\000"
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 18
+
+
+ 431      733A2025 
+ 431      660A00
+ 432 000b 00       		.space	1
+ 433              	.LC1:
+ 434 000c 25642025 		.ascii	"%d %d %d %d \015\012\000"
+ 434      64202564 
+ 434      20256420 
+ 434      0D0A00
+ 435 001b 00       		.text
+ 436              	.Letext0:
+ 437              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 438              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 439              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 440              		.file 5 ".\\ZumoLibrary/Reflectance.h"
+ 441              		.file 6 "Generated_Source\\PSoC5/ADC_Battery.h"
+ 442              		.file 7 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 443              		.file 8 ".\\ZumoLibrary/Beep.h"
+ 444              		.file 9 "Generated_Source\\PSoC5/CyLib.h"
+ 445              		.file 10 "Generated_Source\\PSoC5/UART_1.h"
+ 446              		.file 11 "Generated_Source\\PSoC5/IR_led.h"
+ 447              		.file 12 "Generated_Source\\PSoC5/sensor_isr.h"
+ 448              		.file 13 ".\\ZumoLibrary/Motor.h"
+ 449              		.file 14 ".\\ZumoLibrary/IR.h"
+ 450              		.file 15 "Sumoing.h"
+ 451              		.file 16 "Generated_Source\\PSoC5/core_cm3.h"
+ 452              		.section	.debug_info,"",%progbits
+ 453              	.Ldebug_info0:
+ 454 0000 2A060000 		.4byte	0x62a
+ 455 0004 0400     		.2byte	0x4
+ 456 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 457 000a 04       		.byte	0x4
+ 458 000b 01       		.uleb128 0x1
+ 459 000c 21020000 		.4byte	.LASF60
+ 460 0010 01       		.byte	0x1
+ 461 0011 D5020000 		.4byte	.LASF61
+ 462 0015 00000000 		.4byte	.LASF62
+ 463 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 464 001d 00000000 		.4byte	0
+ 465 0021 00000000 		.4byte	.Ldebug_line0
+ 466 0025 02       		.uleb128 0x2
+ 467 0026 01       		.byte	0x1
+ 468 0027 06       		.byte	0x6
+ 469 0028 A0010000 		.4byte	.LASF0
+ 470 002c 03       		.uleb128 0x3
+ 471 002d 2F010000 		.4byte	.LASF3
+ 472 0031 02       		.byte	0x2
+ 473 0032 1D       		.byte	0x1d
+ 474 0033 37000000 		.4byte	0x37
+ 475 0037 02       		.uleb128 0x2
+ 476 0038 01       		.byte	0x1
+ 477 0039 08       		.byte	0x8
+ 478 003a 39010000 		.4byte	.LASF1
+ 479 003e 02       		.uleb128 0x2
+ 480 003f 02       		.byte	0x2
+ 481 0040 05       		.byte	0x5
+ 482 0041 5D000000 		.4byte	.LASF2
+ 483 0045 03       		.uleb128 0x3
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 19
+
+
+ 484 0046 7C000000 		.4byte	.LASF4
+ 485 004a 02       		.byte	0x2
+ 486 004b 2B       		.byte	0x2b
+ 487 004c 50000000 		.4byte	0x50
+ 488 0050 02       		.uleb128 0x2
+ 489 0051 02       		.byte	0x2
+ 490 0052 07       		.byte	0x7
+ 491 0053 F5010000 		.4byte	.LASF5
+ 492 0057 03       		.uleb128 0x3
+ 493 0058 13030000 		.4byte	.LASF6
+ 494 005c 02       		.byte	0x2
+ 495 005d 3F       		.byte	0x3f
+ 496 005e 62000000 		.4byte	0x62
+ 497 0062 02       		.uleb128 0x2
+ 498 0063 04       		.byte	0x4
+ 499 0064 05       		.byte	0x5
+ 500 0065 18010000 		.4byte	.LASF7
+ 501 0069 02       		.uleb128 0x2
+ 502 006a 04       		.byte	0x4
+ 503 006b 07       		.byte	0x7
+ 504 006c DC020000 		.4byte	.LASF8
+ 505 0070 02       		.uleb128 0x2
+ 506 0071 08       		.byte	0x8
+ 507 0072 05       		.byte	0x5
+ 508 0073 EE000000 		.4byte	.LASF9
+ 509 0077 02       		.uleb128 0x2
+ 510 0078 08       		.byte	0x8
+ 511 0079 07       		.byte	0x7
+ 512 007a AC010000 		.4byte	.LASF10
+ 513 007e 04       		.uleb128 0x4
+ 514 007f 04       		.byte	0x4
+ 515 0080 05       		.byte	0x5
+ 516 0081 696E7400 		.ascii	"int\000"
+ 517 0085 02       		.uleb128 0x2
+ 518 0086 04       		.byte	0x4
+ 519 0087 07       		.byte	0x7
+ 520 0088 C3010000 		.4byte	.LASF11
+ 521 008c 03       		.uleb128 0x3
+ 522 008d 9F000000 		.4byte	.LASF12
+ 523 0091 03       		.byte	0x3
+ 524 0092 15       		.byte	0x15
+ 525 0093 2C000000 		.4byte	0x2c
+ 526 0097 03       		.uleb128 0x3
+ 527 0098 D0010000 		.4byte	.LASF13
+ 528 009c 03       		.byte	0x3
+ 529 009d 21       		.byte	0x21
+ 530 009e 45000000 		.4byte	0x45
+ 531 00a2 03       		.uleb128 0x3
+ 532 00a3 AF020000 		.4byte	.LASF14
+ 533 00a7 03       		.byte	0x3
+ 534 00a8 2C       		.byte	0x2c
+ 535 00a9 57000000 		.4byte	0x57
+ 536 00ad 05       		.uleb128 0x5
+ 537 00ae AD000000 		.4byte	.LASF15
+ 538 00b2 04       		.byte	0x4
+ 539 00b3 9201     		.2byte	0x192
+ 540 00b5 37000000 		.4byte	0x37
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 20
+
+
+ 541 00b9 05       		.uleb128 0x5
+ 542 00ba CE020000 		.4byte	.LASF16
+ 543 00be 04       		.byte	0x4
+ 544 00bf 9401     		.2byte	0x194
+ 545 00c1 69000000 		.4byte	0x69
+ 546 00c5 05       		.uleb128 0x5
+ 547 00c6 A7000000 		.4byte	.LASF17
+ 548 00ca 04       		.byte	0x4
+ 549 00cb 9601     		.2byte	0x196
+ 550 00cd 3E000000 		.4byte	0x3e
+ 551 00d1 05       		.uleb128 0x5
+ 552 00d2 4A000000 		.4byte	.LASF18
+ 553 00d6 04       		.byte	0x4
+ 554 00d7 9801     		.2byte	0x198
+ 555 00d9 DD000000 		.4byte	0xdd
+ 556 00dd 02       		.uleb128 0x2
+ 557 00de 04       		.byte	0x4
+ 558 00df 04       		.byte	0x4
+ 559 00e0 E1000000 		.4byte	.LASF19
+ 560 00e4 02       		.uleb128 0x2
+ 561 00e5 08       		.byte	0x8
+ 562 00e6 04       		.byte	0x4
+ 563 00e7 5B030000 		.4byte	.LASF20
+ 564 00eb 02       		.uleb128 0x2
+ 565 00ec 01       		.byte	0x1
+ 566 00ed 08       		.byte	0x8
+ 567 00ee 1C020000 		.4byte	.LASF21
+ 568 00f2 05       		.uleb128 0x5
+ 569 00f3 7E010000 		.4byte	.LASF22
+ 570 00f7 04       		.byte	0x4
+ 571 00f8 4E02     		.2byte	0x24e
+ 572 00fa FE000000 		.4byte	0xfe
+ 573 00fe 06       		.uleb128 0x6
+ 574 00ff 04       		.byte	0x4
+ 575 0100 04010000 		.4byte	0x104
+ 576 0104 07       		.uleb128 0x7
+ 577 0105 02       		.uleb128 0x2
+ 578 0106 04       		.byte	0x4
+ 579 0107 07       		.byte	0x7
+ 580 0108 67000000 		.4byte	.LASF23
+ 581 010c 06       		.uleb128 0x6
+ 582 010d 04       		.byte	0x4
+ 583 010e EB000000 		.4byte	0xeb
+ 584 0112 06       		.uleb128 0x6
+ 585 0113 04       		.byte	0x4
+ 586 0114 18010000 		.4byte	0x118
+ 587 0118 08       		.uleb128 0x8
+ 588 0119 EB000000 		.4byte	0xeb
+ 589 011d 09       		.uleb128 0x9
+ 590 011e 96000000 		.4byte	.LASF63
+ 591 0122 08       		.byte	0x8
+ 592 0123 05       		.byte	0x5
+ 593 0124 11       		.byte	0x11
+ 594 0125 56010000 		.4byte	0x156
+ 595 0129 0A       		.uleb128 0xa
+ 596 012a 6C3300   		.ascii	"l3\000"
+ 597 012d 05       		.byte	0x5
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 21
+
+
+ 598 012e 12       		.byte	0x12
+ 599 012f 97000000 		.4byte	0x97
+ 600 0133 00       		.byte	0
+ 601 0134 0A       		.uleb128 0xa
+ 602 0135 6C3100   		.ascii	"l1\000"
+ 603 0138 05       		.byte	0x5
+ 604 0139 14       		.byte	0x14
+ 605 013a 97000000 		.4byte	0x97
+ 606 013e 02       		.byte	0x2
+ 607 013f 0A       		.uleb128 0xa
+ 608 0140 723100   		.ascii	"r1\000"
+ 609 0143 05       		.byte	0x5
+ 610 0144 15       		.byte	0x15
+ 611 0145 97000000 		.4byte	0x97
+ 612 0149 04       		.byte	0x4
+ 613 014a 0A       		.uleb128 0xa
+ 614 014b 723300   		.ascii	"r3\000"
+ 615 014e 05       		.byte	0x5
+ 616 014f 17       		.byte	0x17
+ 617 0150 97000000 		.4byte	0x97
+ 618 0154 06       		.byte	0x6
+ 619 0155 00       		.byte	0
+ 620 0156 02       		.uleb128 0x2
+ 621 0157 08       		.byte	0x8
+ 622 0158 04       		.byte	0x4
+ 623 0159 60010000 		.4byte	.LASF24
+ 624 015d 0B       		.uleb128 0xb
+ 625 015e B7020000 		.4byte	.LASF27
+ 626 0162 01       		.byte	0x1
+ 627 0163 8B       		.byte	0x8b
+ 628 0164 00000000 		.4byte	.LFB64
+ 629 0168 74000000 		.4byte	.LFE64-.LFB64
+ 630 016c 01       		.uleb128 0x1
+ 631 016d 9C       		.byte	0x9c
+ 632 016e 0B020000 		.4byte	0x20b
+ 633 0172 0C       		.uleb128 0xc
+ 634 0173 51030000 		.4byte	.LASF25
+ 635 0177 01       		.byte	0x1
+ 636 0178 8E       		.byte	0x8e
+ 637 0179 C5000000 		.4byte	0xc5
+ 638 017d 00000000 		.4byte	.LLST0
+ 639 0181 0C       		.uleb128 0xc
+ 640 0182 08020000 		.4byte	.LASF26
+ 641 0186 01       		.byte	0x1
+ 642 0187 8F       		.byte	0x8f
+ 643 0188 DD000000 		.4byte	0xdd
+ 644 018c 1F000000 		.4byte	.LLST1
+ 645 0190 0D       		.uleb128 0xd
+ 646 0191 06000000 		.4byte	.LVL0
+ 647 0195 D8040000 		.4byte	0x4d8
+ 648 0199 0D       		.uleb128 0xd
+ 649 019a 0A000000 		.4byte	.LVL1
+ 650 019e DF040000 		.4byte	0x4df
+ 651 01a2 0E       		.uleb128 0xe
+ 652 01a3 10000000 		.4byte	.LVL2
+ 653 01a7 E6040000 		.4byte	0x4e6
+ 654 01ab B5010000 		.4byte	0x1b5
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 22
+
+
+ 655 01af 0F       		.uleb128 0xf
+ 656 01b0 01       		.uleb128 0x1
+ 657 01b1 50       		.byte	0x50
+ 658 01b2 01       		.uleb128 0x1
+ 659 01b3 30       		.byte	0x30
+ 660 01b4 00       		.byte	0
+ 661 01b5 0D       		.uleb128 0xd
+ 662 01b6 16000000 		.4byte	.LVL3
+ 663 01ba FB040000 		.4byte	0x4fb
+ 664 01be 0D       		.uleb128 0xd
+ 665 01bf 1A000000 		.4byte	.LVL4
+ 666 01c3 06050000 		.4byte	0x506
+ 667 01c7 0E       		.uleb128 0xe
+ 668 01c8 36000000 		.4byte	.LVL8
+ 669 01cc 1B050000 		.4byte	0x51b
+ 670 01d0 DE010000 		.4byte	0x1de
+ 671 01d4 0F       		.uleb128 0xf
+ 672 01d5 01       		.uleb128 0x1
+ 673 01d6 50       		.byte	0x50
+ 674 01d7 05       		.uleb128 0x5
+ 675 01d8 03       		.byte	0x3
+ 676 01d9 00000000 		.4byte	.LC0
+ 677 01dd 00       		.byte	0
+ 678 01de 0E       		.uleb128 0xe
+ 679 01df 5C000000 		.4byte	.LVL11
+ 680 01e3 31050000 		.4byte	0x531
+ 681 01e7 F9010000 		.4byte	0x1f9
+ 682 01eb 0F       		.uleb128 0xf
+ 683 01ec 01       		.uleb128 0x1
+ 684 01ed 51       		.byte	0x51
+ 685 01ee 02       		.uleb128 0x2
+ 686 01ef 09       		.byte	0x9
+ 687 01f0 C8       		.byte	0xc8
+ 688 01f1 0F       		.uleb128 0xf
+ 689 01f2 01       		.uleb128 0x1
+ 690 01f3 50       		.byte	0x50
+ 691 01f4 03       		.uleb128 0x3
+ 692 01f5 0A       		.byte	0xa
+ 693 01f6 F401     		.2byte	0x1f4
+ 694 01f8 00       		.byte	0
+ 695 01f9 10       		.uleb128 0x10
+ 696 01fa 64000000 		.4byte	.LVL12
+ 697 01fe 47050000 		.4byte	0x547
+ 698 0202 0F       		.uleb128 0xf
+ 699 0203 01       		.uleb128 0x1
+ 700 0204 50       		.byte	0x50
+ 701 0205 03       		.uleb128 0x3
+ 702 0206 0A       		.byte	0xa
+ 703 0207 D007     		.2byte	0x7d0
+ 704 0209 00       		.byte	0
+ 705 020a 00       		.byte	0
+ 706 020b 11       		.uleb128 0x11
+ 707 020c 70000000 		.4byte	.LASF28
+ 708 0210 01       		.byte	0x1
+ 709 0211 3A       		.byte	0x3a
+ 710 0212 7E000000 		.4byte	0x7e
+ 711 0216 00000000 		.4byte	.LFB63
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 23
+
+
+ 712 021a 18010000 		.4byte	.LFE63-.LFB63
+ 713 021e 01       		.uleb128 0x1
+ 714 021f 9C       		.byte	0x9c
+ 715 0220 BC030000 		.4byte	0x3bc
+ 716 0224 12       		.uleb128 0x12
+ 717 0225 72656600 		.ascii	"ref\000"
+ 718 0229 01       		.byte	0x1
+ 719 022a 42       		.byte	0x42
+ 720 022b 1D010000 		.4byte	0x11d
+ 721 022f 02       		.uleb128 0x2
+ 722 0230 91       		.byte	0x91
+ 723 0231 70       		.sleb128 -16
+ 724 0232 12       		.uleb128 0x12
+ 725 0233 64696700 		.ascii	"dig\000"
+ 726 0237 01       		.byte	0x1
+ 727 0238 43       		.byte	0x43
+ 728 0239 1D010000 		.4byte	0x11d
+ 729 023d 02       		.uleb128 0x2
+ 730 023e 91       		.byte	0x91
+ 731 023f 68       		.sleb128 -24
+ 732 0240 13       		.uleb128 0x13
+ 733 0241 E7000000 		.4byte	.LASF29
+ 734 0245 01       		.byte	0x1
+ 735 0246 44       		.byte	0x44
+ 736 0247 8C000000 		.4byte	0x8c
+ 737 024b 00       		.byte	0
+ 738 024c 13       		.uleb128 0x13
+ 739 024d 96010000 		.4byte	.LASF30
+ 740 0251 01       		.byte	0x1
+ 741 0252 44       		.byte	0x44
+ 742 0253 8C000000 		.4byte	0x8c
+ 743 0257 64       		.byte	0x64
+ 744 0258 13       		.uleb128 0x13
+ 745 0259 C4020000 		.4byte	.LASF31
+ 746 025d 01       		.byte	0x1
+ 747 025e 44       		.byte	0x44
+ 748 025f 8C000000 		.4byte	0x8c
+ 749 0263 00       		.byte	0
+ 750 0264 13       		.uleb128 0x13
+ 751 0265 8C000000 		.4byte	.LASF32
+ 752 0269 01       		.byte	0x1
+ 753 026a 44       		.byte	0x44
+ 754 026b 8C000000 		.4byte	0x8c
+ 755 026f 00       		.byte	0
+ 756 0270 0C       		.uleb128 0xc
+ 757 0271 46030000 		.4byte	.LASF33
+ 758 0275 01       		.byte	0x1
+ 759 0276 50       		.byte	0x50
+ 760 0277 8C000000 		.4byte	0x8c
+ 761 027b 4D000000 		.4byte	.LLST2
+ 762 027f 0C       		.uleb128 0xc
+ 763 0280 28010000 		.4byte	.LASF34
+ 764 0284 01       		.byte	0x1
+ 765 0285 69       		.byte	0x69
+ 766 0286 7E000000 		.4byte	0x7e
+ 767 028a 6C000000 		.4byte	.LLST3
+ 768 028e 0D       		.uleb128 0xd
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 24
+
+
+ 769 028f 0A000000 		.4byte	.LVL13
+ 770 0293 58050000 		.4byte	0x558
+ 771 0297 0E       		.uleb128 0xe
+ 772 0298 10000000 		.4byte	.LVL14
+ 773 029c 5F050000 		.4byte	0x55f
+ 774 02a0 AA020000 		.4byte	0x2aa
+ 775 02a4 0F       		.uleb128 0xf
+ 776 02a5 01       		.uleb128 0x1
+ 777 02a6 50       		.byte	0x50
+ 778 02a7 01       		.uleb128 0x1
+ 779 02a8 31       		.byte	0x31
+ 780 02a9 00       		.byte	0
+ 781 02aa 0D       		.uleb128 0xd
+ 782 02ab 14000000 		.4byte	.LVL15
+ 783 02af 70050000 		.4byte	0x570
+ 784 02b3 0D       		.uleb128 0xd
+ 785 02b4 1A000000 		.4byte	.LVL16
+ 786 02b8 7D050000 		.4byte	0x57d
+ 787 02bc 0D       		.uleb128 0xd
+ 788 02bd 1E000000 		.4byte	.LVL17
+ 789 02c1 8E050000 		.4byte	0x58e
+ 790 02c5 0E       		.uleb128 0xe
+ 791 02c6 26000000 		.4byte	.LVL18
+ 792 02ca 95050000 		.4byte	0x595
+ 793 02ce DE020000 		.4byte	0x2de
+ 794 02d2 0F       		.uleb128 0xf
+ 795 02d3 01       		.uleb128 0x1
+ 796 02d4 51       		.byte	0x51
+ 797 02d5 01       		.uleb128 0x1
+ 798 02d6 30       		.byte	0x30
+ 799 02d7 0F       		.uleb128 0xf
+ 800 02d8 01       		.uleb128 0x1
+ 801 02d9 50       		.byte	0x50
+ 802 02da 02       		.uleb128 0x2
+ 803 02db 08       		.byte	0x8
+ 804 02dc 64       		.byte	0x64
+ 805 02dd 00       		.byte	0
+ 806 02de 0E       		.uleb128 0xe
+ 807 02df 30000000 		.4byte	.LVL20
+ 808 02e3 AB050000 		.4byte	0x5ab
+ 809 02e7 F2020000 		.4byte	0x2f2
+ 810 02eb 0F       		.uleb128 0xf
+ 811 02ec 01       		.uleb128 0x1
+ 812 02ed 50       		.byte	0x50
+ 813 02ee 02       		.uleb128 0x2
+ 814 02ef 91       		.byte	0x91
+ 815 02f0 70       		.sleb128 -16
+ 816 02f1 00       		.byte	0
+ 817 02f2 0E       		.uleb128 0xe
+ 818 02f3 48000000 		.4byte	.LVL21
+ 819 02f7 1B050000 		.4byte	0x51b
+ 820 02fb 09030000 		.4byte	0x309
+ 821 02ff 0F       		.uleb128 0xf
+ 822 0300 01       		.uleb128 0x1
+ 823 0301 50       		.byte	0x50
+ 824 0302 05       		.uleb128 0x5
+ 825 0303 03       		.byte	0x3
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 25
+
+
+ 826 0304 0C000000 		.4byte	.LC1
+ 827 0308 00       		.byte	0
+ 828 0309 0E       		.uleb128 0xe
+ 829 030a 98000000 		.4byte	.LVL24
+ 830 030e 95050000 		.4byte	0x595
+ 831 0312 23030000 		.4byte	0x323
+ 832 0316 0F       		.uleb128 0xf
+ 833 0317 01       		.uleb128 0x1
+ 834 0318 51       		.byte	0x51
+ 835 0319 02       		.uleb128 0x2
+ 836 031a 08       		.byte	0x8
+ 837 031b 32       		.byte	0x32
+ 838 031c 0F       		.uleb128 0xf
+ 839 031d 01       		.uleb128 0x1
+ 840 031e 50       		.byte	0x50
+ 841 031f 02       		.uleb128 0x2
+ 842 0320 08       		.byte	0x8
+ 843 0321 64       		.byte	0x64
+ 844 0322 00       		.byte	0
+ 845 0323 0D       		.uleb128 0xd
+ 846 0324 9C000000 		.4byte	.LVL25
+ 847 0328 C2050000 		.4byte	0x5c2
+ 848 032c 0D       		.uleb128 0xd
+ 849 032d A4000000 		.4byte	.LVL27
+ 850 0331 CF050000 		.4byte	0x5cf
+ 851 0335 0D       		.uleb128 0xd
+ 852 0336 AC000000 		.4byte	.LVL28
+ 853 033a 70050000 		.4byte	0x570
+ 854 033e 0E       		.uleb128 0xe
+ 855 033f B6000000 		.4byte	.LVL29
+ 856 0343 95050000 		.4byte	0x595
+ 857 0347 59030000 		.4byte	0x359
+ 858 034b 0F       		.uleb128 0xf
+ 859 034c 01       		.uleb128 0x1
+ 860 034d 51       		.byte	0x51
+ 861 034e 03       		.uleb128 0x3
+ 862 034f 0A       		.byte	0xa
+ 863 0350 2C01     		.2byte	0x12c
+ 864 0352 0F       		.uleb128 0xf
+ 865 0353 01       		.uleb128 0x1
+ 866 0354 50       		.byte	0x50
+ 867 0355 02       		.uleb128 0x2
+ 868 0356 09       		.byte	0x9
+ 869 0357 FF       		.byte	0xff
+ 870 0358 00       		.byte	0
+ 871 0359 0D       		.uleb128 0xd
+ 872 035a BA000000 		.4byte	.LVL30
+ 873 035e 5D010000 		.4byte	0x15d
+ 874 0362 0E       		.uleb128 0xe
+ 875 0363 C0000000 		.4byte	.LVL31
+ 876 0367 AB050000 		.4byte	0x5ab
+ 877 036b 76030000 		.4byte	0x376
+ 878 036f 0F       		.uleb128 0xf
+ 879 0370 01       		.uleb128 0x1
+ 880 0371 50       		.byte	0x50
+ 881 0372 02       		.uleb128 0x2
+ 882 0373 91       		.byte	0x91
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 26
+
+
+ 883 0374 70       		.sleb128 -16
+ 884 0375 00       		.byte	0
+ 885 0376 0E       		.uleb128 0xe
+ 886 0377 DA000000 		.4byte	.LVL32
+ 887 037b 1B050000 		.4byte	0x51b
+ 888 037f 8A030000 		.4byte	0x38a
+ 889 0383 0F       		.uleb128 0xf
+ 890 0384 01       		.uleb128 0x1
+ 891 0385 50       		.byte	0x50
+ 892 0386 02       		.uleb128 0x2
+ 893 0387 74       		.byte	0x74
+ 894 0388 00       		.sleb128 0
+ 895 0389 00       		.byte	0
+ 896 038a 0E       		.uleb128 0xe
+ 897 038b E0000000 		.4byte	.LVL33
+ 898 038f E0050000 		.4byte	0x5e0
+ 899 0393 9E030000 		.4byte	0x39e
+ 900 0397 0F       		.uleb128 0xf
+ 901 0398 01       		.uleb128 0x1
+ 902 0399 50       		.byte	0x50
+ 903 039a 02       		.uleb128 0x2
+ 904 039b 91       		.byte	0x91
+ 905 039c 68       		.sleb128 -24
+ 906 039d 00       		.byte	0
+ 907 039e 0E       		.uleb128 0xe
+ 908 039f F8000000 		.4byte	.LVL34
+ 909 03a3 1B050000 		.4byte	0x51b
+ 910 03a7 B2030000 		.4byte	0x3b2
+ 911 03ab 0F       		.uleb128 0xf
+ 912 03ac 01       		.uleb128 0x1
+ 913 03ad 50       		.byte	0x50
+ 914 03ae 02       		.uleb128 0x2
+ 915 03af 74       		.byte	0x74
+ 916 03b0 00       		.sleb128 0
+ 917 03b1 00       		.byte	0
+ 918 03b2 0D       		.uleb128 0xd
+ 919 03b3 0C010000 		.4byte	.LVL35
+ 920 03b7 F1050000 		.4byte	0x5f1
+ 921 03bb 00       		.byte	0
+ 922 03bc 14       		.uleb128 0x14
+ 923 03bd 75000000 		.4byte	.LASF36
+ 924 03c1 01       		.byte	0x1
+ 925 03c2 D001     		.2byte	0x1d0
+ 926 03c4 7E000000 		.4byte	0x7e
+ 927 03c8 00000000 		.4byte	.LFB65
+ 928 03cc 2A000000 		.4byte	.LFE65-.LFB65
+ 929 03d0 01       		.uleb128 0x1
+ 930 03d1 9C       		.byte	0x9c
+ 931 03d2 31040000 		.4byte	0x431
+ 932 03d6 15       		.uleb128 0x15
+ 933 03d7 87000000 		.4byte	.LASF35
+ 934 03db 01       		.byte	0x1
+ 935 03dc D001     		.2byte	0x1d0
+ 936 03de 7E000000 		.4byte	0x7e
+ 937 03e2 96000000 		.4byte	.LLST4
+ 938 03e6 16       		.uleb128 0x16
+ 939 03e7 70747200 		.ascii	"ptr\000"
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 27
+
+
+ 940 03eb 01       		.byte	0x1
+ 941 03ec D001     		.2byte	0x1d0
+ 942 03ee 0C010000 		.4byte	0x10c
+ 943 03f2 B7000000 		.4byte	.LLST5
+ 944 03f6 16       		.uleb128 0x16
+ 945 03f7 6C656E00 		.ascii	"len\000"
+ 946 03fb 01       		.byte	0x1
+ 947 03fc D001     		.2byte	0x1d0
+ 948 03fe 7E000000 		.4byte	0x7e
+ 949 0402 EB000000 		.4byte	.LLST6
+ 950 0406 17       		.uleb128 0x17
+ 951 0407 6E00     		.ascii	"n\000"
+ 952 0409 01       		.byte	0x1
+ 953 040a D301     		.2byte	0x1d3
+ 954 040c 7E000000 		.4byte	0x7e
+ 955 0410 09010000 		.4byte	.LLST7
+ 956 0414 0E       		.uleb128 0xe
+ 957 0415 16000000 		.4byte	.LVL39
+ 958 0419 11060000 		.4byte	0x611
+ 959 041d 27040000 		.4byte	0x427
+ 960 0421 0F       		.uleb128 0xf
+ 961 0422 01       		.uleb128 0x1
+ 962 0423 50       		.byte	0x50
+ 963 0424 01       		.uleb128 0x1
+ 964 0425 3D       		.byte	0x3d
+ 965 0426 00       		.byte	0
+ 966 0427 0D       		.uleb128 0xd
+ 967 0428 1E000000 		.4byte	.LVL41
+ 968 042c 11060000 		.4byte	0x611
+ 969 0430 00       		.byte	0
+ 970 0431 14       		.uleb128 0x14
+ 971 0432 90010000 		.4byte	.LASF37
+ 972 0436 01       		.byte	0x1
+ 973 0437 DB01     		.2byte	0x1db
+ 974 0439 7E000000 		.4byte	0x7e
+ 975 043d 00000000 		.4byte	.LFB66
+ 976 0441 38000000 		.4byte	.LFE66-.LFB66
+ 977 0445 01       		.uleb128 0x1
+ 978 0446 9C       		.byte	0x9c
+ 979 0447 C7040000 		.4byte	0x4c7
+ 980 044b 15       		.uleb128 0x15
+ 981 044c 87000000 		.4byte	.LASF35
+ 982 0450 01       		.byte	0x1
+ 983 0451 DB01     		.2byte	0x1db
+ 984 0453 7E000000 		.4byte	0x7e
+ 985 0457 28010000 		.4byte	.LLST8
+ 986 045b 16       		.uleb128 0x16
+ 987 045c 70747200 		.ascii	"ptr\000"
+ 988 0460 01       		.byte	0x1
+ 989 0461 DB01     		.2byte	0x1db
+ 990 0463 0C010000 		.4byte	0x10c
+ 991 0467 49010000 		.4byte	.LLST9
+ 992 046b 15       		.uleb128 0x15
+ 993 046c 0D030000 		.4byte	.LASF38
+ 994 0470 01       		.byte	0x1
+ 995 0471 DB01     		.2byte	0x1db
+ 996 0473 7E000000 		.4byte	0x7e
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 28
+
+
+ 997 0477 7D010000 		.4byte	.LLST10
+ 998 047b 17       		.uleb128 0x17
+ 999 047c 63687300 		.ascii	"chs\000"
+ 1000 0480 01       		.byte	0x1
+ 1001 0481 DD01     		.2byte	0x1dd
+ 1002 0483 7E000000 		.4byte	0x7e
+ 1003 0487 9B010000 		.4byte	.LLST11
+ 1004 048b 17       		.uleb128 0x17
+ 1005 048c 636800   		.ascii	"ch\000"
+ 1006 048f 01       		.byte	0x1
+ 1007 0490 DE01     		.2byte	0x1de
+ 1008 0492 EB000000 		.4byte	0xeb
+ 1009 0496 BA010000 		.4byte	.LLST12
+ 1010 049a 0D       		.uleb128 0xd
+ 1011 049b 0E000000 		.4byte	.LVL47
+ 1012 049f 22060000 		.4byte	0x622
+ 1013 04a3 0E       		.uleb128 0xe
+ 1014 04a4 16000000 		.4byte	.LVL48
+ 1015 04a8 11060000 		.4byte	0x611
+ 1016 04ac B7040000 		.4byte	0x4b7
+ 1017 04b0 0F       		.uleb128 0xf
+ 1018 04b1 01       		.uleb128 0x1
+ 1019 04b2 50       		.byte	0x50
+ 1020 04b3 02       		.uleb128 0x2
+ 1021 04b4 75       		.byte	0x75
+ 1022 04b5 00       		.sleb128 0
+ 1023 04b6 00       		.byte	0
+ 1024 04b7 10       		.uleb128 0x10
+ 1025 04b8 22000000 		.4byte	.LVL51
+ 1026 04bc 11060000 		.4byte	0x611
+ 1027 04c0 0F       		.uleb128 0xf
+ 1028 04c1 01       		.uleb128 0x1
+ 1029 04c2 50       		.byte	0x50
+ 1030 04c3 01       		.uleb128 0x1
+ 1031 04c4 3A       		.byte	0x3a
+ 1032 04c5 00       		.byte	0
+ 1033 04c6 00       		.byte	0
+ 1034 04c7 18       		.uleb128 0x18
+ 1035 04c8 69030000 		.4byte	.LASF64
+ 1036 04cc 10       		.byte	0x10
+ 1037 04cd 9606     		.2byte	0x696
+ 1038 04cf D3040000 		.4byte	0x4d3
+ 1039 04d3 19       		.uleb128 0x19
+ 1040 04d4 A2000000 		.4byte	0xa2
+ 1041 04d8 1A       		.uleb128 0x1a
+ 1042 04d9 6C010000 		.4byte	.LASF39
+ 1043 04dd 06       		.byte	0x6
+ 1044 04de 34       		.byte	0x34
+ 1045 04df 1A       		.uleb128 0x1a
+ 1046 04e0 47010000 		.4byte	.LASF40
+ 1047 04e4 06       		.byte	0x6
+ 1048 04e5 D1       		.byte	0xd1
+ 1049 04e6 1B       		.uleb128 0x1b
+ 1050 04e7 D9010000 		.4byte	.LASF41
+ 1051 04eb 06       		.byte	0x6
+ 1052 04ec 39       		.byte	0x39
+ 1053 04ed AD000000 		.4byte	0xad
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 29
+
+
+ 1054 04f1 FB040000 		.4byte	0x4fb
+ 1055 04f5 1C       		.uleb128 0x1c
+ 1056 04f6 AD000000 		.4byte	0xad
+ 1057 04fa 00       		.byte	0
+ 1058 04fb 1D       		.uleb128 0x1d
+ 1059 04fc 2E030000 		.4byte	.LASF58
+ 1060 0500 06       		.byte	0x6
+ 1061 0501 3B       		.byte	0x3b
+ 1062 0502 C5000000 		.4byte	0xc5
+ 1063 0506 1B       		.uleb128 0x1b
+ 1064 0507 7E030000 		.4byte	.LASF42
+ 1065 050b 06       		.byte	0x6
+ 1066 050c 41       		.byte	0x41
+ 1067 050d D1000000 		.4byte	0xd1
+ 1068 0511 1B050000 		.4byte	0x51b
+ 1069 0515 1C       		.uleb128 0x1c
+ 1070 0516 C5000000 		.4byte	0xc5
+ 1071 051a 00       		.byte	0
+ 1072 051b 1B       		.uleb128 0x1b
+ 1073 051c 21010000 		.4byte	.LASF43
+ 1074 0520 07       		.byte	0x7
+ 1075 0521 B2       		.byte	0xb2
+ 1076 0522 7E000000 		.4byte	0x7e
+ 1077 0526 31050000 		.4byte	0x531
+ 1078 052a 1C       		.uleb128 0x1c
+ 1079 052b 12010000 		.4byte	0x112
+ 1080 052f 1E       		.uleb128 0x1e
+ 1081 0530 00       		.byte	0
+ 1082 0531 1F       		.uleb128 0x1f
+ 1083 0532 8B010000 		.4byte	.LASF44
+ 1084 0536 08       		.byte	0x8
+ 1085 0537 04       		.byte	0x4
+ 1086 0538 47050000 		.4byte	0x547
+ 1087 053c 1C       		.uleb128 0x1c
+ 1088 053d B9000000 		.4byte	0xb9
+ 1089 0541 1C       		.uleb128 0x1c
+ 1090 0542 AD000000 		.4byte	0xad
+ 1091 0546 00       		.byte	0
+ 1092 0547 1F       		.uleb128 0x1f
+ 1093 0548 76030000 		.4byte	.LASF45
+ 1094 054c 09       		.byte	0x9
+ 1095 054d 76       		.byte	0x76
+ 1096 054e 58050000 		.4byte	0x558
+ 1097 0552 1C       		.uleb128 0x1c
+ 1098 0553 B9000000 		.4byte	0xb9
+ 1099 0557 00       		.byte	0
+ 1100 0558 1A       		.uleb128 0x1a
+ 1101 0559 C5000000 		.4byte	.LASF46
+ 1102 055d 0A       		.byte	0xa
+ 1103 055e 54       		.byte	0x54
+ 1104 055f 1F       		.uleb128 0x1f
+ 1105 0560 99030000 		.4byte	.LASF47
+ 1106 0564 0B       		.byte	0xb
+ 1107 0565 26       		.byte	0x26
+ 1108 0566 70050000 		.4byte	0x570
+ 1109 056a 1C       		.uleb128 0x1c
+ 1110 056b AD000000 		.4byte	0xad
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 30
+
+
+ 1111 056f 00       		.byte	0
+ 1112 0570 20       		.uleb128 0x20
+ 1113 0571 01030000 		.4byte	.LASF52
+ 1114 0575 0D       		.byte	0xd
+ 1115 0576 0B       		.byte	0xb
+ 1116 0577 7D050000 		.4byte	0x57d
+ 1117 057b 1E       		.uleb128 0x1e
+ 1118 057c 00       		.byte	0
+ 1119 057d 1F       		.uleb128 0x1f
+ 1120 057e EE020000 		.4byte	.LASF48
+ 1121 0582 0C       		.byte	0xc
+ 1122 0583 18       		.byte	0x18
+ 1123 0584 8E050000 		.4byte	0x58e
+ 1124 0588 1C       		.uleb128 0x1c
+ 1125 0589 F2000000 		.4byte	0xf2
+ 1126 058d 00       		.byte	0
+ 1127 058e 1A       		.uleb128 0x1a
+ 1128 058f B3000000 		.4byte	.LASF49
+ 1129 0593 05       		.byte	0x5
+ 1130 0594 1A       		.byte	0x1a
+ 1131 0595 1F       		.uleb128 0x1f
+ 1132 0596 0E020000 		.4byte	.LASF50
+ 1133 059a 0D       		.byte	0xd
+ 1134 059b 0F       		.byte	0xf
+ 1135 059c AB050000 		.4byte	0x5ab
+ 1136 05a0 1C       		.uleb128 0x1c
+ 1137 05a1 AD000000 		.4byte	0xad
+ 1138 05a5 1C       		.uleb128 0x1c
+ 1139 05a6 B9000000 		.4byte	0xb9
+ 1140 05aa 00       		.byte	0
+ 1141 05ab 1F       		.uleb128 0x1f
+ 1142 05ac 1D030000 		.4byte	.LASF51
+ 1143 05b0 05       		.byte	0x5
+ 1144 05b1 1B       		.byte	0x1b
+ 1145 05b2 BC050000 		.4byte	0x5bc
+ 1146 05b6 1C       		.uleb128 0x1c
+ 1147 05b7 BC050000 		.4byte	0x5bc
+ 1148 05bb 00       		.byte	0
+ 1149 05bc 06       		.uleb128 0x6
+ 1150 05bd 04       		.byte	0x4
+ 1151 05be 1D010000 		.4byte	0x11d
+ 1152 05c2 20       		.uleb128 0x20
+ 1153 05c3 52000000 		.4byte	.LASF53
+ 1154 05c7 0D       		.byte	0xd
+ 1155 05c8 0C       		.byte	0xc
+ 1156 05c9 CF050000 		.4byte	0x5cf
+ 1157 05cd 1E       		.uleb128 0x1e
+ 1158 05ce 00       		.byte	0
+ 1159 05cf 21       		.uleb128 0x21
+ 1160 05d0 62030000 		.4byte	.LASF54
+ 1161 05d4 0E       		.byte	0xe
+ 1162 05d5 10       		.byte	0x10
+ 1163 05d6 7E000000 		.4byte	0x7e
+ 1164 05da E0050000 		.4byte	0x5e0
+ 1165 05de 1E       		.uleb128 0x1e
+ 1166 05df 00       		.byte	0
+ 1167 05e0 1F       		.uleb128 0x1f
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 31
+
+
+ 1168 05e1 FC000000 		.4byte	.LASF55
+ 1169 05e5 05       		.byte	0x5
+ 1170 05e6 1C       		.byte	0x1c
+ 1171 05e7 F1050000 		.4byte	0x5f1
+ 1172 05eb 1C       		.uleb128 0x1c
+ 1173 05ec BC050000 		.4byte	0x5bc
+ 1174 05f0 00       		.byte	0
+ 1175 05f1 1F       		.uleb128 0x1f
+ 1176 05f2 10010000 		.4byte	.LASF56
+ 1177 05f6 0F       		.byte	0xf
+ 1178 05f7 10       		.byte	0x10
+ 1179 05f8 11060000 		.4byte	0x611
+ 1180 05fc 1C       		.uleb128 0x1c
+ 1181 05fd 97000000 		.4byte	0x97
+ 1182 0601 1C       		.uleb128 0x1c
+ 1183 0602 97000000 		.4byte	0x97
+ 1184 0606 1C       		.uleb128 0x1c
+ 1185 0607 97000000 		.4byte	0x97
+ 1186 060b 1C       		.uleb128 0x1c
+ 1187 060c 97000000 		.4byte	0x97
+ 1188 0610 00       		.byte	0
+ 1189 0611 1F       		.uleb128 0x1f
+ 1190 0612 D2000000 		.4byte	.LASF57
+ 1191 0616 0A       		.byte	0xa
+ 1192 0617 8A       		.byte	0x8a
+ 1193 0618 22060000 		.4byte	0x622
+ 1194 061c 1C       		.uleb128 0x1c
+ 1195 061d AD000000 		.4byte	0xad
+ 1196 0621 00       		.byte	0
+ 1197 0622 1D       		.uleb128 0x1d
+ 1198 0623 3B000000 		.4byte	.LASF59
+ 1199 0627 0A       		.byte	0xa
+ 1200 0628 71       		.byte	0x71
+ 1201 0629 AD000000 		.4byte	0xad
+ 1202 062d 00       		.byte	0
+ 1203              		.section	.debug_abbrev,"",%progbits
+ 1204              	.Ldebug_abbrev0:
+ 1205 0000 01       		.uleb128 0x1
+ 1206 0001 11       		.uleb128 0x11
+ 1207 0002 01       		.byte	0x1
+ 1208 0003 25       		.uleb128 0x25
+ 1209 0004 0E       		.uleb128 0xe
+ 1210 0005 13       		.uleb128 0x13
+ 1211 0006 0B       		.uleb128 0xb
+ 1212 0007 03       		.uleb128 0x3
+ 1213 0008 0E       		.uleb128 0xe
+ 1214 0009 1B       		.uleb128 0x1b
+ 1215 000a 0E       		.uleb128 0xe
+ 1216 000b 55       		.uleb128 0x55
+ 1217 000c 17       		.uleb128 0x17
+ 1218 000d 11       		.uleb128 0x11
+ 1219 000e 01       		.uleb128 0x1
+ 1220 000f 10       		.uleb128 0x10
+ 1221 0010 17       		.uleb128 0x17
+ 1222 0011 00       		.byte	0
+ 1223 0012 00       		.byte	0
+ 1224 0013 02       		.uleb128 0x2
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 32
+
+
+ 1225 0014 24       		.uleb128 0x24
+ 1226 0015 00       		.byte	0
+ 1227 0016 0B       		.uleb128 0xb
+ 1228 0017 0B       		.uleb128 0xb
+ 1229 0018 3E       		.uleb128 0x3e
+ 1230 0019 0B       		.uleb128 0xb
+ 1231 001a 03       		.uleb128 0x3
+ 1232 001b 0E       		.uleb128 0xe
+ 1233 001c 00       		.byte	0
+ 1234 001d 00       		.byte	0
+ 1235 001e 03       		.uleb128 0x3
+ 1236 001f 16       		.uleb128 0x16
+ 1237 0020 00       		.byte	0
+ 1238 0021 03       		.uleb128 0x3
+ 1239 0022 0E       		.uleb128 0xe
+ 1240 0023 3A       		.uleb128 0x3a
+ 1241 0024 0B       		.uleb128 0xb
+ 1242 0025 3B       		.uleb128 0x3b
+ 1243 0026 0B       		.uleb128 0xb
+ 1244 0027 49       		.uleb128 0x49
+ 1245 0028 13       		.uleb128 0x13
+ 1246 0029 00       		.byte	0
+ 1247 002a 00       		.byte	0
+ 1248 002b 04       		.uleb128 0x4
+ 1249 002c 24       		.uleb128 0x24
+ 1250 002d 00       		.byte	0
+ 1251 002e 0B       		.uleb128 0xb
+ 1252 002f 0B       		.uleb128 0xb
+ 1253 0030 3E       		.uleb128 0x3e
+ 1254 0031 0B       		.uleb128 0xb
+ 1255 0032 03       		.uleb128 0x3
+ 1256 0033 08       		.uleb128 0x8
+ 1257 0034 00       		.byte	0
+ 1258 0035 00       		.byte	0
+ 1259 0036 05       		.uleb128 0x5
+ 1260 0037 16       		.uleb128 0x16
+ 1261 0038 00       		.byte	0
+ 1262 0039 03       		.uleb128 0x3
+ 1263 003a 0E       		.uleb128 0xe
+ 1264 003b 3A       		.uleb128 0x3a
+ 1265 003c 0B       		.uleb128 0xb
+ 1266 003d 3B       		.uleb128 0x3b
+ 1267 003e 05       		.uleb128 0x5
+ 1268 003f 49       		.uleb128 0x49
+ 1269 0040 13       		.uleb128 0x13
+ 1270 0041 00       		.byte	0
+ 1271 0042 00       		.byte	0
+ 1272 0043 06       		.uleb128 0x6
+ 1273 0044 0F       		.uleb128 0xf
+ 1274 0045 00       		.byte	0
+ 1275 0046 0B       		.uleb128 0xb
+ 1276 0047 0B       		.uleb128 0xb
+ 1277 0048 49       		.uleb128 0x49
+ 1278 0049 13       		.uleb128 0x13
+ 1279 004a 00       		.byte	0
+ 1280 004b 00       		.byte	0
+ 1281 004c 07       		.uleb128 0x7
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 33
+
+
+ 1282 004d 15       		.uleb128 0x15
+ 1283 004e 00       		.byte	0
+ 1284 004f 27       		.uleb128 0x27
+ 1285 0050 19       		.uleb128 0x19
+ 1286 0051 00       		.byte	0
+ 1287 0052 00       		.byte	0
+ 1288 0053 08       		.uleb128 0x8
+ 1289 0054 26       		.uleb128 0x26
+ 1290 0055 00       		.byte	0
+ 1291 0056 49       		.uleb128 0x49
+ 1292 0057 13       		.uleb128 0x13
+ 1293 0058 00       		.byte	0
+ 1294 0059 00       		.byte	0
+ 1295 005a 09       		.uleb128 0x9
+ 1296 005b 13       		.uleb128 0x13
+ 1297 005c 01       		.byte	0x1
+ 1298 005d 03       		.uleb128 0x3
+ 1299 005e 0E       		.uleb128 0xe
+ 1300 005f 0B       		.uleb128 0xb
+ 1301 0060 0B       		.uleb128 0xb
+ 1302 0061 3A       		.uleb128 0x3a
+ 1303 0062 0B       		.uleb128 0xb
+ 1304 0063 3B       		.uleb128 0x3b
+ 1305 0064 0B       		.uleb128 0xb
+ 1306 0065 01       		.uleb128 0x1
+ 1307 0066 13       		.uleb128 0x13
+ 1308 0067 00       		.byte	0
+ 1309 0068 00       		.byte	0
+ 1310 0069 0A       		.uleb128 0xa
+ 1311 006a 0D       		.uleb128 0xd
+ 1312 006b 00       		.byte	0
+ 1313 006c 03       		.uleb128 0x3
+ 1314 006d 08       		.uleb128 0x8
+ 1315 006e 3A       		.uleb128 0x3a
+ 1316 006f 0B       		.uleb128 0xb
+ 1317 0070 3B       		.uleb128 0x3b
+ 1318 0071 0B       		.uleb128 0xb
+ 1319 0072 49       		.uleb128 0x49
+ 1320 0073 13       		.uleb128 0x13
+ 1321 0074 38       		.uleb128 0x38
+ 1322 0075 0B       		.uleb128 0xb
+ 1323 0076 00       		.byte	0
+ 1324 0077 00       		.byte	0
+ 1325 0078 0B       		.uleb128 0xb
+ 1326 0079 2E       		.uleb128 0x2e
+ 1327 007a 01       		.byte	0x1
+ 1328 007b 3F       		.uleb128 0x3f
+ 1329 007c 19       		.uleb128 0x19
+ 1330 007d 03       		.uleb128 0x3
+ 1331 007e 0E       		.uleb128 0xe
+ 1332 007f 3A       		.uleb128 0x3a
+ 1333 0080 0B       		.uleb128 0xb
+ 1334 0081 3B       		.uleb128 0x3b
+ 1335 0082 0B       		.uleb128 0xb
+ 1336 0083 27       		.uleb128 0x27
+ 1337 0084 19       		.uleb128 0x19
+ 1338 0085 11       		.uleb128 0x11
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 34
+
+
+ 1339 0086 01       		.uleb128 0x1
+ 1340 0087 12       		.uleb128 0x12
+ 1341 0088 06       		.uleb128 0x6
+ 1342 0089 40       		.uleb128 0x40
+ 1343 008a 18       		.uleb128 0x18
+ 1344 008b 9642     		.uleb128 0x2116
+ 1345 008d 19       		.uleb128 0x19
+ 1346 008e 01       		.uleb128 0x1
+ 1347 008f 13       		.uleb128 0x13
+ 1348 0090 00       		.byte	0
+ 1349 0091 00       		.byte	0
+ 1350 0092 0C       		.uleb128 0xc
+ 1351 0093 34       		.uleb128 0x34
+ 1352 0094 00       		.byte	0
+ 1353 0095 03       		.uleb128 0x3
+ 1354 0096 0E       		.uleb128 0xe
+ 1355 0097 3A       		.uleb128 0x3a
+ 1356 0098 0B       		.uleb128 0xb
+ 1357 0099 3B       		.uleb128 0x3b
+ 1358 009a 0B       		.uleb128 0xb
+ 1359 009b 49       		.uleb128 0x49
+ 1360 009c 13       		.uleb128 0x13
+ 1361 009d 02       		.uleb128 0x2
+ 1362 009e 17       		.uleb128 0x17
+ 1363 009f 00       		.byte	0
+ 1364 00a0 00       		.byte	0
+ 1365 00a1 0D       		.uleb128 0xd
+ 1366 00a2 898201   		.uleb128 0x4109
+ 1367 00a5 00       		.byte	0
+ 1368 00a6 11       		.uleb128 0x11
+ 1369 00a7 01       		.uleb128 0x1
+ 1370 00a8 31       		.uleb128 0x31
+ 1371 00a9 13       		.uleb128 0x13
+ 1372 00aa 00       		.byte	0
+ 1373 00ab 00       		.byte	0
+ 1374 00ac 0E       		.uleb128 0xe
+ 1375 00ad 898201   		.uleb128 0x4109
+ 1376 00b0 01       		.byte	0x1
+ 1377 00b1 11       		.uleb128 0x11
+ 1378 00b2 01       		.uleb128 0x1
+ 1379 00b3 31       		.uleb128 0x31
+ 1380 00b4 13       		.uleb128 0x13
+ 1381 00b5 01       		.uleb128 0x1
+ 1382 00b6 13       		.uleb128 0x13
+ 1383 00b7 00       		.byte	0
+ 1384 00b8 00       		.byte	0
+ 1385 00b9 0F       		.uleb128 0xf
+ 1386 00ba 8A8201   		.uleb128 0x410a
+ 1387 00bd 00       		.byte	0
+ 1388 00be 02       		.uleb128 0x2
+ 1389 00bf 18       		.uleb128 0x18
+ 1390 00c0 9142     		.uleb128 0x2111
+ 1391 00c2 18       		.uleb128 0x18
+ 1392 00c3 00       		.byte	0
+ 1393 00c4 00       		.byte	0
+ 1394 00c5 10       		.uleb128 0x10
+ 1395 00c6 898201   		.uleb128 0x4109
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 35
+
+
+ 1396 00c9 01       		.byte	0x1
+ 1397 00ca 11       		.uleb128 0x11
+ 1398 00cb 01       		.uleb128 0x1
+ 1399 00cc 31       		.uleb128 0x31
+ 1400 00cd 13       		.uleb128 0x13
+ 1401 00ce 00       		.byte	0
+ 1402 00cf 00       		.byte	0
+ 1403 00d0 11       		.uleb128 0x11
+ 1404 00d1 2E       		.uleb128 0x2e
+ 1405 00d2 01       		.byte	0x1
+ 1406 00d3 3F       		.uleb128 0x3f
+ 1407 00d4 19       		.uleb128 0x19
+ 1408 00d5 03       		.uleb128 0x3
+ 1409 00d6 0E       		.uleb128 0xe
+ 1410 00d7 3A       		.uleb128 0x3a
+ 1411 00d8 0B       		.uleb128 0xb
+ 1412 00d9 3B       		.uleb128 0x3b
+ 1413 00da 0B       		.uleb128 0xb
+ 1414 00db 49       		.uleb128 0x49
+ 1415 00dc 13       		.uleb128 0x13
+ 1416 00dd 11       		.uleb128 0x11
+ 1417 00de 01       		.uleb128 0x1
+ 1418 00df 12       		.uleb128 0x12
+ 1419 00e0 06       		.uleb128 0x6
+ 1420 00e1 40       		.uleb128 0x40
+ 1421 00e2 18       		.uleb128 0x18
+ 1422 00e3 9742     		.uleb128 0x2117
+ 1423 00e5 19       		.uleb128 0x19
+ 1424 00e6 01       		.uleb128 0x1
+ 1425 00e7 13       		.uleb128 0x13
+ 1426 00e8 00       		.byte	0
+ 1427 00e9 00       		.byte	0
+ 1428 00ea 12       		.uleb128 0x12
+ 1429 00eb 34       		.uleb128 0x34
+ 1430 00ec 00       		.byte	0
+ 1431 00ed 03       		.uleb128 0x3
+ 1432 00ee 08       		.uleb128 0x8
+ 1433 00ef 3A       		.uleb128 0x3a
+ 1434 00f0 0B       		.uleb128 0xb
+ 1435 00f1 3B       		.uleb128 0x3b
+ 1436 00f2 0B       		.uleb128 0xb
+ 1437 00f3 49       		.uleb128 0x49
+ 1438 00f4 13       		.uleb128 0x13
+ 1439 00f5 02       		.uleb128 0x2
+ 1440 00f6 18       		.uleb128 0x18
+ 1441 00f7 00       		.byte	0
+ 1442 00f8 00       		.byte	0
+ 1443 00f9 13       		.uleb128 0x13
+ 1444 00fa 34       		.uleb128 0x34
+ 1445 00fb 00       		.byte	0
+ 1446 00fc 03       		.uleb128 0x3
+ 1447 00fd 0E       		.uleb128 0xe
+ 1448 00fe 3A       		.uleb128 0x3a
+ 1449 00ff 0B       		.uleb128 0xb
+ 1450 0100 3B       		.uleb128 0x3b
+ 1451 0101 0B       		.uleb128 0xb
+ 1452 0102 49       		.uleb128 0x49
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 36
+
+
+ 1453 0103 13       		.uleb128 0x13
+ 1454 0104 1C       		.uleb128 0x1c
+ 1455 0105 0B       		.uleb128 0xb
+ 1456 0106 00       		.byte	0
+ 1457 0107 00       		.byte	0
+ 1458 0108 14       		.uleb128 0x14
+ 1459 0109 2E       		.uleb128 0x2e
+ 1460 010a 01       		.byte	0x1
+ 1461 010b 3F       		.uleb128 0x3f
+ 1462 010c 19       		.uleb128 0x19
+ 1463 010d 03       		.uleb128 0x3
+ 1464 010e 0E       		.uleb128 0xe
+ 1465 010f 3A       		.uleb128 0x3a
+ 1466 0110 0B       		.uleb128 0xb
+ 1467 0111 3B       		.uleb128 0x3b
+ 1468 0112 05       		.uleb128 0x5
+ 1469 0113 27       		.uleb128 0x27
+ 1470 0114 19       		.uleb128 0x19
+ 1471 0115 49       		.uleb128 0x49
+ 1472 0116 13       		.uleb128 0x13
+ 1473 0117 11       		.uleb128 0x11
+ 1474 0118 01       		.uleb128 0x1
+ 1475 0119 12       		.uleb128 0x12
+ 1476 011a 06       		.uleb128 0x6
+ 1477 011b 40       		.uleb128 0x40
+ 1478 011c 18       		.uleb128 0x18
+ 1479 011d 9742     		.uleb128 0x2117
+ 1480 011f 19       		.uleb128 0x19
+ 1481 0120 01       		.uleb128 0x1
+ 1482 0121 13       		.uleb128 0x13
+ 1483 0122 00       		.byte	0
+ 1484 0123 00       		.byte	0
+ 1485 0124 15       		.uleb128 0x15
+ 1486 0125 05       		.uleb128 0x5
+ 1487 0126 00       		.byte	0
+ 1488 0127 03       		.uleb128 0x3
+ 1489 0128 0E       		.uleb128 0xe
+ 1490 0129 3A       		.uleb128 0x3a
+ 1491 012a 0B       		.uleb128 0xb
+ 1492 012b 3B       		.uleb128 0x3b
+ 1493 012c 05       		.uleb128 0x5
+ 1494 012d 49       		.uleb128 0x49
+ 1495 012e 13       		.uleb128 0x13
+ 1496 012f 02       		.uleb128 0x2
+ 1497 0130 17       		.uleb128 0x17
+ 1498 0131 00       		.byte	0
+ 1499 0132 00       		.byte	0
+ 1500 0133 16       		.uleb128 0x16
+ 1501 0134 05       		.uleb128 0x5
+ 1502 0135 00       		.byte	0
+ 1503 0136 03       		.uleb128 0x3
+ 1504 0137 08       		.uleb128 0x8
+ 1505 0138 3A       		.uleb128 0x3a
+ 1506 0139 0B       		.uleb128 0xb
+ 1507 013a 3B       		.uleb128 0x3b
+ 1508 013b 05       		.uleb128 0x5
+ 1509 013c 49       		.uleb128 0x49
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 37
+
+
+ 1510 013d 13       		.uleb128 0x13
+ 1511 013e 02       		.uleb128 0x2
+ 1512 013f 17       		.uleb128 0x17
+ 1513 0140 00       		.byte	0
+ 1514 0141 00       		.byte	0
+ 1515 0142 17       		.uleb128 0x17
+ 1516 0143 34       		.uleb128 0x34
+ 1517 0144 00       		.byte	0
+ 1518 0145 03       		.uleb128 0x3
+ 1519 0146 08       		.uleb128 0x8
+ 1520 0147 3A       		.uleb128 0x3a
+ 1521 0148 0B       		.uleb128 0xb
+ 1522 0149 3B       		.uleb128 0x3b
+ 1523 014a 05       		.uleb128 0x5
+ 1524 014b 49       		.uleb128 0x49
+ 1525 014c 13       		.uleb128 0x13
+ 1526 014d 02       		.uleb128 0x2
+ 1527 014e 17       		.uleb128 0x17
+ 1528 014f 00       		.byte	0
+ 1529 0150 00       		.byte	0
+ 1530 0151 18       		.uleb128 0x18
+ 1531 0152 34       		.uleb128 0x34
+ 1532 0153 00       		.byte	0
+ 1533 0154 03       		.uleb128 0x3
+ 1534 0155 0E       		.uleb128 0xe
+ 1535 0156 3A       		.uleb128 0x3a
+ 1536 0157 0B       		.uleb128 0xb
+ 1537 0158 3B       		.uleb128 0x3b
+ 1538 0159 05       		.uleb128 0x5
+ 1539 015a 49       		.uleb128 0x49
+ 1540 015b 13       		.uleb128 0x13
+ 1541 015c 3F       		.uleb128 0x3f
+ 1542 015d 19       		.uleb128 0x19
+ 1543 015e 3C       		.uleb128 0x3c
+ 1544 015f 19       		.uleb128 0x19
+ 1545 0160 00       		.byte	0
+ 1546 0161 00       		.byte	0
+ 1547 0162 19       		.uleb128 0x19
+ 1548 0163 35       		.uleb128 0x35
+ 1549 0164 00       		.byte	0
+ 1550 0165 49       		.uleb128 0x49
+ 1551 0166 13       		.uleb128 0x13
+ 1552 0167 00       		.byte	0
+ 1553 0168 00       		.byte	0
+ 1554 0169 1A       		.uleb128 0x1a
+ 1555 016a 2E       		.uleb128 0x2e
+ 1556 016b 00       		.byte	0
+ 1557 016c 3F       		.uleb128 0x3f
+ 1558 016d 19       		.uleb128 0x19
+ 1559 016e 03       		.uleb128 0x3
+ 1560 016f 0E       		.uleb128 0xe
+ 1561 0170 3A       		.uleb128 0x3a
+ 1562 0171 0B       		.uleb128 0xb
+ 1563 0172 3B       		.uleb128 0x3b
+ 1564 0173 0B       		.uleb128 0xb
+ 1565 0174 27       		.uleb128 0x27
+ 1566 0175 19       		.uleb128 0x19
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 38
+
+
+ 1567 0176 3C       		.uleb128 0x3c
+ 1568 0177 19       		.uleb128 0x19
+ 1569 0178 00       		.byte	0
+ 1570 0179 00       		.byte	0
+ 1571 017a 1B       		.uleb128 0x1b
+ 1572 017b 2E       		.uleb128 0x2e
+ 1573 017c 01       		.byte	0x1
+ 1574 017d 3F       		.uleb128 0x3f
+ 1575 017e 19       		.uleb128 0x19
+ 1576 017f 03       		.uleb128 0x3
+ 1577 0180 0E       		.uleb128 0xe
+ 1578 0181 3A       		.uleb128 0x3a
+ 1579 0182 0B       		.uleb128 0xb
+ 1580 0183 3B       		.uleb128 0x3b
+ 1581 0184 0B       		.uleb128 0xb
+ 1582 0185 27       		.uleb128 0x27
+ 1583 0186 19       		.uleb128 0x19
+ 1584 0187 49       		.uleb128 0x49
+ 1585 0188 13       		.uleb128 0x13
+ 1586 0189 3C       		.uleb128 0x3c
+ 1587 018a 19       		.uleb128 0x19
+ 1588 018b 01       		.uleb128 0x1
+ 1589 018c 13       		.uleb128 0x13
+ 1590 018d 00       		.byte	0
+ 1591 018e 00       		.byte	0
+ 1592 018f 1C       		.uleb128 0x1c
+ 1593 0190 05       		.uleb128 0x5
+ 1594 0191 00       		.byte	0
+ 1595 0192 49       		.uleb128 0x49
+ 1596 0193 13       		.uleb128 0x13
+ 1597 0194 00       		.byte	0
+ 1598 0195 00       		.byte	0
+ 1599 0196 1D       		.uleb128 0x1d
+ 1600 0197 2E       		.uleb128 0x2e
+ 1601 0198 00       		.byte	0
+ 1602 0199 3F       		.uleb128 0x3f
+ 1603 019a 19       		.uleb128 0x19
+ 1604 019b 03       		.uleb128 0x3
+ 1605 019c 0E       		.uleb128 0xe
+ 1606 019d 3A       		.uleb128 0x3a
+ 1607 019e 0B       		.uleb128 0xb
+ 1608 019f 3B       		.uleb128 0x3b
+ 1609 01a0 0B       		.uleb128 0xb
+ 1610 01a1 27       		.uleb128 0x27
+ 1611 01a2 19       		.uleb128 0x19
+ 1612 01a3 49       		.uleb128 0x49
+ 1613 01a4 13       		.uleb128 0x13
+ 1614 01a5 3C       		.uleb128 0x3c
+ 1615 01a6 19       		.uleb128 0x19
+ 1616 01a7 00       		.byte	0
+ 1617 01a8 00       		.byte	0
+ 1618 01a9 1E       		.uleb128 0x1e
+ 1619 01aa 18       		.uleb128 0x18
+ 1620 01ab 00       		.byte	0
+ 1621 01ac 00       		.byte	0
+ 1622 01ad 00       		.byte	0
+ 1623 01ae 1F       		.uleb128 0x1f
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 39
+
+
+ 1624 01af 2E       		.uleb128 0x2e
+ 1625 01b0 01       		.byte	0x1
+ 1626 01b1 3F       		.uleb128 0x3f
+ 1627 01b2 19       		.uleb128 0x19
+ 1628 01b3 03       		.uleb128 0x3
+ 1629 01b4 0E       		.uleb128 0xe
+ 1630 01b5 3A       		.uleb128 0x3a
+ 1631 01b6 0B       		.uleb128 0xb
+ 1632 01b7 3B       		.uleb128 0x3b
+ 1633 01b8 0B       		.uleb128 0xb
+ 1634 01b9 27       		.uleb128 0x27
+ 1635 01ba 19       		.uleb128 0x19
+ 1636 01bb 3C       		.uleb128 0x3c
+ 1637 01bc 19       		.uleb128 0x19
+ 1638 01bd 01       		.uleb128 0x1
+ 1639 01be 13       		.uleb128 0x13
+ 1640 01bf 00       		.byte	0
+ 1641 01c0 00       		.byte	0
+ 1642 01c1 20       		.uleb128 0x20
+ 1643 01c2 2E       		.uleb128 0x2e
+ 1644 01c3 01       		.byte	0x1
+ 1645 01c4 3F       		.uleb128 0x3f
+ 1646 01c5 19       		.uleb128 0x19
+ 1647 01c6 03       		.uleb128 0x3
+ 1648 01c7 0E       		.uleb128 0xe
+ 1649 01c8 3A       		.uleb128 0x3a
+ 1650 01c9 0B       		.uleb128 0xb
+ 1651 01ca 3B       		.uleb128 0x3b
+ 1652 01cb 0B       		.uleb128 0xb
+ 1653 01cc 3C       		.uleb128 0x3c
+ 1654 01cd 19       		.uleb128 0x19
+ 1655 01ce 01       		.uleb128 0x1
+ 1656 01cf 13       		.uleb128 0x13
+ 1657 01d0 00       		.byte	0
+ 1658 01d1 00       		.byte	0
+ 1659 01d2 21       		.uleb128 0x21
+ 1660 01d3 2E       		.uleb128 0x2e
+ 1661 01d4 01       		.byte	0x1
+ 1662 01d5 3F       		.uleb128 0x3f
+ 1663 01d6 19       		.uleb128 0x19
+ 1664 01d7 03       		.uleb128 0x3
+ 1665 01d8 0E       		.uleb128 0xe
+ 1666 01d9 3A       		.uleb128 0x3a
+ 1667 01da 0B       		.uleb128 0xb
+ 1668 01db 3B       		.uleb128 0x3b
+ 1669 01dc 0B       		.uleb128 0xb
+ 1670 01dd 49       		.uleb128 0x49
+ 1671 01de 13       		.uleb128 0x13
+ 1672 01df 3C       		.uleb128 0x3c
+ 1673 01e0 19       		.uleb128 0x19
+ 1674 01e1 01       		.uleb128 0x1
+ 1675 01e2 13       		.uleb128 0x13
+ 1676 01e3 00       		.byte	0
+ 1677 01e4 00       		.byte	0
+ 1678 01e5 00       		.byte	0
+ 1679              		.section	.debug_loc,"",%progbits
+ 1680              	.Ldebug_loc0:
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 40
+
+
+ 1681              	.LLST0:
+ 1682 0000 06000000 		.4byte	.LVL0
+ 1683 0004 16000000 		.4byte	.LVL3
+ 1684 0008 0200     		.2byte	0x2
+ 1685 000a 30       		.byte	0x30
+ 1686 000b 9F       		.byte	0x9f
+ 1687 000c 16000000 		.4byte	.LVL3
+ 1688 0010 19000000 		.4byte	.LVL4-1
+ 1689 0014 0100     		.2byte	0x1
+ 1690 0016 50       		.byte	0x50
+ 1691 0017 00000000 		.4byte	0
+ 1692 001b 00000000 		.4byte	0
+ 1693              	.LLST1:
+ 1694 001f 06000000 		.4byte	.LVL0
+ 1695 0023 24000000 		.4byte	.LVL6
+ 1696 0027 0600     		.2byte	0x6
+ 1697 0029 9E       		.byte	0x9e
+ 1698 002a 04       		.uleb128 0x4
+ 1699 002b 00000000 		.4byte	0
+ 1700 002f 24000000 		.4byte	.LVL6
+ 1701 0033 27000000 		.4byte	.LVL7-1
+ 1702 0037 0100     		.2byte	0x1
+ 1703 0039 50       		.byte	0x50
+ 1704 003a 27000000 		.4byte	.LVL7-1
+ 1705 003e 64000000 		.4byte	.LVL12
+ 1706 0042 0100     		.2byte	0x1
+ 1707 0044 56       		.byte	0x56
+ 1708 0045 00000000 		.4byte	0
+ 1709 0049 00000000 		.4byte	0
+ 1710              	.LLST2:
+ 1711 004d 1E000000 		.4byte	.LVL17
+ 1712 0051 2A000000 		.4byte	.LVL19
+ 1713 0055 0200     		.2byte	0x2
+ 1714 0057 30       		.byte	0x30
+ 1715 0058 9F       		.byte	0x9f
+ 1716 0059 2A000000 		.4byte	.LVL19
+ 1717 005d B6000000 		.4byte	.LVL29
+ 1718 0061 0100     		.2byte	0x1
+ 1719 0063 54       		.byte	0x54
+ 1720 0064 00000000 		.4byte	0
+ 1721 0068 00000000 		.4byte	0
+ 1722              	.LLST3:
+ 1723 006c 9C000000 		.4byte	.LVL25
+ 1724 0070 A0000000 		.4byte	.LVL26
+ 1725 0074 0200     		.2byte	0x2
+ 1726 0076 31       		.byte	0x31
+ 1727 0077 9F       		.byte	0x9f
+ 1728 0078 A0000000 		.4byte	.LVL26
+ 1729 007c A3000000 		.4byte	.LVL27-1
+ 1730 0080 0100     		.2byte	0x1
+ 1731 0082 50       		.byte	0x50
+ 1732 0083 A4000000 		.4byte	.LVL27
+ 1733 0087 AB000000 		.4byte	.LVL28-1
+ 1734 008b 0100     		.2byte	0x1
+ 1735 008d 50       		.byte	0x50
+ 1736 008e 00000000 		.4byte	0
+ 1737 0092 00000000 		.4byte	0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 41
+
+
+ 1738              	.LLST4:
+ 1739 0096 00000000 		.4byte	.LVL36
+ 1740 009a 0A000000 		.4byte	.LVL38
+ 1741 009e 0100     		.2byte	0x1
+ 1742 00a0 50       		.byte	0x50
+ 1743 00a1 0A000000 		.4byte	.LVL38
+ 1744 00a5 2A000000 		.4byte	.LFE65
+ 1745 00a9 0400     		.2byte	0x4
+ 1746 00ab F3       		.byte	0xf3
+ 1747 00ac 01       		.uleb128 0x1
+ 1748 00ad 50       		.byte	0x50
+ 1749 00ae 9F       		.byte	0x9f
+ 1750 00af 00000000 		.4byte	0
+ 1751 00b3 00000000 		.4byte	0
+ 1752              	.LLST5:
+ 1753 00b7 00000000 		.4byte	.LVL36
+ 1754 00bb 0A000000 		.4byte	.LVL38
+ 1755 00bf 0100     		.2byte	0x1
+ 1756 00c1 51       		.byte	0x51
+ 1757 00c2 0A000000 		.4byte	.LVL38
+ 1758 00c6 18000000 		.4byte	.LVL40
+ 1759 00ca 0100     		.2byte	0x1
+ 1760 00cc 54       		.byte	0x54
+ 1761 00cd 18000000 		.4byte	.LVL40
+ 1762 00d1 22000000 		.4byte	.LVL43
+ 1763 00d5 0100     		.2byte	0x1
+ 1764 00d7 56       		.byte	0x56
+ 1765 00d8 22000000 		.4byte	.LVL43
+ 1766 00dc 2A000000 		.4byte	.LFE65
+ 1767 00e0 0100     		.2byte	0x1
+ 1768 00e2 54       		.byte	0x54
+ 1769 00e3 00000000 		.4byte	0
+ 1770 00e7 00000000 		.4byte	0
+ 1771              	.LLST6:
+ 1772 00eb 00000000 		.4byte	.LVL36
+ 1773 00ef 0A000000 		.4byte	.LVL38
+ 1774 00f3 0100     		.2byte	0x1
+ 1775 00f5 52       		.byte	0x52
+ 1776 00f6 0A000000 		.4byte	.LVL38
+ 1777 00fa 2A000000 		.4byte	.LFE65
+ 1778 00fe 0100     		.2byte	0x1
+ 1779 0100 57       		.byte	0x57
+ 1780 0101 00000000 		.4byte	0
+ 1781 0105 00000000 		.4byte	0
+ 1782              	.LLST7:
+ 1783 0109 06000000 		.4byte	.LVL37
+ 1784 010d 0A000000 		.4byte	.LVL38
+ 1785 0111 0200     		.2byte	0x2
+ 1786 0113 30       		.byte	0x30
+ 1787 0114 9F       		.byte	0x9f
+ 1788 0115 0A000000 		.4byte	.LVL38
+ 1789 0119 2A000000 		.4byte	.LFE65
+ 1790 011d 0100     		.2byte	0x1
+ 1791 011f 55       		.byte	0x55
+ 1792 0120 00000000 		.4byte	0
+ 1793 0124 00000000 		.4byte	0
+ 1794              	.LLST8:
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 42
+
+
+ 1795 0128 00000000 		.4byte	.LVL44
+ 1796 012c 0A000000 		.4byte	.LVL46
+ 1797 0130 0100     		.2byte	0x1
+ 1798 0132 50       		.byte	0x50
+ 1799 0133 0A000000 		.4byte	.LVL46
+ 1800 0137 38000000 		.4byte	.LFE66
+ 1801 013b 0400     		.2byte	0x4
+ 1802 013d F3       		.byte	0xf3
+ 1803 013e 01       		.uleb128 0x1
+ 1804 013f 50       		.byte	0x50
+ 1805 0140 9F       		.byte	0x9f
+ 1806 0141 00000000 		.4byte	0
+ 1807 0145 00000000 		.4byte	0
+ 1808              	.LLST9:
+ 1809 0149 00000000 		.4byte	.LVL44
+ 1810 014d 0A000000 		.4byte	.LVL46
+ 1811 0151 0100     		.2byte	0x1
+ 1812 0153 51       		.byte	0x51
+ 1813 0154 0A000000 		.4byte	.LVL46
+ 1814 0158 26000000 		.4byte	.LVL53
+ 1815 015c 0100     		.2byte	0x1
+ 1816 015e 57       		.byte	0x57
+ 1817 015f 26000000 		.4byte	.LVL53
+ 1818 0163 30000000 		.4byte	.LVL55
+ 1819 0167 0100     		.2byte	0x1
+ 1820 0169 53       		.byte	0x53
+ 1821 016a 30000000 		.4byte	.LVL55
+ 1822 016e 34000000 		.4byte	.LVL56
+ 1823 0172 0100     		.2byte	0x1
+ 1824 0174 57       		.byte	0x57
+ 1825 0175 00000000 		.4byte	0
+ 1826 0179 00000000 		.4byte	0
+ 1827              	.LLST10:
+ 1828 017d 00000000 		.4byte	.LVL44
+ 1829 0181 0A000000 		.4byte	.LVL46
+ 1830 0185 0100     		.2byte	0x1
+ 1831 0187 52       		.byte	0x52
+ 1832 0188 0A000000 		.4byte	.LVL46
+ 1833 018c 38000000 		.4byte	.LFE66
+ 1834 0190 0100     		.2byte	0x1
+ 1835 0192 54       		.byte	0x54
+ 1836 0193 00000000 		.4byte	0
+ 1837 0197 00000000 		.4byte	0
+ 1838              	.LLST11:
+ 1839 019b 06000000 		.4byte	.LVL45
+ 1840 019f 0A000000 		.4byte	.LVL46
+ 1841 01a3 0200     		.2byte	0x2
+ 1842 01a5 30       		.byte	0x30
+ 1843 01a6 9F       		.byte	0x9f
+ 1844 01a7 0A000000 		.4byte	.LVL46
+ 1845 01ab 38000000 		.4byte	.LFE66
+ 1846 01af 0100     		.2byte	0x1
+ 1847 01b1 56       		.byte	0x56
+ 1848 01b2 00000000 		.4byte	0
+ 1849 01b6 00000000 		.4byte	0
+ 1850              	.LLST12:
+ 1851 01ba 0E000000 		.4byte	.LVL47
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 43
+
+
+ 1852 01be 15000000 		.4byte	.LVL48-1
+ 1853 01c2 0100     		.2byte	0x1
+ 1854 01c4 50       		.byte	0x50
+ 1855 01c5 1C000000 		.4byte	.LVL50
+ 1856 01c9 24000000 		.4byte	.LVL52
+ 1857 01cd 0200     		.2byte	0x2
+ 1858 01cf 3A       		.byte	0x3a
+ 1859 01d0 9F       		.byte	0x9f
+ 1860 01d1 24000000 		.4byte	.LVL52
+ 1861 01d5 30000000 		.4byte	.LVL55
+ 1862 01d9 0100     		.2byte	0x1
+ 1863 01db 55       		.byte	0x55
+ 1864 01dc 00000000 		.4byte	0
+ 1865 01e0 00000000 		.4byte	0
+ 1866              		.section	.debug_aranges,"",%progbits
+ 1867 0000 34000000 		.4byte	0x34
+ 1868 0004 0200     		.2byte	0x2
+ 1869 0006 00000000 		.4byte	.Ldebug_info0
+ 1870 000a 04       		.byte	0x4
+ 1871 000b 00       		.byte	0
+ 1872 000c 0000     		.2byte	0
+ 1873 000e 0000     		.2byte	0
+ 1874 0010 00000000 		.4byte	.LFB64
+ 1875 0014 74000000 		.4byte	.LFE64-.LFB64
+ 1876 0018 00000000 		.4byte	.LFB63
+ 1877 001c 18010000 		.4byte	.LFE63-.LFB63
+ 1878 0020 00000000 		.4byte	.LFB65
+ 1879 0024 2A000000 		.4byte	.LFE65-.LFB65
+ 1880 0028 00000000 		.4byte	.LFB66
+ 1881 002c 38000000 		.4byte	.LFE66-.LFB66
+ 1882 0030 00000000 		.4byte	0
+ 1883 0034 00000000 		.4byte	0
+ 1884              		.section	.debug_ranges,"",%progbits
+ 1885              	.Ldebug_ranges0:
+ 1886 0000 00000000 		.4byte	.LFB64
+ 1887 0004 74000000 		.4byte	.LFE64
+ 1888 0008 00000000 		.4byte	.LFB63
+ 1889 000c 18010000 		.4byte	.LFE63
+ 1890 0010 00000000 		.4byte	.LFB65
+ 1891 0014 2A000000 		.4byte	.LFE65
+ 1892 0018 00000000 		.4byte	.LFB66
+ 1893 001c 38000000 		.4byte	.LFE66
+ 1894 0020 00000000 		.4byte	0
+ 1895 0024 00000000 		.4byte	0
+ 1896              		.section	.debug_line,"",%progbits
+ 1897              	.Ldebug_line0:
+ 1898 0000 C3020000 		.section	.debug_str,"MS",%progbits,1
+ 1898      0200DF01 
+ 1898      00000201 
+ 1898      FB0E0D00 
+ 1898      01010101 
+ 1899              	.LASF62:
+ 1900 0000 433A5C55 		.ascii	"C:\\Users\\Nhan Phan\\Desktop\\CProjects\\Zumobot\\"
+ 1900      73657273 
+ 1900      5C4E6861 
+ 1900      6E205068 
+ 1900      616E5C44 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 44
+
+
+ 1901 002d 5A756D6F 		.ascii	"ZumoBot.cydsn\000"
+ 1901      426F742E 
+ 1901      63796473 
+ 1901      6E00
+ 1902              	.LASF59:
+ 1903 003b 55415254 		.ascii	"UART_1_GetChar\000"
+ 1903      5F315F47 
+ 1903      65744368 
+ 1903      617200
+ 1904              	.LASF18:
+ 1905 004a 666C6F61 		.ascii	"float32\000"
+ 1905      74333200 
+ 1906              	.LASF53:
+ 1907 0052 6D6F746F 		.ascii	"motor_stop\000"
+ 1907      725F7374 
+ 1907      6F7000
+ 1908              	.LASF2:
+ 1909 005d 73686F72 		.ascii	"short int\000"
+ 1909      7420696E 
+ 1909      7400
+ 1910              	.LASF23:
+ 1911 0067 73697A65 		.ascii	"sizetype\000"
+ 1911      74797065 
+ 1911      00
+ 1912              	.LASF28:
+ 1913 0070 6D61696E 		.ascii	"main\000"
+ 1913      00
+ 1914              	.LASF36:
+ 1915 0075 5F777269 		.ascii	"_write\000"
+ 1915      746500
+ 1916              	.LASF4:
+ 1917 007c 5F5F7569 		.ascii	"__uint16_t\000"
+ 1917      6E743136 
+ 1917      5F7400
+ 1918              	.LASF35:
+ 1919 0087 66696C65 		.ascii	"file\000"
+ 1919      00
+ 1920              	.LASF32:
+ 1921 008c 6C617374 		.ascii	"lastBlack\000"
+ 1921      426C6163 
+ 1921      6B00
+ 1922              	.LASF63:
+ 1923 0096 73656E73 		.ascii	"sensors_\000"
+ 1923      6F72735F 
+ 1923      00
+ 1924              	.LASF12:
+ 1925 009f 75696E74 		.ascii	"uint8_t\000"
+ 1925      385F7400 
+ 1926              	.LASF17:
+ 1927 00a7 696E7431 		.ascii	"int16\000"
+ 1927      3600
+ 1928              	.LASF15:
+ 1929 00ad 75696E74 		.ascii	"uint8\000"
+ 1929      3800
+ 1930              	.LASF49:
+ 1931 00b3 7265666C 		.ascii	"reflectance_start\000"
+ 1931      65637461 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 45
+
+
+ 1931      6E63655F 
+ 1931      73746172 
+ 1931      7400
+ 1932              	.LASF46:
+ 1933 00c5 55415254 		.ascii	"UART_1_Start\000"
+ 1933      5F315F53 
+ 1933      74617274 
+ 1933      00
+ 1934              	.LASF57:
+ 1935 00d2 55415254 		.ascii	"UART_1_PutChar\000"
+ 1935      5F315F50 
+ 1935      75744368 
+ 1935      617200
+ 1936              	.LASF19:
+ 1937 00e1 666C6F61 		.ascii	"float\000"
+ 1937      7400
+ 1938              	.LASF29:
+ 1939 00e7 64657465 		.ascii	"detect\000"
+ 1939      637400
+ 1940              	.LASF9:
+ 1941 00ee 6C6F6E67 		.ascii	"long long int\000"
+ 1941      206C6F6E 
+ 1941      6720696E 
+ 1941      7400
+ 1942              	.LASF55:
+ 1943 00fc 7265666C 		.ascii	"reflectance_digital\000"
+ 1943      65637461 
+ 1943      6E63655F 
+ 1943      64696769 
+ 1943      74616C00 
+ 1944              	.LASF56:
+ 1945 0110 53756D6F 		.ascii	"Sumoing\000"
+ 1945      696E6700 
+ 1946              	.LASF7:
+ 1947 0118 6C6F6E67 		.ascii	"long int\000"
+ 1947      20696E74 
+ 1947      00
+ 1948              	.LASF43:
+ 1949 0121 7072696E 		.ascii	"printf\000"
+ 1949      746600
+ 1950              	.LASF34:
+ 1951 0128 62757474 		.ascii	"button\000"
+ 1951      6F6E00
+ 1952              	.LASF3:
+ 1953 012f 5F5F7569 		.ascii	"__uint8_t\000"
+ 1953      6E74385F 
+ 1953      7400
+ 1954              	.LASF1:
+ 1955 0139 756E7369 		.ascii	"unsigned char\000"
+ 1955      676E6564 
+ 1955      20636861 
+ 1955      7200
+ 1956              	.LASF40:
+ 1957 0147 4144435F 		.ascii	"ADC_Battery_StartConvert\000"
+ 1957      42617474 
+ 1957      6572795F 
+ 1957      53746172 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 46
+
+
+ 1957      74436F6E 
+ 1958              	.LASF24:
+ 1959 0160 6C6F6E67 		.ascii	"long double\000"
+ 1959      20646F75 
+ 1959      626C6500 
+ 1960              	.LASF39:
+ 1961 016c 4144435F 		.ascii	"ADC_Battery_Start\000"
+ 1961      42617474 
+ 1961      6572795F 
+ 1961      53746172 
+ 1961      7400
+ 1962              	.LASF22:
+ 1963 017e 63796973 		.ascii	"cyisraddress\000"
+ 1963      72616464 
+ 1963      72657373 
+ 1963      00
+ 1964              	.LASF44:
+ 1965 018b 42656570 		.ascii	"Beep\000"
+ 1965      00
+ 1966              	.LASF37:
+ 1967 0190 5F726561 		.ascii	"_read\000"
+ 1967      6400
+ 1968              	.LASF30:
+ 1969 0196 636F756E 		.ascii	"countdown\000"
+ 1969      74646F77 
+ 1969      6E00
+ 1970              	.LASF0:
+ 1971 01a0 7369676E 		.ascii	"signed char\000"
+ 1971      65642063 
+ 1971      68617200 
+ 1972              	.LASF10:
+ 1973 01ac 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1973      206C6F6E 
+ 1973      6720756E 
+ 1973      7369676E 
+ 1973      65642069 
+ 1974              	.LASF11:
+ 1975 01c3 756E7369 		.ascii	"unsigned int\000"
+ 1975      676E6564 
+ 1975      20696E74 
+ 1975      00
+ 1976              	.LASF13:
+ 1977 01d0 75696E74 		.ascii	"uint16_t\000"
+ 1977      31365F74 
+ 1977      00
+ 1978              	.LASF41:
+ 1979 01d9 4144435F 		.ascii	"ADC_Battery_IsEndConversion\000"
+ 1979      42617474 
+ 1979      6572795F 
+ 1979      4973456E 
+ 1979      64436F6E 
+ 1980              	.LASF5:
+ 1981 01f5 73686F72 		.ascii	"short unsigned int\000"
+ 1981      7420756E 
+ 1981      7369676E 
+ 1981      65642069 
+ 1981      6E7400
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 47
+
+
+ 1982              	.LASF26:
+ 1983 0208 766F6C74 		.ascii	"volts\000"
+ 1983      7300
+ 1984              	.LASF50:
+ 1985 020e 6D6F746F 		.ascii	"motor_forward\000"
+ 1985      725F666F 
+ 1985      72776172 
+ 1985      6400
+ 1986              	.LASF21:
+ 1987 021c 63686172 		.ascii	"char\000"
+ 1987      00
+ 1988              	.LASF60:
+ 1989 0221 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 1989      4320342E 
+ 1989      392E3320 
+ 1989      32303135 
+ 1989      30333033 
+ 1990 0254 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 1990      20726576 
+ 1990      6973696F 
+ 1990      6E203232 
+ 1990      31323230 
+ 1991 0287 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1991      66756E63 
+ 1991      74696F6E 
+ 1991      2D736563 
+ 1991      74696F6E 
+ 1992              	.LASF14:
+ 1993 02af 696E7433 		.ascii	"int32_t\000"
+ 1993      325F7400 
+ 1994              	.LASF27:
+ 1995 02b7 62617474 		.ascii	"batteryAlert\000"
+ 1995      65727941 
+ 1995      6C657274 
+ 1995      00
+ 1996              	.LASF31:
+ 1997 02c4 63686563 		.ascii	"checkStop\000"
+ 1997      6B53746F 
+ 1997      7000
+ 1998              	.LASF16:
+ 1999 02ce 75696E74 		.ascii	"uint32\000"
+ 1999      333200
+ 2000              	.LASF61:
+ 2001 02d5 6D61696E 		.ascii	"main.c\000"
+ 2001      2E6300
+ 2002              	.LASF8:
+ 2003 02dc 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2003      20756E73 
+ 2003      69676E65 
+ 2003      6420696E 
+ 2003      7400
+ 2004              	.LASF48:
+ 2005 02ee 73656E73 		.ascii	"sensor_isr_StartEx\000"
+ 2005      6F725F69 
+ 2005      73725F53 
+ 2005      74617274 
+ 2005      457800
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 48
+
+
+ 2006              	.LASF52:
+ 2007 0301 6D6F746F 		.ascii	"motor_start\000"
+ 2007      725F7374 
+ 2007      61727400 
+ 2008              	.LASF38:
+ 2009 030d 636F756E 		.ascii	"count\000"
+ 2009      7400
+ 2010              	.LASF6:
+ 2011 0313 5F5F696E 		.ascii	"__int32_t\000"
+ 2011      7433325F 
+ 2011      7400
+ 2012              	.LASF51:
+ 2013 031d 7265666C 		.ascii	"reflectance_read\000"
+ 2013      65637461 
+ 2013      6E63655F 
+ 2013      72656164 
+ 2013      00
+ 2014              	.LASF58:
+ 2015 032e 4144435F 		.ascii	"ADC_Battery_GetResult16\000"
+ 2015      42617474 
+ 2015      6572795F 
+ 2015      47657452 
+ 2015      6573756C 
+ 2016              	.LASF33:
+ 2017 0346 696E6974 		.ascii	"initialRun\000"
+ 2017      69616C52 
+ 2017      756E00
+ 2018              	.LASF25:
+ 2019 0351 61646372 		.ascii	"adcresult\000"
+ 2019      6573756C 
+ 2019      7400
+ 2020              	.LASF20:
+ 2021 035b 646F7562 		.ascii	"double\000"
+ 2021      6C6500
+ 2022              	.LASF54:
+ 2023 0362 6765745F 		.ascii	"get_IR\000"
+ 2023      495200
+ 2024              	.LASF64:
+ 2025 0369 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 2025      52784275 
+ 2025      66666572 
+ 2025      00
+ 2026              	.LASF45:
+ 2027 0376 43794465 		.ascii	"CyDelay\000"
+ 2027      6C617900 
+ 2028              	.LASF42:
+ 2029 037e 4144435F 		.ascii	"ADC_Battery_CountsTo_Volts\000"
+ 2029      42617474 
+ 2029      6572795F 
+ 2029      436F756E 
+ 2029      7473546F 
+ 2030              	.LASF47:
+ 2031 0399 49525F6C 		.ascii	"IR_led_Write\000"
+ 2031      65645F57 
+ 2031      72697465 
+ 2031      00
+ 2032              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cchcj3A1.s 			page 49
+
+

@@ -1,0 +1,2147 @@
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"Reflectance.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text.sensor_isr_handler,"ax",%progbits
+  19              		.align	2
+  20              		.global	sensor_isr_handler
+  21              		.thumb
+  22              		.thumb_func
+  23              		.type	sensor_isr_handler, %function
+  24              	sensor_isr_handler:
+  25              	.LFB63:
+  26              		.file 1 "ZumoLibrary\\Reflectance.c"
+   1:ZumoLibrary/Reflectance.c **** /**
+   2:ZumoLibrary/Reflectance.c ****  * @file    Reflectance.c
+   3:ZumoLibrary/Reflectance.c ****  * @brief   Basic methods for operating reflectance sensor. For more details, please refer to Refle
+   4:ZumoLibrary/Reflectance.c ****  * @details included in Zumo shield
+   5:ZumoLibrary/Reflectance.c **** */
+   6:ZumoLibrary/Reflectance.c **** #include <project.h>
+   7:ZumoLibrary/Reflectance.c **** #include <stdio.h>
+   8:ZumoLibrary/Reflectance.c **** 
+   9:ZumoLibrary/Reflectance.c **** #include "Reflectance.h"
+  10:ZumoLibrary/Reflectance.c **** 
+  11:ZumoLibrary/Reflectance.c **** static volatile struct sensors_ sensors;
+  12:ZumoLibrary/Reflectance.c **** static volatile struct sensors_  digital_sensor_value;
+  13:ZumoLibrary/Reflectance.c **** static struct sensors_ threshold = { 10000, 10000, 10000, 10000};
+  14:ZumoLibrary/Reflectance.c **** 
+  15:ZumoLibrary/Reflectance.c **** /**
+  16:ZumoLibrary/Reflectance.c **** * @brief    Reflectance Sensor Interrupt Handler
+  17:ZumoLibrary/Reflectance.c **** * @details  Measuring each sensors' time to recognition of white or black
+  18:ZumoLibrary/Reflectance.c **** */
+  19:ZumoLibrary/Reflectance.c **** CY_ISR(sensor_isr_handler)
+  20:ZumoLibrary/Reflectance.c **** {
+  27              		.loc 1 20 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+  32              		.cfi_def_cfa_offset 24
+  33              		.cfi_offset 3, -24
+  34              		.cfi_offset 4, -20
+  35              		.cfi_offset 5, -16
+  36              		.cfi_offset 6, -12
+  37              		.cfi_offset 7, -8
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 2
+
+
+  38              		.cfi_offset 14, -4
+  21:ZumoLibrary/Reflectance.c ****     uint32_t statusR1 = Timer_R1_ReadStatusRegister();
+  39              		.loc 1 21 0
+  40 0002 FFF7FEFF 		bl	Timer_R1_ReadStatusRegister
+  41              	.LVL0:
+  42 0006 0446     		mov	r4, r0
+  43              	.LVL1:
+  22:ZumoLibrary/Reflectance.c ****     uint32_t statusR3 = Timer_R3_ReadStatusRegister();
+  44              		.loc 1 22 0
+  45 0008 FFF7FEFF 		bl	Timer_R3_ReadStatusRegister
+  46              	.LVL2:
+  47 000c 0746     		mov	r7, r0
+  48              	.LVL3:
+  23:ZumoLibrary/Reflectance.c ****     uint32_t statusL3 = Timer_L3_ReadStatusRegister();
+  49              		.loc 1 23 0
+  50 000e FFF7FEFF 		bl	Timer_L3_ReadStatusRegister
+  51              	.LVL4:
+  52 0012 0646     		mov	r6, r0
+  53              	.LVL5:
+  24:ZumoLibrary/Reflectance.c ****     uint32_t statusL1 = Timer_L1_ReadStatusRegister();
+  54              		.loc 1 24 0
+  55 0014 FFF7FEFF 		bl	Timer_L1_ReadStatusRegister
+  56              	.LVL6:
+  57 0018 0546     		mov	r5, r0
+  58              	.LVL7:
+  25:ZumoLibrary/Reflectance.c **** 
+  26:ZumoLibrary/Reflectance.c ****     if(statusR1 & Timer_R1_STATUS_CAPTURE) {
+  59              		.loc 1 26 0
+  60 001a 14F0400F 		tst	r4, #64
+  61 001e 09D0     		beq	.L2
+  27:ZumoLibrary/Reflectance.c ****         sensors.r1 = Timer_R1_ReadPeriod() - Timer_R1_ReadCapture();
+  62              		.loc 1 27 0
+  63 0020 FFF7FEFF 		bl	Timer_R1_ReadPeriod
+  64              	.LVL8:
+  65 0024 0446     		mov	r4, r0
+  66              	.LVL9:
+  67 0026 FFF7FEFF 		bl	Timer_R1_ReadCapture
+  68              	.LVL10:
+  69 002a 201A     		subs	r0, r4, r0
+  70 002c 80B2     		uxth	r0, r0
+  71 002e 354B     		ldr	r3, .L11
+  72 0030 9880     		strh	r0, [r3, #4]	@ movhi
+  73 0032 03E0     		b	.L3
+  74              	.LVL11:
+  75              	.L2:
+  28:ZumoLibrary/Reflectance.c ****     }
+  29:ZumoLibrary/Reflectance.c ****     else {
+  30:ZumoLibrary/Reflectance.c ****         sensors.r1 = Timer_R1_ReadPeriod();
+  76              		.loc 1 30 0
+  77 0034 FFF7FEFF 		bl	Timer_R1_ReadPeriod
+  78              	.LVL12:
+  79 0038 324B     		ldr	r3, .L11
+  80 003a 9880     		strh	r0, [r3, #4]	@ movhi
+  81              	.LVL13:
+  82              	.L3:
+  31:ZumoLibrary/Reflectance.c ****     }
+  32:ZumoLibrary/Reflectance.c ****     
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 3
+
+
+  33:ZumoLibrary/Reflectance.c ****     if(statusR3 & Timer_R3_STATUS_CAPTURE) {
+  83              		.loc 1 33 0
+  84 003c 17F0400F 		tst	r7, #64
+  85 0040 09D0     		beq	.L4
+  34:ZumoLibrary/Reflectance.c ****         sensors.r3 = Timer_R3_ReadPeriod() - Timer_R3_ReadCapture();
+  86              		.loc 1 34 0
+  87 0042 FFF7FEFF 		bl	Timer_R3_ReadPeriod
+  88              	.LVL14:
+  89 0046 0446     		mov	r4, r0
+  90 0048 FFF7FEFF 		bl	Timer_R3_ReadCapture
+  91              	.LVL15:
+  92 004c 201A     		subs	r0, r4, r0
+  93 004e 80B2     		uxth	r0, r0
+  94 0050 2C4B     		ldr	r3, .L11
+  95 0052 D880     		strh	r0, [r3, #6]	@ movhi
+  96 0054 03E0     		b	.L5
+  97              	.L4:
+  35:ZumoLibrary/Reflectance.c ****     }
+  36:ZumoLibrary/Reflectance.c ****     else {
+  37:ZumoLibrary/Reflectance.c ****         sensors.r3 = Timer_R3_ReadPeriod();
+  98              		.loc 1 37 0
+  99 0056 FFF7FEFF 		bl	Timer_R3_ReadPeriod
+ 100              	.LVL16:
+ 101 005a 2A4B     		ldr	r3, .L11
+ 102 005c D880     		strh	r0, [r3, #6]	@ movhi
+ 103              	.L5:
+  38:ZumoLibrary/Reflectance.c ****     }
+  39:ZumoLibrary/Reflectance.c ****     
+  40:ZumoLibrary/Reflectance.c ****     if(statusL3 & Timer_L3_STATUS_CAPTURE) {
+ 104              		.loc 1 40 0
+ 105 005e 16F0400F 		tst	r6, #64
+ 106 0062 09D0     		beq	.L6
+  41:ZumoLibrary/Reflectance.c ****         sensors.l3 = Timer_L3_ReadPeriod() - Timer_L3_ReadCapture();
+ 107              		.loc 1 41 0
+ 108 0064 FFF7FEFF 		bl	Timer_L3_ReadPeriod
+ 109              	.LVL17:
+ 110 0068 0446     		mov	r4, r0
+ 111 006a FFF7FEFF 		bl	Timer_L3_ReadCapture
+ 112              	.LVL18:
+ 113 006e 201A     		subs	r0, r4, r0
+ 114 0070 80B2     		uxth	r0, r0
+ 115 0072 244B     		ldr	r3, .L11
+ 116 0074 1880     		strh	r0, [r3]	@ movhi
+ 117 0076 03E0     		b	.L7
+ 118              	.L6:
+  42:ZumoLibrary/Reflectance.c ****     }
+  43:ZumoLibrary/Reflectance.c ****     else {
+  44:ZumoLibrary/Reflectance.c ****         sensors.l3 = Timer_L3_ReadPeriod();
+ 119              		.loc 1 44 0
+ 120 0078 FFF7FEFF 		bl	Timer_L3_ReadPeriod
+ 121              	.LVL19:
+ 122 007c 214B     		ldr	r3, .L11
+ 123 007e 1880     		strh	r0, [r3]	@ movhi
+ 124              	.L7:
+  45:ZumoLibrary/Reflectance.c ****     }
+  46:ZumoLibrary/Reflectance.c ****     
+  47:ZumoLibrary/Reflectance.c ****     if(statusL1 & Timer_L1_STATUS_CAPTURE) {
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 4
+
+
+ 125              		.loc 1 47 0
+ 126 0080 15F0400F 		tst	r5, #64
+ 127 0084 09D0     		beq	.L8
+  48:ZumoLibrary/Reflectance.c ****         sensors.l1 = Timer_L1_ReadPeriod() - Timer_L1_ReadCapture();
+ 128              		.loc 1 48 0
+ 129 0086 FFF7FEFF 		bl	Timer_L1_ReadPeriod
+ 130              	.LVL20:
+ 131 008a 0446     		mov	r4, r0
+ 132 008c FFF7FEFF 		bl	Timer_L1_ReadCapture
+ 133              	.LVL21:
+ 134 0090 201A     		subs	r0, r4, r0
+ 135 0092 80B2     		uxth	r0, r0
+ 136 0094 1B4B     		ldr	r3, .L11
+ 137 0096 5880     		strh	r0, [r3, #2]	@ movhi
+ 138 0098 03E0     		b	.L9
+ 139              	.L8:
+  49:ZumoLibrary/Reflectance.c ****     }
+  50:ZumoLibrary/Reflectance.c ****     else {
+  51:ZumoLibrary/Reflectance.c ****         sensors.l1 = Timer_L1_ReadPeriod();
+ 140              		.loc 1 51 0
+ 141 009a FFF7FEFF 		bl	Timer_L1_ReadPeriod
+ 142              	.LVL22:
+ 143 009e 194B     		ldr	r3, .L11
+ 144 00a0 5880     		strh	r0, [r3, #2]	@ movhi
+ 145              	.L9:
+  52:ZumoLibrary/Reflectance.c ****     }
+  53:ZumoLibrary/Reflectance.c ****     
+  54:ZumoLibrary/Reflectance.c ****     R1_SetDriveMode(PIN_DM_STRONG);
+ 146              		.loc 1 54 0
+ 147 00a2 0C20     		movs	r0, #12
+ 148 00a4 FFF7FEFF 		bl	R1_SetDriveMode
+ 149              	.LVL23:
+  55:ZumoLibrary/Reflectance.c ****     R1_Write(1);
+ 150              		.loc 1 55 0
+ 151 00a8 0120     		movs	r0, #1
+ 152 00aa FFF7FEFF 		bl	R1_Write
+ 153              	.LVL24:
+  56:ZumoLibrary/Reflectance.c ****     R3_SetDriveMode(PIN_DM_STRONG);
+ 154              		.loc 1 56 0
+ 155 00ae 0C20     		movs	r0, #12
+ 156 00b0 FFF7FEFF 		bl	R3_SetDriveMode
+ 157              	.LVL25:
+  57:ZumoLibrary/Reflectance.c ****     R3_Write(1);
+ 158              		.loc 1 57 0
+ 159 00b4 0120     		movs	r0, #1
+ 160 00b6 FFF7FEFF 		bl	R3_Write
+ 161              	.LVL26:
+  58:ZumoLibrary/Reflectance.c ****     L3_SetDriveMode(PIN_DM_STRONG);
+ 162              		.loc 1 58 0
+ 163 00ba 0C20     		movs	r0, #12
+ 164 00bc FFF7FEFF 		bl	L3_SetDriveMode
+ 165              	.LVL27:
+  59:ZumoLibrary/Reflectance.c ****     L3_Write(1);
+ 166              		.loc 1 59 0
+ 167 00c0 0120     		movs	r0, #1
+ 168 00c2 FFF7FEFF 		bl	L3_Write
+ 169              	.LVL28:
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 5
+
+
+  60:ZumoLibrary/Reflectance.c ****     L1_SetDriveMode(PIN_DM_STRONG);
+ 170              		.loc 1 60 0
+ 171 00c6 0C20     		movs	r0, #12
+ 172 00c8 FFF7FEFF 		bl	L1_SetDriveMode
+ 173              	.LVL29:
+  61:ZumoLibrary/Reflectance.c ****     L1_Write(1);
+ 174              		.loc 1 61 0
+ 175 00cc 0120     		movs	r0, #1
+ 176 00ce FFF7FEFF 		bl	L1_Write
+ 177              	.LVL30:
+  62:ZumoLibrary/Reflectance.c ****     CyDelayUs(10);
+ 178              		.loc 1 62 0
+ 179 00d2 0A20     		movs	r0, #10
+ 180 00d4 FFF7FEFF 		bl	CyDelayUs
+ 181              	.LVL31:
+  63:ZumoLibrary/Reflectance.c ****     R1_SetDriveMode(PIN_DM_DIG_HIZ);
+ 182              		.loc 1 63 0
+ 183 00d8 0220     		movs	r0, #2
+ 184 00da FFF7FEFF 		bl	R1_SetDriveMode
+ 185              	.LVL32:
+  64:ZumoLibrary/Reflectance.c ****     R3_SetDriveMode(PIN_DM_DIG_HIZ);
+ 186              		.loc 1 64 0
+ 187 00de 0220     		movs	r0, #2
+ 188 00e0 FFF7FEFF 		bl	R3_SetDriveMode
+ 189              	.LVL33:
+  65:ZumoLibrary/Reflectance.c ****     L3_SetDriveMode(PIN_DM_DIG_HIZ);
+ 190              		.loc 1 65 0
+ 191 00e4 0220     		movs	r0, #2
+ 192 00e6 FFF7FEFF 		bl	L3_SetDriveMode
+ 193              	.LVL34:
+  66:ZumoLibrary/Reflectance.c ****     L1_SetDriveMode(PIN_DM_DIG_HIZ);
+ 194              		.loc 1 66 0
+ 195 00ea 0220     		movs	r0, #2
+ 196 00ec FFF7FEFF 		bl	L1_SetDriveMode
+ 197              	.LVL35:
+  67:ZumoLibrary/Reflectance.c **** 
+  68:ZumoLibrary/Reflectance.c ****     Timer_R1_ReadStatusRegister();
+ 198              		.loc 1 68 0
+ 199 00f0 FFF7FEFF 		bl	Timer_R1_ReadStatusRegister
+ 200              	.LVL36:
+  69:ZumoLibrary/Reflectance.c ****     Timer_R3_ReadStatusRegister();
+ 201              		.loc 1 69 0
+ 202 00f4 FFF7FEFF 		bl	Timer_R3_ReadStatusRegister
+ 203              	.LVL37:
+  70:ZumoLibrary/Reflectance.c ****     Timer_L3_ReadStatusRegister();
+ 204              		.loc 1 70 0
+ 205 00f8 FFF7FEFF 		bl	Timer_L3_ReadStatusRegister
+ 206              	.LVL38:
+  71:ZumoLibrary/Reflectance.c ****     Timer_L1_ReadStatusRegister();
+ 207              		.loc 1 71 0
+ 208 00fc FFF7FEFF 		bl	Timer_L1_ReadStatusRegister
+ 209              	.LVL39:
+ 210 0100 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 211              	.LVL40:
+ 212              	.L12:
+ 213 0102 00BF     		.align	2
+ 214              	.L11:
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 6
+
+
+ 215 0104 00000000 		.word	.LANCHOR0
+ 216              		.cfi_endproc
+ 217              	.LFE63:
+ 218              		.size	sensor_isr_handler, .-sensor_isr_handler
+ 219              		.section	.text.reflectance_start,"ax",%progbits
+ 220              		.align	2
+ 221              		.global	reflectance_start
+ 222              		.thumb
+ 223              		.thumb_func
+ 224              		.type	reflectance_start, %function
+ 225              	reflectance_start:
+ 226              	.LFB64:
+  72:ZumoLibrary/Reflectance.c **** }
+  73:ZumoLibrary/Reflectance.c **** 
+  74:ZumoLibrary/Reflectance.c **** 
+  75:ZumoLibrary/Reflectance.c **** /**
+  76:ZumoLibrary/Reflectance.c **** * @brief    Starting Reflectance Sensor
+  77:ZumoLibrary/Reflectance.c **** * @details 
+  78:ZumoLibrary/Reflectance.c **** */
+  79:ZumoLibrary/Reflectance.c **** void reflectance_start()
+  80:ZumoLibrary/Reflectance.c **** {
+ 227              		.loc 1 80 0
+ 228              		.cfi_startproc
+ 229              		@ args = 0, pretend = 0, frame = 0
+ 230              		@ frame_needed = 0, uses_anonymous_args = 0
+ 231 0000 08B5     		push	{r3, lr}
+ 232              		.cfi_def_cfa_offset 8
+ 233              		.cfi_offset 3, -8
+ 234              		.cfi_offset 14, -4
+  81:ZumoLibrary/Reflectance.c ****     sensor_isr_StartEx(sensor_isr_handler);
+ 235              		.loc 1 81 0
+ 236 0002 0648     		ldr	r0, .L15
+ 237 0004 FFF7FEFF 		bl	sensor_isr_StartEx
+ 238              	.LVL41:
+  82:ZumoLibrary/Reflectance.c ****     Timer_R1_Start();
+ 239              		.loc 1 82 0
+ 240 0008 FFF7FEFF 		bl	Timer_R1_Start
+ 241              	.LVL42:
+  83:ZumoLibrary/Reflectance.c ****     Timer_R3_Start();
+ 242              		.loc 1 83 0
+ 243 000c FFF7FEFF 		bl	Timer_R3_Start
+ 244              	.LVL43:
+  84:ZumoLibrary/Reflectance.c ****     Timer_L3_Start();
+ 245              		.loc 1 84 0
+ 246 0010 FFF7FEFF 		bl	Timer_L3_Start
+ 247              	.LVL44:
+  85:ZumoLibrary/Reflectance.c ****     Timer_L1_Start();
+ 248              		.loc 1 85 0
+ 249 0014 FFF7FEFF 		bl	Timer_L1_Start
+ 250              	.LVL45:
+ 251 0018 08BD     		pop	{r3, pc}
+ 252              	.L16:
+ 253 001a 00BF     		.align	2
+ 254              	.L15:
+ 255 001c 00000000 		.word	sensor_isr_handler
+ 256              		.cfi_endproc
+ 257              	.LFE64:
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 7
+
+
+ 258              		.size	reflectance_start, .-reflectance_start
+ 259              		.section	.text.reflectance_read,"ax",%progbits
+ 260              		.align	2
+ 261              		.global	reflectance_read
+ 262              		.thumb
+ 263              		.thumb_func
+ 264              		.type	reflectance_read, %function
+ 265              	reflectance_read:
+ 266              	.LFB65:
+  86:ZumoLibrary/Reflectance.c **** }
+  87:ZumoLibrary/Reflectance.c **** 
+  88:ZumoLibrary/Reflectance.c **** 
+  89:ZumoLibrary/Reflectance.c **** /**
+  90:ZumoLibrary/Reflectance.c **** * @brief    Read reflectance sensor values
+  91:ZumoLibrary/Reflectance.c **** * @details
+  92:ZumoLibrary/Reflectance.c **** */
+  93:ZumoLibrary/Reflectance.c **** void reflectance_read(struct sensors_ *values)
+  94:ZumoLibrary/Reflectance.c **** {
+ 267              		.loc 1 94 0
+ 268              		.cfi_startproc
+ 269              		@ args = 0, pretend = 0, frame = 0
+ 270              		@ frame_needed = 0, uses_anonymous_args = 0
+ 271              		@ link register save eliminated.
+ 272              	.LVL46:
+ 273 0000 0246     		mov	r2, r0
+  95:ZumoLibrary/Reflectance.c ****     *values = sensors;
+ 274              		.loc 1 95 0
+ 275 0002 024B     		ldr	r3, .L18
+ 276 0004 03CB     		ldmia	r3!, {r0, r1}
+ 277              	.LVL47:
+ 278 0006 1060     		str	r0, [r2]	@ unaligned
+ 279 0008 5160     		str	r1, [r2, #4]	@ unaligned
+ 280 000a 7047     		bx	lr
+ 281              	.L19:
+ 282              		.align	2
+ 283              	.L18:
+ 284 000c 00000000 		.word	.LANCHOR0
+ 285              		.cfi_endproc
+ 286              	.LFE65:
+ 287              		.size	reflectance_read, .-reflectance_read
+ 288              		.section	.text.reflectance_digital,"ax",%progbits
+ 289              		.align	2
+ 290              		.global	reflectance_digital
+ 291              		.thumb
+ 292              		.thumb_func
+ 293              		.type	reflectance_digital, %function
+ 294              	reflectance_digital:
+ 295              	.LFB66:
+  96:ZumoLibrary/Reflectance.c **** }
+  97:ZumoLibrary/Reflectance.c **** 
+  98:ZumoLibrary/Reflectance.c **** 
+  99:ZumoLibrary/Reflectance.c **** /**
+ 100:ZumoLibrary/Reflectance.c **** * @brief    Making Reflectance Sensor's period to digital
+ 101:ZumoLibrary/Reflectance.c **** * @details
+ 102:ZumoLibrary/Reflectance.c **** */
+ 103:ZumoLibrary/Reflectance.c **** void reflectance_digital(struct sensors_ *digital)
+ 104:ZumoLibrary/Reflectance.c **** {
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 8
+
+
+ 296              		.loc 1 104 0
+ 297              		.cfi_startproc
+ 298              		@ args = 0, pretend = 0, frame = 0
+ 299              		@ frame_needed = 0, uses_anonymous_args = 0
+ 300              		@ link register save eliminated.
+ 301              	.LVL48:
+ 105:ZumoLibrary/Reflectance.c ****     //if the results of reflectance_period function is over threshold, set digital_sensor_value to 
+ 106:ZumoLibrary/Reflectance.c ****     if(sensors.l3 > threshold.l3)
+ 302              		.loc 1 106 0
+ 303 0000 184B     		ldr	r3, .L29
+ 304 0002 1B88     		ldrh	r3, [r3]
+ 305 0004 9BB2     		uxth	r3, r3
+ 306 0006 184A     		ldr	r2, .L29+4
+ 307 0008 1288     		ldrh	r2, [r2]
+ 308 000a 9342     		cmp	r3, r2
+ 309 000c 02D9     		bls	.L21
+ 107:ZumoLibrary/Reflectance.c ****         digital->l3 = 0;
+ 310              		.loc 1 107 0
+ 311 000e 0023     		movs	r3, #0
+ 312 0010 0380     		strh	r3, [r0]	@ movhi
+ 313 0012 01E0     		b	.L22
+ 314              	.L21:
+ 108:ZumoLibrary/Reflectance.c ****     else
+ 109:ZumoLibrary/Reflectance.c ****         digital->l3 = 1;
+ 315              		.loc 1 109 0
+ 316 0014 0123     		movs	r3, #1
+ 317 0016 0380     		strh	r3, [r0]	@ movhi
+ 318              	.L22:
+ 110:ZumoLibrary/Reflectance.c ****     
+ 111:ZumoLibrary/Reflectance.c ****     if(sensors.l1 > threshold.l1)
+ 319              		.loc 1 111 0
+ 320 0018 124B     		ldr	r3, .L29
+ 321 001a 5B88     		ldrh	r3, [r3, #2]
+ 322 001c 9BB2     		uxth	r3, r3
+ 323 001e 124A     		ldr	r2, .L29+4
+ 324 0020 5288     		ldrh	r2, [r2, #2]
+ 325 0022 9342     		cmp	r3, r2
+ 326 0024 02D9     		bls	.L23
+ 112:ZumoLibrary/Reflectance.c ****         digital->l1 = 0;
+ 327              		.loc 1 112 0
+ 328 0026 0023     		movs	r3, #0
+ 329 0028 4380     		strh	r3, [r0, #2]	@ movhi
+ 330 002a 01E0     		b	.L24
+ 331              	.L23:
+ 113:ZumoLibrary/Reflectance.c ****     else
+ 114:ZumoLibrary/Reflectance.c ****         digital->l1 = 1;
+ 332              		.loc 1 114 0
+ 333 002c 0123     		movs	r3, #1
+ 334 002e 4380     		strh	r3, [r0, #2]	@ movhi
+ 335              	.L24:
+ 115:ZumoLibrary/Reflectance.c ****     
+ 116:ZumoLibrary/Reflectance.c ****     if(sensors.r1 > threshold.r1)
+ 336              		.loc 1 116 0
+ 337 0030 0C4B     		ldr	r3, .L29
+ 338 0032 9B88     		ldrh	r3, [r3, #4]
+ 339 0034 9BB2     		uxth	r3, r3
+ 340 0036 0C4A     		ldr	r2, .L29+4
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 9
+
+
+ 341 0038 9288     		ldrh	r2, [r2, #4]
+ 342 003a 9342     		cmp	r3, r2
+ 343 003c 02D9     		bls	.L25
+ 117:ZumoLibrary/Reflectance.c ****         digital->r1 = 0;
+ 344              		.loc 1 117 0
+ 345 003e 0023     		movs	r3, #0
+ 346 0040 8380     		strh	r3, [r0, #4]	@ movhi
+ 347 0042 01E0     		b	.L26
+ 348              	.L25:
+ 118:ZumoLibrary/Reflectance.c ****     else
+ 119:ZumoLibrary/Reflectance.c ****         digital->r1 = 1;
+ 349              		.loc 1 119 0
+ 350 0044 0123     		movs	r3, #1
+ 351 0046 8380     		strh	r3, [r0, #4]	@ movhi
+ 352              	.L26:
+ 120:ZumoLibrary/Reflectance.c ****     
+ 121:ZumoLibrary/Reflectance.c ****     if(sensors.r3 > threshold.r3)
+ 353              		.loc 1 121 0
+ 354 0048 064B     		ldr	r3, .L29
+ 355 004a DB88     		ldrh	r3, [r3, #6]
+ 356 004c 9BB2     		uxth	r3, r3
+ 357 004e 064A     		ldr	r2, .L29+4
+ 358 0050 D288     		ldrh	r2, [r2, #6]
+ 359 0052 9342     		cmp	r3, r2
+ 360 0054 02D9     		bls	.L27
+ 122:ZumoLibrary/Reflectance.c ****         digital->r3 = 0;
+ 361              		.loc 1 122 0
+ 362 0056 0023     		movs	r3, #0
+ 363 0058 C380     		strh	r3, [r0, #6]	@ movhi
+ 364 005a 7047     		bx	lr
+ 365              	.L27:
+ 123:ZumoLibrary/Reflectance.c ****     else
+ 124:ZumoLibrary/Reflectance.c ****         digital->r3 = 1;
+ 366              		.loc 1 124 0
+ 367 005c 0123     		movs	r3, #1
+ 368 005e C380     		strh	r3, [r0, #6]	@ movhi
+ 369 0060 7047     		bx	lr
+ 370              	.L30:
+ 371 0062 00BF     		.align	2
+ 372              	.L29:
+ 373 0064 00000000 		.word	.LANCHOR0
+ 374 0068 00000000 		.word	.LANCHOR1
+ 375              		.cfi_endproc
+ 376              	.LFE66:
+ 377              		.size	reflectance_digital, .-reflectance_digital
+ 378              		.section	.text.reflectance_set_threshold,"ax",%progbits
+ 379              		.align	2
+ 380              		.global	reflectance_set_threshold
+ 381              		.thumb
+ 382              		.thumb_func
+ 383              		.type	reflectance_set_threshold, %function
+ 384              	reflectance_set_threshold:
+ 385              	.LFB67:
+ 125:ZumoLibrary/Reflectance.c ****         
+ 126:ZumoLibrary/Reflectance.c **** }
+ 127:ZumoLibrary/Reflectance.c **** 
+ 128:ZumoLibrary/Reflectance.c **** void reflectance_set_threshold(uint16_t l3, uint16_t l1, uint16_t r1, uint16_t r3)
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 10
+
+
+ 129:ZumoLibrary/Reflectance.c **** {
+ 386              		.loc 1 129 0
+ 387              		.cfi_startproc
+ 388              		@ args = 0, pretend = 0, frame = 0
+ 389              		@ frame_needed = 0, uses_anonymous_args = 0
+ 390              		@ link register save eliminated.
+ 391              	.LVL49:
+ 392 0000 10B4     		push	{r4}
+ 393              		.cfi_def_cfa_offset 4
+ 394              		.cfi_offset 4, -4
+ 130:ZumoLibrary/Reflectance.c ****     threshold.l3 = l3;
+ 395              		.loc 1 130 0
+ 396 0002 044C     		ldr	r4, .L33
+ 397 0004 2080     		strh	r0, [r4]	@ movhi
+ 131:ZumoLibrary/Reflectance.c ****     threshold.l1 = l1;
+ 398              		.loc 1 131 0
+ 399 0006 6180     		strh	r1, [r4, #2]	@ movhi
+ 132:ZumoLibrary/Reflectance.c ****     threshold.r3 = r3;
+ 400              		.loc 1 132 0
+ 401 0008 E380     		strh	r3, [r4, #6]	@ movhi
+ 133:ZumoLibrary/Reflectance.c ****     threshold.r1 = r1;
+ 402              		.loc 1 133 0
+ 403 000a A280     		strh	r2, [r4, #4]	@ movhi
+ 134:ZumoLibrary/Reflectance.c **** }
+ 404              		.loc 1 134 0
+ 405 000c 5DF8044B 		ldr	r4, [sp], #4
+ 406              		.cfi_restore 4
+ 407              		.cfi_def_cfa_offset 0
+ 408 0010 7047     		bx	lr
+ 409              	.L34:
+ 410 0012 00BF     		.align	2
+ 411              	.L33:
+ 412 0014 00000000 		.word	.LANCHOR1
+ 413              		.cfi_endproc
+ 414              	.LFE67:
+ 415              		.size	reflectance_set_threshold, .-reflectance_set_threshold
+ 416              		.data
+ 417              		.align	2
+ 418              		.set	.LANCHOR1,. + 0
+ 419              		.type	threshold, %object
+ 420              		.size	threshold, 8
+ 421              	threshold:
+ 422 0000 1027     		.short	10000
+ 423 0002 1027     		.short	10000
+ 424 0004 1027     		.short	10000
+ 425 0006 1027     		.short	10000
+ 426              		.bss
+ 427              		.align	2
+ 428              		.set	.LANCHOR0,. + 0
+ 429              		.type	sensors, %object
+ 430              		.size	sensors, 8
+ 431              	sensors:
+ 432 0000 00000000 		.space	8
+ 432      00000000 
+ 433              		.type	digital_sensor_value, %object
+ 434              		.size	digital_sensor_value, 8
+ 435              	digital_sensor_value:
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 11
+
+
+ 436 0008 00000000 		.space	8
+ 436      00000000 
+ 437              		.text
+ 438              	.Letext0:
+ 439              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 440              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 441              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 442              		.file 5 "ZumoLibrary\\Reflectance.h"
+ 443              		.file 6 "Generated_Source\\PSoC5/Timer_R1.h"
+ 444              		.file 7 "Generated_Source\\PSoC5/Timer_R3.h"
+ 445              		.file 8 "Generated_Source\\PSoC5/Timer_L3.h"
+ 446              		.file 9 "Generated_Source\\PSoC5/Timer_L1.h"
+ 447              		.file 10 "Generated_Source\\PSoC5/R1.h"
+ 448              		.file 11 "Generated_Source\\PSoC5/R3.h"
+ 449              		.file 12 "Generated_Source\\PSoC5/L3.h"
+ 450              		.file 13 "Generated_Source\\PSoC5/L1.h"
+ 451              		.file 14 "Generated_Source\\PSoC5/CyLib.h"
+ 452              		.file 15 "Generated_Source\\PSoC5/sensor_isr.h"
+ 453              		.file 16 "Generated_Source\\PSoC5/core_cm3.h"
+ 454              		.section	.debug_info,"",%progbits
+ 455              	.Ldebug_info0:
+ 456 0000 9F050000 		.4byte	0x59f
+ 457 0004 0400     		.2byte	0x4
+ 458 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 459 000a 04       		.byte	0x4
+ 460 000b 01       		.uleb128 0x1
+ 461 000c 7A030000 		.4byte	.LASF62
+ 462 0010 01       		.byte	0x1
+ 463 0011 38040000 		.4byte	.LASF63
+ 464 0015 00000000 		.4byte	.LASF64
+ 465 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 466 001d 00000000 		.4byte	0
+ 467 0021 00000000 		.4byte	.Ldebug_line0
+ 468 0025 02       		.uleb128 0x2
+ 469 0026 01       		.byte	0x1
+ 470 0027 06       		.byte	0x6
+ 471 0028 FE010000 		.4byte	.LASF0
+ 472 002c 02       		.uleb128 0x2
+ 473 002d 01       		.byte	0x1
+ 474 002e 08       		.byte	0x8
+ 475 002f AF010000 		.4byte	.LASF1
+ 476 0033 02       		.uleb128 0x2
+ 477 0034 02       		.byte	0x2
+ 478 0035 05       		.byte	0x5
+ 479 0036 6F000000 		.4byte	.LASF2
+ 480 003a 03       		.uleb128 0x3
+ 481 003b B3000000 		.4byte	.LASF4
+ 482 003f 02       		.byte	0x2
+ 483 0040 2B       		.byte	0x2b
+ 484 0041 45000000 		.4byte	0x45
+ 485 0045 02       		.uleb128 0x2
+ 486 0046 02       		.byte	0x2
+ 487 0047 07       		.byte	0x7
+ 488 0048 49020000 		.4byte	.LASF3
+ 489 004c 03       		.uleb128 0x3
+ 490 004d 5D030000 		.4byte	.LASF5
+ 491 0051 02       		.byte	0x2
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 12
+
+
+ 492 0052 3F       		.byte	0x3f
+ 493 0053 57000000 		.4byte	0x57
+ 494 0057 02       		.uleb128 0x2
+ 495 0058 04       		.byte	0x4
+ 496 0059 05       		.byte	0x5
+ 497 005a 80010000 		.4byte	.LASF6
+ 498 005e 03       		.uleb128 0x3
+ 499 005f 98000000 		.4byte	.LASF7
+ 500 0063 02       		.byte	0x2
+ 501 0064 41       		.byte	0x41
+ 502 0065 69000000 		.4byte	0x69
+ 503 0069 02       		.uleb128 0x2
+ 504 006a 04       		.byte	0x4
+ 505 006b 07       		.byte	0x7
+ 506 006c FD020000 		.4byte	.LASF8
+ 507 0070 02       		.uleb128 0x2
+ 508 0071 08       		.byte	0x8
+ 509 0072 05       		.byte	0x5
+ 510 0073 8A000000 		.4byte	.LASF9
+ 511 0077 02       		.uleb128 0x2
+ 512 0078 08       		.byte	0x8
+ 513 0079 07       		.byte	0x7
+ 514 007a 0A020000 		.4byte	.LASF10
+ 515 007e 04       		.uleb128 0x4
+ 516 007f 04       		.byte	0x4
+ 517 0080 05       		.byte	0x5
+ 518 0081 696E7400 		.ascii	"int\000"
+ 519 0085 02       		.uleb128 0x2
+ 520 0086 04       		.byte	0x4
+ 521 0087 07       		.byte	0x7
+ 522 0088 2A020000 		.4byte	.LASF11
+ 523 008c 03       		.uleb128 0x3
+ 524 008d 37020000 		.4byte	.LASF12
+ 525 0091 03       		.byte	0x3
+ 526 0092 21       		.byte	0x21
+ 527 0093 3A000000 		.4byte	0x3a
+ 528 0097 03       		.uleb128 0x3
+ 529 0098 98020000 		.4byte	.LASF13
+ 530 009c 03       		.byte	0x3
+ 531 009d 2C       		.byte	0x2c
+ 532 009e 4C000000 		.4byte	0x4c
+ 533 00a2 03       		.uleb128 0x3
+ 534 00a3 21020000 		.4byte	.LASF14
+ 535 00a7 03       		.byte	0x3
+ 536 00a8 2D       		.byte	0x2d
+ 537 00a9 5E000000 		.4byte	0x5e
+ 538 00ad 05       		.uleb128 0x5
+ 539 00ae CE000000 		.4byte	.LASF15
+ 540 00b2 04       		.byte	0x4
+ 541 00b3 9201     		.2byte	0x192
+ 542 00b5 2C000000 		.4byte	0x2c
+ 543 00b9 05       		.uleb128 0x5
+ 544 00ba BE000000 		.4byte	.LASF16
+ 545 00be 04       		.byte	0x4
+ 546 00bf 9301     		.2byte	0x193
+ 547 00c1 45000000 		.4byte	0x45
+ 548 00c5 02       		.uleb128 0x2
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 13
+
+
+ 549 00c6 04       		.byte	0x4
+ 550 00c7 04       		.byte	0x4
+ 551 00c8 17010000 		.4byte	.LASF17
+ 552 00cc 02       		.uleb128 0x2
+ 553 00cd 08       		.byte	0x8
+ 554 00ce 04       		.byte	0x4
+ 555 00cf 08040000 		.4byte	.LASF18
+ 556 00d3 02       		.uleb128 0x2
+ 557 00d4 01       		.byte	0x1
+ 558 00d5 08       		.byte	0x8
+ 559 00d6 67010000 		.4byte	.LASF19
+ 560 00da 05       		.uleb128 0x5
+ 561 00db C7010000 		.4byte	.LASF20
+ 562 00df 04       		.byte	0x4
+ 563 00e0 4E02     		.2byte	0x24e
+ 564 00e2 E6000000 		.4byte	0xe6
+ 565 00e6 06       		.uleb128 0x6
+ 566 00e7 04       		.byte	0x4
+ 567 00e8 EC000000 		.4byte	0xec
+ 568 00ec 07       		.uleb128 0x7
+ 569 00ed 02       		.uleb128 0x2
+ 570 00ee 04       		.byte	0x4
+ 571 00ef 07       		.byte	0x7
+ 572 00f0 79000000 		.4byte	.LASF21
+ 573 00f4 08       		.uleb128 0x8
+ 574 00f5 D8020000 		.4byte	.LASF65
+ 575 00f9 08       		.byte	0x8
+ 576 00fa 05       		.byte	0x5
+ 577 00fb 11       		.byte	0x11
+ 578 00fc 2D010000 		.4byte	0x12d
+ 579 0100 09       		.uleb128 0x9
+ 580 0101 6C3300   		.ascii	"l3\000"
+ 581 0104 05       		.byte	0x5
+ 582 0105 12       		.byte	0x12
+ 583 0106 8C000000 		.4byte	0x8c
+ 584 010a 00       		.byte	0
+ 585 010b 09       		.uleb128 0x9
+ 586 010c 6C3100   		.ascii	"l1\000"
+ 587 010f 05       		.byte	0x5
+ 588 0110 14       		.byte	0x14
+ 589 0111 8C000000 		.4byte	0x8c
+ 590 0115 02       		.byte	0x2
+ 591 0116 09       		.uleb128 0x9
+ 592 0117 723100   		.ascii	"r1\000"
+ 593 011a 05       		.byte	0x5
+ 594 011b 15       		.byte	0x15
+ 595 011c 8C000000 		.4byte	0x8c
+ 596 0120 04       		.byte	0x4
+ 597 0121 09       		.uleb128 0x9
+ 598 0122 723300   		.ascii	"r3\000"
+ 599 0125 05       		.byte	0x5
+ 600 0126 17       		.byte	0x17
+ 601 0127 8C000000 		.4byte	0x8c
+ 602 012b 06       		.byte	0x6
+ 603 012c 00       		.byte	0
+ 604 012d 0A       		.uleb128 0xa
+ 605 012e 67030000 		.4byte	.LASF26
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 14
+
+
+ 606 0132 01       		.byte	0x1
+ 607 0133 13       		.byte	0x13
+ 608 0134 00000000 		.4byte	.LFB63
+ 609 0138 08010000 		.4byte	.LFE63-.LFB63
+ 610 013c 01       		.uleb128 0x1
+ 611 013d 9C       		.byte	0x9c
+ 612 013e 2A030000 		.4byte	0x32a
+ 613 0142 0B       		.uleb128 0xb
+ 614 0143 C5000000 		.4byte	.LASF22
+ 615 0147 01       		.byte	0x1
+ 616 0148 15       		.byte	0x15
+ 617 0149 A2000000 		.4byte	0xa2
+ 618 014d 00000000 		.4byte	.LLST0
+ 619 0151 0B       		.uleb128 0xb
+ 620 0152 D4000000 		.4byte	.LASF23
+ 621 0156 01       		.byte	0x1
+ 622 0157 16       		.byte	0x16
+ 623 0158 A2000000 		.4byte	0xa2
+ 624 015c 28000000 		.4byte	.LLST1
+ 625 0160 0B       		.uleb128 0xb
+ 626 0161 8F020000 		.4byte	.LASF24
+ 627 0165 01       		.byte	0x1
+ 628 0166 17       		.byte	0x17
+ 629 0167 A2000000 		.4byte	0xa2
+ 630 016b 40000000 		.4byte	.LLST2
+ 631 016f 0B       		.uleb128 0xb
+ 632 0170 23030000 		.4byte	.LASF25
+ 633 0174 01       		.byte	0x1
+ 634 0175 18       		.byte	0x18
+ 635 0176 A2000000 		.4byte	0xa2
+ 636 017a 58000000 		.4byte	.LLST3
+ 637 017e 0C       		.uleb128 0xc
+ 638 017f 06000000 		.4byte	.LVL0
+ 639 0183 58040000 		.4byte	0x458
+ 640 0187 0C       		.uleb128 0xc
+ 641 0188 0C000000 		.4byte	.LVL2
+ 642 018c 63040000 		.4byte	0x463
+ 643 0190 0C       		.uleb128 0xc
+ 644 0191 12000000 		.4byte	.LVL4
+ 645 0195 6E040000 		.4byte	0x46e
+ 646 0199 0C       		.uleb128 0xc
+ 647 019a 18000000 		.4byte	.LVL6
+ 648 019e 79040000 		.4byte	0x479
+ 649 01a2 0C       		.uleb128 0xc
+ 650 01a3 24000000 		.4byte	.LVL8
+ 651 01a7 84040000 		.4byte	0x484
+ 652 01ab 0C       		.uleb128 0xc
+ 653 01ac 2A000000 		.4byte	.LVL10
+ 654 01b0 8F040000 		.4byte	0x48f
+ 655 01b4 0C       		.uleb128 0xc
+ 656 01b5 38000000 		.4byte	.LVL12
+ 657 01b9 84040000 		.4byte	0x484
+ 658 01bd 0C       		.uleb128 0xc
+ 659 01be 46000000 		.4byte	.LVL14
+ 660 01c2 9A040000 		.4byte	0x49a
+ 661 01c6 0C       		.uleb128 0xc
+ 662 01c7 4C000000 		.4byte	.LVL15
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 15
+
+
+ 663 01cb A5040000 		.4byte	0x4a5
+ 664 01cf 0C       		.uleb128 0xc
+ 665 01d0 5A000000 		.4byte	.LVL16
+ 666 01d4 9A040000 		.4byte	0x49a
+ 667 01d8 0C       		.uleb128 0xc
+ 668 01d9 68000000 		.4byte	.LVL17
+ 669 01dd B0040000 		.4byte	0x4b0
+ 670 01e1 0C       		.uleb128 0xc
+ 671 01e2 6E000000 		.4byte	.LVL18
+ 672 01e6 BB040000 		.4byte	0x4bb
+ 673 01ea 0C       		.uleb128 0xc
+ 674 01eb 7C000000 		.4byte	.LVL19
+ 675 01ef B0040000 		.4byte	0x4b0
+ 676 01f3 0C       		.uleb128 0xc
+ 677 01f4 8A000000 		.4byte	.LVL20
+ 678 01f8 C6040000 		.4byte	0x4c6
+ 679 01fc 0C       		.uleb128 0xc
+ 680 01fd 90000000 		.4byte	.LVL21
+ 681 0201 D1040000 		.4byte	0x4d1
+ 682 0205 0C       		.uleb128 0xc
+ 683 0206 9E000000 		.4byte	.LVL22
+ 684 020a C6040000 		.4byte	0x4c6
+ 685 020e 0D       		.uleb128 0xd
+ 686 020f A8000000 		.4byte	.LVL23
+ 687 0213 DC040000 		.4byte	0x4dc
+ 688 0217 21020000 		.4byte	0x221
+ 689 021b 0E       		.uleb128 0xe
+ 690 021c 01       		.uleb128 0x1
+ 691 021d 50       		.byte	0x50
+ 692 021e 01       		.uleb128 0x1
+ 693 021f 3C       		.byte	0x3c
+ 694 0220 00       		.byte	0
+ 695 0221 0D       		.uleb128 0xd
+ 696 0222 AE000000 		.4byte	.LVL24
+ 697 0226 ED040000 		.4byte	0x4ed
+ 698 022a 34020000 		.4byte	0x234
+ 699 022e 0E       		.uleb128 0xe
+ 700 022f 01       		.uleb128 0x1
+ 701 0230 50       		.byte	0x50
+ 702 0231 01       		.uleb128 0x1
+ 703 0232 31       		.byte	0x31
+ 704 0233 00       		.byte	0
+ 705 0234 0D       		.uleb128 0xd
+ 706 0235 B4000000 		.4byte	.LVL25
+ 707 0239 FE040000 		.4byte	0x4fe
+ 708 023d 47020000 		.4byte	0x247
+ 709 0241 0E       		.uleb128 0xe
+ 710 0242 01       		.uleb128 0x1
+ 711 0243 50       		.byte	0x50
+ 712 0244 01       		.uleb128 0x1
+ 713 0245 3C       		.byte	0x3c
+ 714 0246 00       		.byte	0
+ 715 0247 0D       		.uleb128 0xd
+ 716 0248 BA000000 		.4byte	.LVL26
+ 717 024c 0F050000 		.4byte	0x50f
+ 718 0250 5A020000 		.4byte	0x25a
+ 719 0254 0E       		.uleb128 0xe
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 16
+
+
+ 720 0255 01       		.uleb128 0x1
+ 721 0256 50       		.byte	0x50
+ 722 0257 01       		.uleb128 0x1
+ 723 0258 31       		.byte	0x31
+ 724 0259 00       		.byte	0
+ 725 025a 0D       		.uleb128 0xd
+ 726 025b C0000000 		.4byte	.LVL27
+ 727 025f 20050000 		.4byte	0x520
+ 728 0263 6D020000 		.4byte	0x26d
+ 729 0267 0E       		.uleb128 0xe
+ 730 0268 01       		.uleb128 0x1
+ 731 0269 50       		.byte	0x50
+ 732 026a 01       		.uleb128 0x1
+ 733 026b 3C       		.byte	0x3c
+ 734 026c 00       		.byte	0
+ 735 026d 0D       		.uleb128 0xd
+ 736 026e C6000000 		.4byte	.LVL28
+ 737 0272 31050000 		.4byte	0x531
+ 738 0276 80020000 		.4byte	0x280
+ 739 027a 0E       		.uleb128 0xe
+ 740 027b 01       		.uleb128 0x1
+ 741 027c 50       		.byte	0x50
+ 742 027d 01       		.uleb128 0x1
+ 743 027e 31       		.byte	0x31
+ 744 027f 00       		.byte	0
+ 745 0280 0D       		.uleb128 0xd
+ 746 0281 CC000000 		.4byte	.LVL29
+ 747 0285 42050000 		.4byte	0x542
+ 748 0289 93020000 		.4byte	0x293
+ 749 028d 0E       		.uleb128 0xe
+ 750 028e 01       		.uleb128 0x1
+ 751 028f 50       		.byte	0x50
+ 752 0290 01       		.uleb128 0x1
+ 753 0291 3C       		.byte	0x3c
+ 754 0292 00       		.byte	0
+ 755 0293 0D       		.uleb128 0xd
+ 756 0294 D2000000 		.4byte	.LVL30
+ 757 0298 53050000 		.4byte	0x553
+ 758 029c A6020000 		.4byte	0x2a6
+ 759 02a0 0E       		.uleb128 0xe
+ 760 02a1 01       		.uleb128 0x1
+ 761 02a2 50       		.byte	0x50
+ 762 02a3 01       		.uleb128 0x1
+ 763 02a4 31       		.byte	0x31
+ 764 02a5 00       		.byte	0
+ 765 02a6 0D       		.uleb128 0xd
+ 766 02a7 D8000000 		.4byte	.LVL31
+ 767 02ab 64050000 		.4byte	0x564
+ 768 02af B9020000 		.4byte	0x2b9
+ 769 02b3 0E       		.uleb128 0xe
+ 770 02b4 01       		.uleb128 0x1
+ 771 02b5 50       		.byte	0x50
+ 772 02b6 01       		.uleb128 0x1
+ 773 02b7 3A       		.byte	0x3a
+ 774 02b8 00       		.byte	0
+ 775 02b9 0D       		.uleb128 0xd
+ 776 02ba DE000000 		.4byte	.LVL32
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 17
+
+
+ 777 02be DC040000 		.4byte	0x4dc
+ 778 02c2 CC020000 		.4byte	0x2cc
+ 779 02c6 0E       		.uleb128 0xe
+ 780 02c7 01       		.uleb128 0x1
+ 781 02c8 50       		.byte	0x50
+ 782 02c9 01       		.uleb128 0x1
+ 783 02ca 32       		.byte	0x32
+ 784 02cb 00       		.byte	0
+ 785 02cc 0D       		.uleb128 0xd
+ 786 02cd E4000000 		.4byte	.LVL33
+ 787 02d1 FE040000 		.4byte	0x4fe
+ 788 02d5 DF020000 		.4byte	0x2df
+ 789 02d9 0E       		.uleb128 0xe
+ 790 02da 01       		.uleb128 0x1
+ 791 02db 50       		.byte	0x50
+ 792 02dc 01       		.uleb128 0x1
+ 793 02dd 32       		.byte	0x32
+ 794 02de 00       		.byte	0
+ 795 02df 0D       		.uleb128 0xd
+ 796 02e0 EA000000 		.4byte	.LVL34
+ 797 02e4 20050000 		.4byte	0x520
+ 798 02e8 F2020000 		.4byte	0x2f2
+ 799 02ec 0E       		.uleb128 0xe
+ 800 02ed 01       		.uleb128 0x1
+ 801 02ee 50       		.byte	0x50
+ 802 02ef 01       		.uleb128 0x1
+ 803 02f0 32       		.byte	0x32
+ 804 02f1 00       		.byte	0
+ 805 02f2 0D       		.uleb128 0xd
+ 806 02f3 F0000000 		.4byte	.LVL35
+ 807 02f7 42050000 		.4byte	0x542
+ 808 02fb 05030000 		.4byte	0x305
+ 809 02ff 0E       		.uleb128 0xe
+ 810 0300 01       		.uleb128 0x1
+ 811 0301 50       		.byte	0x50
+ 812 0302 01       		.uleb128 0x1
+ 813 0303 32       		.byte	0x32
+ 814 0304 00       		.byte	0
+ 815 0305 0C       		.uleb128 0xc
+ 816 0306 F4000000 		.4byte	.LVL36
+ 817 030a 58040000 		.4byte	0x458
+ 818 030e 0C       		.uleb128 0xc
+ 819 030f F8000000 		.4byte	.LVL37
+ 820 0313 63040000 		.4byte	0x463
+ 821 0317 0C       		.uleb128 0xc
+ 822 0318 FC000000 		.4byte	.LVL38
+ 823 031c 6E040000 		.4byte	0x46e
+ 824 0320 0C       		.uleb128 0xc
+ 825 0321 00010000 		.4byte	.LVL39
+ 826 0325 79040000 		.4byte	0x479
+ 827 0329 00       		.byte	0
+ 828 032a 0A       		.uleb128 0xa
+ 829 032b 05010000 		.4byte	.LASF27
+ 830 032f 01       		.byte	0x1
+ 831 0330 4F       		.byte	0x4f
+ 832 0331 00000000 		.4byte	.LFB64
+ 833 0335 20000000 		.4byte	.LFE64-.LFB64
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 18
+
+
+ 834 0339 01       		.uleb128 0x1
+ 835 033a 9C       		.byte	0x9c
+ 836 033b 7B030000 		.4byte	0x37b
+ 837 033f 0D       		.uleb128 0xd
+ 838 0340 08000000 		.4byte	.LVL41
+ 839 0344 75050000 		.4byte	0x575
+ 840 0348 56030000 		.4byte	0x356
+ 841 034c 0E       		.uleb128 0xe
+ 842 034d 01       		.uleb128 0x1
+ 843 034e 50       		.byte	0x50
+ 844 034f 05       		.uleb128 0x5
+ 845 0350 03       		.byte	0x3
+ 846 0351 00000000 		.4byte	sensor_isr_handler
+ 847 0355 00       		.byte	0
+ 848 0356 0C       		.uleb128 0xc
+ 849 0357 0C000000 		.4byte	.LVL42
+ 850 035b 86050000 		.4byte	0x586
+ 851 035f 0C       		.uleb128 0xc
+ 852 0360 10000000 		.4byte	.LVL43
+ 853 0364 8D050000 		.4byte	0x58d
+ 854 0368 0C       		.uleb128 0xc
+ 855 0369 14000000 		.4byte	.LVL44
+ 856 036d 94050000 		.4byte	0x594
+ 857 0371 0C       		.uleb128 0xc
+ 858 0372 18000000 		.4byte	.LVL45
+ 859 0376 9B050000 		.4byte	0x59b
+ 860 037a 00       		.byte	0
+ 861 037b 0A       		.uleb128 0xa
+ 862 037c 52040000 		.4byte	.LASF28
+ 863 0380 01       		.byte	0x1
+ 864 0381 5D       		.byte	0x5d
+ 865 0382 00000000 		.4byte	.LFB65
+ 866 0386 10000000 		.4byte	.LFE65-.LFB65
+ 867 038a 01       		.uleb128 0x1
+ 868 038b 9C       		.byte	0x9c
+ 869 038c A0030000 		.4byte	0x3a0
+ 870 0390 0F       		.uleb128 0xf
+ 871 0391 89010000 		.4byte	.LASF30
+ 872 0395 01       		.byte	0x1
+ 873 0396 5D       		.byte	0x5d
+ 874 0397 A0030000 		.4byte	0x3a0
+ 875 039b 70000000 		.4byte	.LLST4
+ 876 039f 00       		.byte	0
+ 877 03a0 06       		.uleb128 0x6
+ 878 03a1 04       		.byte	0x4
+ 879 03a2 F4000000 		.4byte	0xf4
+ 880 03a6 0A       		.uleb128 0xa
+ 881 03a7 49010000 		.4byte	.LASF29
+ 882 03ab 01       		.byte	0x1
+ 883 03ac 67       		.byte	0x67
+ 884 03ad 00000000 		.4byte	.LFB66
+ 885 03b1 6C000000 		.4byte	.LFE66-.LFB66
+ 886 03b5 01       		.uleb128 0x1
+ 887 03b6 9C       		.byte	0x9c
+ 888 03b7 C9030000 		.4byte	0x3c9
+ 889 03bb 10       		.uleb128 0x10
+ 890 03bc 2C030000 		.4byte	.LASF31
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 19
+
+
+ 891 03c0 01       		.byte	0x1
+ 892 03c1 67       		.byte	0x67
+ 893 03c2 A0030000 		.4byte	0x3a0
+ 894 03c6 01       		.uleb128 0x1
+ 895 03c7 50       		.byte	0x50
+ 896 03c8 00       		.byte	0
+ 897 03c9 0A       		.uleb128 0xa
+ 898 03ca E4010000 		.4byte	.LASF32
+ 899 03ce 01       		.byte	0x1
+ 900 03cf 80       		.byte	0x80
+ 901 03d0 00000000 		.4byte	.LFB67
+ 902 03d4 18000000 		.4byte	.LFE67-.LFB67
+ 903 03d8 01       		.uleb128 0x1
+ 904 03d9 9C       		.byte	0x9c
+ 905 03da 0F040000 		.4byte	0x40f
+ 906 03de 11       		.uleb128 0x11
+ 907 03df 6C3300   		.ascii	"l3\000"
+ 908 03e2 01       		.byte	0x1
+ 909 03e3 80       		.byte	0x80
+ 910 03e4 8C000000 		.4byte	0x8c
+ 911 03e8 01       		.uleb128 0x1
+ 912 03e9 50       		.byte	0x50
+ 913 03ea 11       		.uleb128 0x11
+ 914 03eb 6C3100   		.ascii	"l1\000"
+ 915 03ee 01       		.byte	0x1
+ 916 03ef 80       		.byte	0x80
+ 917 03f0 8C000000 		.4byte	0x8c
+ 918 03f4 01       		.uleb128 0x1
+ 919 03f5 51       		.byte	0x51
+ 920 03f6 11       		.uleb128 0x11
+ 921 03f7 723100   		.ascii	"r1\000"
+ 922 03fa 01       		.byte	0x1
+ 923 03fb 80       		.byte	0x80
+ 924 03fc 8C000000 		.4byte	0x8c
+ 925 0400 01       		.uleb128 0x1
+ 926 0401 52       		.byte	0x52
+ 927 0402 11       		.uleb128 0x11
+ 928 0403 723300   		.ascii	"r3\000"
+ 929 0406 01       		.byte	0x1
+ 930 0407 80       		.byte	0x80
+ 931 0408 8C000000 		.4byte	0x8c
+ 932 040c 01       		.uleb128 0x1
+ 933 040d 53       		.byte	0x53
+ 934 040e 00       		.byte	0
+ 935 040f 12       		.uleb128 0x12
+ 936 0410 82000000 		.4byte	.LASF33
+ 937 0414 01       		.byte	0x1
+ 938 0415 0B       		.byte	0xb
+ 939 0416 20040000 		.4byte	0x420
+ 940 041a 05       		.uleb128 0x5
+ 941 041b 03       		.byte	0x3
+ 942 041c 00000000 		.4byte	sensors
+ 943 0420 13       		.uleb128 0x13
+ 944 0421 F4000000 		.4byte	0xf4
+ 945 0425 12       		.uleb128 0x12
+ 946 0426 71020000 		.4byte	.LASF34
+ 947 042a 01       		.byte	0x1
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 20
+
+
+ 948 042b 0C       		.byte	0xc
+ 949 042c 20040000 		.4byte	0x420
+ 950 0430 05       		.uleb128 0x5
+ 951 0431 03       		.byte	0x3
+ 952 0432 08000000 		.4byte	digital_sensor_value
+ 953 0436 12       		.uleb128 0x12
+ 954 0437 5D010000 		.4byte	.LASF35
+ 955 043b 01       		.byte	0x1
+ 956 043c 0D       		.byte	0xd
+ 957 043d F4000000 		.4byte	0xf4
+ 958 0441 05       		.uleb128 0x5
+ 959 0442 03       		.byte	0x3
+ 960 0443 00000000 		.4byte	threshold
+ 961 0447 14       		.uleb128 0x14
+ 962 0448 0F040000 		.4byte	.LASF66
+ 963 044c 10       		.byte	0x10
+ 964 044d 9606     		.2byte	0x696
+ 965 044f 53040000 		.4byte	0x453
+ 966 0453 13       		.uleb128 0x13
+ 967 0454 97000000 		.4byte	0x97
+ 968 0458 15       		.uleb128 0x15
+ 969 0459 2D010000 		.4byte	.LASF36
+ 970 045d 06       		.byte	0x6
+ 971 045e 5E       		.byte	0x5e
+ 972 045f AD000000 		.4byte	0xad
+ 973 0463 15       		.uleb128 0x15
+ 974 0464 E1020000 		.4byte	.LASF37
+ 975 0468 07       		.byte	0x7
+ 976 0469 5E       		.byte	0x5e
+ 977 046a AD000000 		.4byte	0xad
+ 978 046e 15       		.uleb128 0x15
+ 979 046f 1C040000 		.4byte	.LASF38
+ 980 0473 08       		.byte	0x8
+ 981 0474 5E       		.byte	0x5e
+ 982 0475 AD000000 		.4byte	0xad
+ 983 0479 15       		.uleb128 0x15
+ 984 047a 53000000 		.4byte	.LASF39
+ 985 047e 09       		.byte	0x9
+ 986 047f 5E       		.byte	0x5e
+ 987 0480 AD000000 		.4byte	0xad
+ 988 0484 15       		.uleb128 0x15
+ 989 0485 34030000 		.4byte	.LASF40
+ 990 0489 06       		.byte	0x6
+ 991 048a 67       		.byte	0x67
+ 992 048b B9000000 		.4byte	0xb9
+ 993 048f 15       		.uleb128 0x15
+ 994 0490 F0000000 		.4byte	.LASF41
+ 995 0494 06       		.byte	0x6
+ 996 0495 6B       		.byte	0x6b
+ 997 0496 B9000000 		.4byte	0xb9
+ 998 049a 15       		.uleb128 0x15
+ 999 049b 6C010000 		.4byte	.LASF42
+ 1000 049f 07       		.byte	0x7
+ 1001 04a0 67       		.byte	0x67
+ 1002 04a1 B9000000 		.4byte	0xb9
+ 1003 04a5 15       		.uleb128 0x15
+ 1004 04a6 48030000 		.4byte	.LASF43
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 21
+
+
+ 1005 04aa 07       		.byte	0x7
+ 1006 04ab 6B       		.byte	0x6b
+ 1007 04ac B9000000 		.4byte	0xb9
+ 1008 04b0 15       		.uleb128 0x15
+ 1009 04b1 0F030000 		.4byte	.LASF44
+ 1010 04b5 08       		.byte	0x8
+ 1011 04b6 67       		.byte	0x67
+ 1012 04b7 B9000000 		.4byte	0xb9
+ 1013 04bb 15       		.uleb128 0x15
+ 1014 04bc A0020000 		.4byte	.LASF45
+ 1015 04c0 08       		.byte	0x8
+ 1016 04c1 6B       		.byte	0x6b
+ 1017 04c2 B9000000 		.4byte	0xb9
+ 1018 04c6 15       		.uleb128 0x15
+ 1019 04c7 B5020000 		.4byte	.LASF46
+ 1020 04cb 09       		.byte	0x9
+ 1021 04cc 67       		.byte	0x67
+ 1022 04cd B9000000 		.4byte	0xb9
+ 1023 04d1 15       		.uleb128 0x15
+ 1024 04d2 5C020000 		.4byte	.LASF47
+ 1025 04d6 09       		.byte	0x9
+ 1026 04d7 6B       		.byte	0x6b
+ 1027 04d8 B9000000 		.4byte	0xb9
+ 1028 04dc 16       		.uleb128 0x16
+ 1029 04dd D4010000 		.4byte	.LASF48
+ 1030 04e1 0A       		.byte	0xa
+ 1031 04e2 27       		.byte	0x27
+ 1032 04e3 ED040000 		.4byte	0x4ed
+ 1033 04e7 17       		.uleb128 0x17
+ 1034 04e8 AD000000 		.4byte	0xad
+ 1035 04ec 00       		.byte	0
+ 1036 04ed 16       		.uleb128 0x16
+ 1037 04ee 40020000 		.4byte	.LASF49
+ 1038 04f2 0A       		.byte	0xa
+ 1039 04f3 26       		.byte	0x26
+ 1040 04f4 FE040000 		.4byte	0x4fe
+ 1041 04f8 17       		.uleb128 0x17
+ 1042 04f9 AD000000 		.4byte	0xad
+ 1043 04fd 00       		.byte	0
+ 1044 04fe 16       		.uleb128 0x16
+ 1045 04ff 1D010000 		.4byte	.LASF50
+ 1046 0503 0B       		.byte	0xb
+ 1047 0504 27       		.byte	0x27
+ 1048 0505 0F050000 		.4byte	0x50f
+ 1049 0509 17       		.uleb128 0x17
+ 1050 050a AD000000 		.4byte	0xad
+ 1051 050e 00       		.byte	0
+ 1052 050f 16       		.uleb128 0x16
+ 1053 0510 86020000 		.4byte	.LASF51
+ 1054 0514 0B       		.byte	0xb
+ 1055 0515 26       		.byte	0x26
+ 1056 0516 20050000 		.4byte	0x520
+ 1057 051a 17       		.uleb128 0x17
+ 1058 051b AD000000 		.4byte	0xad
+ 1059 051f 00       		.byte	0
+ 1060 0520 16       		.uleb128 0x16
+ 1061 0521 A3000000 		.4byte	.LASF52
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 22
+
+
+ 1062 0525 0C       		.byte	0xc
+ 1063 0526 27       		.byte	0x27
+ 1064 0527 31050000 		.4byte	0x531
+ 1065 052b 17       		.uleb128 0x17
+ 1066 052c AD000000 		.4byte	0xad
+ 1067 0530 00       		.byte	0
+ 1068 0531 16       		.uleb128 0x16
+ 1069 0532 4A000000 		.4byte	.LASF53
+ 1070 0536 0C       		.byte	0xc
+ 1071 0537 26       		.byte	0x26
+ 1072 0538 42050000 		.4byte	0x542
+ 1073 053c 17       		.uleb128 0x17
+ 1074 053d AD000000 		.4byte	0xad
+ 1075 0541 00       		.byte	0
+ 1076 0542 16       		.uleb128 0x16
+ 1077 0543 9F010000 		.4byte	.LASF54
+ 1078 0547 0D       		.byte	0xd
+ 1079 0548 27       		.byte	0x27
+ 1080 0549 53050000 		.4byte	0x553
+ 1081 054d 17       		.uleb128 0x17
+ 1082 054e AD000000 		.4byte	0xad
+ 1083 0552 00       		.byte	0
+ 1084 0553 16       		.uleb128 0x16
+ 1085 0554 72040000 		.4byte	.LASF55
+ 1086 0558 0D       		.byte	0xd
+ 1087 0559 26       		.byte	0x26
+ 1088 055a 64050000 		.4byte	0x564
+ 1089 055e 17       		.uleb128 0x17
+ 1090 055f AD000000 		.4byte	0xad
+ 1091 0563 00       		.byte	0
+ 1092 0564 16       		.uleb128 0x16
+ 1093 0565 BD010000 		.4byte	.LASF56
+ 1094 0569 0E       		.byte	0xe
+ 1095 056a 77       		.byte	0x77
+ 1096 056b 75050000 		.4byte	0x575
+ 1097 056f 17       		.uleb128 0x17
+ 1098 0570 B9000000 		.4byte	0xb9
+ 1099 0574 00       		.byte	0
+ 1100 0575 16       		.uleb128 0x16
+ 1101 0576 DD000000 		.4byte	.LASF57
+ 1102 057a 0F       		.byte	0xf
+ 1103 057b 18       		.byte	0x18
+ 1104 057c 86050000 		.4byte	0x586
+ 1105 0580 17       		.uleb128 0x17
+ 1106 0581 DA000000 		.4byte	0xda
+ 1107 0585 00       		.byte	0
+ 1108 0586 18       		.uleb128 0x18
+ 1109 0587 63040000 		.4byte	.LASF58
+ 1110 058b 06       		.byte	0x6
+ 1111 058c 5A       		.byte	0x5a
+ 1112 058d 18       		.uleb128 0x18
+ 1113 058e 3B000000 		.4byte	.LASF59
+ 1114 0592 07       		.byte	0x7
+ 1115 0593 5A       		.byte	0x5a
+ 1116 0594 18       		.uleb128 0x18
+ 1117 0595 C9020000 		.4byte	.LASF60
+ 1118 0599 08       		.byte	0x8
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 23
+
+
+ 1119 059a 5A       		.byte	0x5a
+ 1120 059b 18       		.uleb128 0x18
+ 1121 059c 90010000 		.4byte	.LASF61
+ 1122 05a0 09       		.byte	0x9
+ 1123 05a1 5A       		.byte	0x5a
+ 1124 05a2 00       		.byte	0
+ 1125              		.section	.debug_abbrev,"",%progbits
+ 1126              	.Ldebug_abbrev0:
+ 1127 0000 01       		.uleb128 0x1
+ 1128 0001 11       		.uleb128 0x11
+ 1129 0002 01       		.byte	0x1
+ 1130 0003 25       		.uleb128 0x25
+ 1131 0004 0E       		.uleb128 0xe
+ 1132 0005 13       		.uleb128 0x13
+ 1133 0006 0B       		.uleb128 0xb
+ 1134 0007 03       		.uleb128 0x3
+ 1135 0008 0E       		.uleb128 0xe
+ 1136 0009 1B       		.uleb128 0x1b
+ 1137 000a 0E       		.uleb128 0xe
+ 1138 000b 55       		.uleb128 0x55
+ 1139 000c 17       		.uleb128 0x17
+ 1140 000d 11       		.uleb128 0x11
+ 1141 000e 01       		.uleb128 0x1
+ 1142 000f 10       		.uleb128 0x10
+ 1143 0010 17       		.uleb128 0x17
+ 1144 0011 00       		.byte	0
+ 1145 0012 00       		.byte	0
+ 1146 0013 02       		.uleb128 0x2
+ 1147 0014 24       		.uleb128 0x24
+ 1148 0015 00       		.byte	0
+ 1149 0016 0B       		.uleb128 0xb
+ 1150 0017 0B       		.uleb128 0xb
+ 1151 0018 3E       		.uleb128 0x3e
+ 1152 0019 0B       		.uleb128 0xb
+ 1153 001a 03       		.uleb128 0x3
+ 1154 001b 0E       		.uleb128 0xe
+ 1155 001c 00       		.byte	0
+ 1156 001d 00       		.byte	0
+ 1157 001e 03       		.uleb128 0x3
+ 1158 001f 16       		.uleb128 0x16
+ 1159 0020 00       		.byte	0
+ 1160 0021 03       		.uleb128 0x3
+ 1161 0022 0E       		.uleb128 0xe
+ 1162 0023 3A       		.uleb128 0x3a
+ 1163 0024 0B       		.uleb128 0xb
+ 1164 0025 3B       		.uleb128 0x3b
+ 1165 0026 0B       		.uleb128 0xb
+ 1166 0027 49       		.uleb128 0x49
+ 1167 0028 13       		.uleb128 0x13
+ 1168 0029 00       		.byte	0
+ 1169 002a 00       		.byte	0
+ 1170 002b 04       		.uleb128 0x4
+ 1171 002c 24       		.uleb128 0x24
+ 1172 002d 00       		.byte	0
+ 1173 002e 0B       		.uleb128 0xb
+ 1174 002f 0B       		.uleb128 0xb
+ 1175 0030 3E       		.uleb128 0x3e
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 24
+
+
+ 1176 0031 0B       		.uleb128 0xb
+ 1177 0032 03       		.uleb128 0x3
+ 1178 0033 08       		.uleb128 0x8
+ 1179 0034 00       		.byte	0
+ 1180 0035 00       		.byte	0
+ 1181 0036 05       		.uleb128 0x5
+ 1182 0037 16       		.uleb128 0x16
+ 1183 0038 00       		.byte	0
+ 1184 0039 03       		.uleb128 0x3
+ 1185 003a 0E       		.uleb128 0xe
+ 1186 003b 3A       		.uleb128 0x3a
+ 1187 003c 0B       		.uleb128 0xb
+ 1188 003d 3B       		.uleb128 0x3b
+ 1189 003e 05       		.uleb128 0x5
+ 1190 003f 49       		.uleb128 0x49
+ 1191 0040 13       		.uleb128 0x13
+ 1192 0041 00       		.byte	0
+ 1193 0042 00       		.byte	0
+ 1194 0043 06       		.uleb128 0x6
+ 1195 0044 0F       		.uleb128 0xf
+ 1196 0045 00       		.byte	0
+ 1197 0046 0B       		.uleb128 0xb
+ 1198 0047 0B       		.uleb128 0xb
+ 1199 0048 49       		.uleb128 0x49
+ 1200 0049 13       		.uleb128 0x13
+ 1201 004a 00       		.byte	0
+ 1202 004b 00       		.byte	0
+ 1203 004c 07       		.uleb128 0x7
+ 1204 004d 15       		.uleb128 0x15
+ 1205 004e 00       		.byte	0
+ 1206 004f 27       		.uleb128 0x27
+ 1207 0050 19       		.uleb128 0x19
+ 1208 0051 00       		.byte	0
+ 1209 0052 00       		.byte	0
+ 1210 0053 08       		.uleb128 0x8
+ 1211 0054 13       		.uleb128 0x13
+ 1212 0055 01       		.byte	0x1
+ 1213 0056 03       		.uleb128 0x3
+ 1214 0057 0E       		.uleb128 0xe
+ 1215 0058 0B       		.uleb128 0xb
+ 1216 0059 0B       		.uleb128 0xb
+ 1217 005a 3A       		.uleb128 0x3a
+ 1218 005b 0B       		.uleb128 0xb
+ 1219 005c 3B       		.uleb128 0x3b
+ 1220 005d 0B       		.uleb128 0xb
+ 1221 005e 01       		.uleb128 0x1
+ 1222 005f 13       		.uleb128 0x13
+ 1223 0060 00       		.byte	0
+ 1224 0061 00       		.byte	0
+ 1225 0062 09       		.uleb128 0x9
+ 1226 0063 0D       		.uleb128 0xd
+ 1227 0064 00       		.byte	0
+ 1228 0065 03       		.uleb128 0x3
+ 1229 0066 08       		.uleb128 0x8
+ 1230 0067 3A       		.uleb128 0x3a
+ 1231 0068 0B       		.uleb128 0xb
+ 1232 0069 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 25
+
+
+ 1233 006a 0B       		.uleb128 0xb
+ 1234 006b 49       		.uleb128 0x49
+ 1235 006c 13       		.uleb128 0x13
+ 1236 006d 38       		.uleb128 0x38
+ 1237 006e 0B       		.uleb128 0xb
+ 1238 006f 00       		.byte	0
+ 1239 0070 00       		.byte	0
+ 1240 0071 0A       		.uleb128 0xa
+ 1241 0072 2E       		.uleb128 0x2e
+ 1242 0073 01       		.byte	0x1
+ 1243 0074 3F       		.uleb128 0x3f
+ 1244 0075 19       		.uleb128 0x19
+ 1245 0076 03       		.uleb128 0x3
+ 1246 0077 0E       		.uleb128 0xe
+ 1247 0078 3A       		.uleb128 0x3a
+ 1248 0079 0B       		.uleb128 0xb
+ 1249 007a 3B       		.uleb128 0x3b
+ 1250 007b 0B       		.uleb128 0xb
+ 1251 007c 27       		.uleb128 0x27
+ 1252 007d 19       		.uleb128 0x19
+ 1253 007e 11       		.uleb128 0x11
+ 1254 007f 01       		.uleb128 0x1
+ 1255 0080 12       		.uleb128 0x12
+ 1256 0081 06       		.uleb128 0x6
+ 1257 0082 40       		.uleb128 0x40
+ 1258 0083 18       		.uleb128 0x18
+ 1259 0084 9742     		.uleb128 0x2117
+ 1260 0086 19       		.uleb128 0x19
+ 1261 0087 01       		.uleb128 0x1
+ 1262 0088 13       		.uleb128 0x13
+ 1263 0089 00       		.byte	0
+ 1264 008a 00       		.byte	0
+ 1265 008b 0B       		.uleb128 0xb
+ 1266 008c 34       		.uleb128 0x34
+ 1267 008d 00       		.byte	0
+ 1268 008e 03       		.uleb128 0x3
+ 1269 008f 0E       		.uleb128 0xe
+ 1270 0090 3A       		.uleb128 0x3a
+ 1271 0091 0B       		.uleb128 0xb
+ 1272 0092 3B       		.uleb128 0x3b
+ 1273 0093 0B       		.uleb128 0xb
+ 1274 0094 49       		.uleb128 0x49
+ 1275 0095 13       		.uleb128 0x13
+ 1276 0096 02       		.uleb128 0x2
+ 1277 0097 17       		.uleb128 0x17
+ 1278 0098 00       		.byte	0
+ 1279 0099 00       		.byte	0
+ 1280 009a 0C       		.uleb128 0xc
+ 1281 009b 898201   		.uleb128 0x4109
+ 1282 009e 00       		.byte	0
+ 1283 009f 11       		.uleb128 0x11
+ 1284 00a0 01       		.uleb128 0x1
+ 1285 00a1 31       		.uleb128 0x31
+ 1286 00a2 13       		.uleb128 0x13
+ 1287 00a3 00       		.byte	0
+ 1288 00a4 00       		.byte	0
+ 1289 00a5 0D       		.uleb128 0xd
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 26
+
+
+ 1290 00a6 898201   		.uleb128 0x4109
+ 1291 00a9 01       		.byte	0x1
+ 1292 00aa 11       		.uleb128 0x11
+ 1293 00ab 01       		.uleb128 0x1
+ 1294 00ac 31       		.uleb128 0x31
+ 1295 00ad 13       		.uleb128 0x13
+ 1296 00ae 01       		.uleb128 0x1
+ 1297 00af 13       		.uleb128 0x13
+ 1298 00b0 00       		.byte	0
+ 1299 00b1 00       		.byte	0
+ 1300 00b2 0E       		.uleb128 0xe
+ 1301 00b3 8A8201   		.uleb128 0x410a
+ 1302 00b6 00       		.byte	0
+ 1303 00b7 02       		.uleb128 0x2
+ 1304 00b8 18       		.uleb128 0x18
+ 1305 00b9 9142     		.uleb128 0x2111
+ 1306 00bb 18       		.uleb128 0x18
+ 1307 00bc 00       		.byte	0
+ 1308 00bd 00       		.byte	0
+ 1309 00be 0F       		.uleb128 0xf
+ 1310 00bf 05       		.uleb128 0x5
+ 1311 00c0 00       		.byte	0
+ 1312 00c1 03       		.uleb128 0x3
+ 1313 00c2 0E       		.uleb128 0xe
+ 1314 00c3 3A       		.uleb128 0x3a
+ 1315 00c4 0B       		.uleb128 0xb
+ 1316 00c5 3B       		.uleb128 0x3b
+ 1317 00c6 0B       		.uleb128 0xb
+ 1318 00c7 49       		.uleb128 0x49
+ 1319 00c8 13       		.uleb128 0x13
+ 1320 00c9 02       		.uleb128 0x2
+ 1321 00ca 17       		.uleb128 0x17
+ 1322 00cb 00       		.byte	0
+ 1323 00cc 00       		.byte	0
+ 1324 00cd 10       		.uleb128 0x10
+ 1325 00ce 05       		.uleb128 0x5
+ 1326 00cf 00       		.byte	0
+ 1327 00d0 03       		.uleb128 0x3
+ 1328 00d1 0E       		.uleb128 0xe
+ 1329 00d2 3A       		.uleb128 0x3a
+ 1330 00d3 0B       		.uleb128 0xb
+ 1331 00d4 3B       		.uleb128 0x3b
+ 1332 00d5 0B       		.uleb128 0xb
+ 1333 00d6 49       		.uleb128 0x49
+ 1334 00d7 13       		.uleb128 0x13
+ 1335 00d8 02       		.uleb128 0x2
+ 1336 00d9 18       		.uleb128 0x18
+ 1337 00da 00       		.byte	0
+ 1338 00db 00       		.byte	0
+ 1339 00dc 11       		.uleb128 0x11
+ 1340 00dd 05       		.uleb128 0x5
+ 1341 00de 00       		.byte	0
+ 1342 00df 03       		.uleb128 0x3
+ 1343 00e0 08       		.uleb128 0x8
+ 1344 00e1 3A       		.uleb128 0x3a
+ 1345 00e2 0B       		.uleb128 0xb
+ 1346 00e3 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 27
+
+
+ 1347 00e4 0B       		.uleb128 0xb
+ 1348 00e5 49       		.uleb128 0x49
+ 1349 00e6 13       		.uleb128 0x13
+ 1350 00e7 02       		.uleb128 0x2
+ 1351 00e8 18       		.uleb128 0x18
+ 1352 00e9 00       		.byte	0
+ 1353 00ea 00       		.byte	0
+ 1354 00eb 12       		.uleb128 0x12
+ 1355 00ec 34       		.uleb128 0x34
+ 1356 00ed 00       		.byte	0
+ 1357 00ee 03       		.uleb128 0x3
+ 1358 00ef 0E       		.uleb128 0xe
+ 1359 00f0 3A       		.uleb128 0x3a
+ 1360 00f1 0B       		.uleb128 0xb
+ 1361 00f2 3B       		.uleb128 0x3b
+ 1362 00f3 0B       		.uleb128 0xb
+ 1363 00f4 49       		.uleb128 0x49
+ 1364 00f5 13       		.uleb128 0x13
+ 1365 00f6 02       		.uleb128 0x2
+ 1366 00f7 18       		.uleb128 0x18
+ 1367 00f8 00       		.byte	0
+ 1368 00f9 00       		.byte	0
+ 1369 00fa 13       		.uleb128 0x13
+ 1370 00fb 35       		.uleb128 0x35
+ 1371 00fc 00       		.byte	0
+ 1372 00fd 49       		.uleb128 0x49
+ 1373 00fe 13       		.uleb128 0x13
+ 1374 00ff 00       		.byte	0
+ 1375 0100 00       		.byte	0
+ 1376 0101 14       		.uleb128 0x14
+ 1377 0102 34       		.uleb128 0x34
+ 1378 0103 00       		.byte	0
+ 1379 0104 03       		.uleb128 0x3
+ 1380 0105 0E       		.uleb128 0xe
+ 1381 0106 3A       		.uleb128 0x3a
+ 1382 0107 0B       		.uleb128 0xb
+ 1383 0108 3B       		.uleb128 0x3b
+ 1384 0109 05       		.uleb128 0x5
+ 1385 010a 49       		.uleb128 0x49
+ 1386 010b 13       		.uleb128 0x13
+ 1387 010c 3F       		.uleb128 0x3f
+ 1388 010d 19       		.uleb128 0x19
+ 1389 010e 3C       		.uleb128 0x3c
+ 1390 010f 19       		.uleb128 0x19
+ 1391 0110 00       		.byte	0
+ 1392 0111 00       		.byte	0
+ 1393 0112 15       		.uleb128 0x15
+ 1394 0113 2E       		.uleb128 0x2e
+ 1395 0114 00       		.byte	0
+ 1396 0115 3F       		.uleb128 0x3f
+ 1397 0116 19       		.uleb128 0x19
+ 1398 0117 03       		.uleb128 0x3
+ 1399 0118 0E       		.uleb128 0xe
+ 1400 0119 3A       		.uleb128 0x3a
+ 1401 011a 0B       		.uleb128 0xb
+ 1402 011b 3B       		.uleb128 0x3b
+ 1403 011c 0B       		.uleb128 0xb
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 28
+
+
+ 1404 011d 27       		.uleb128 0x27
+ 1405 011e 19       		.uleb128 0x19
+ 1406 011f 49       		.uleb128 0x49
+ 1407 0120 13       		.uleb128 0x13
+ 1408 0121 3C       		.uleb128 0x3c
+ 1409 0122 19       		.uleb128 0x19
+ 1410 0123 00       		.byte	0
+ 1411 0124 00       		.byte	0
+ 1412 0125 16       		.uleb128 0x16
+ 1413 0126 2E       		.uleb128 0x2e
+ 1414 0127 01       		.byte	0x1
+ 1415 0128 3F       		.uleb128 0x3f
+ 1416 0129 19       		.uleb128 0x19
+ 1417 012a 03       		.uleb128 0x3
+ 1418 012b 0E       		.uleb128 0xe
+ 1419 012c 3A       		.uleb128 0x3a
+ 1420 012d 0B       		.uleb128 0xb
+ 1421 012e 3B       		.uleb128 0x3b
+ 1422 012f 0B       		.uleb128 0xb
+ 1423 0130 27       		.uleb128 0x27
+ 1424 0131 19       		.uleb128 0x19
+ 1425 0132 3C       		.uleb128 0x3c
+ 1426 0133 19       		.uleb128 0x19
+ 1427 0134 01       		.uleb128 0x1
+ 1428 0135 13       		.uleb128 0x13
+ 1429 0136 00       		.byte	0
+ 1430 0137 00       		.byte	0
+ 1431 0138 17       		.uleb128 0x17
+ 1432 0139 05       		.uleb128 0x5
+ 1433 013a 00       		.byte	0
+ 1434 013b 49       		.uleb128 0x49
+ 1435 013c 13       		.uleb128 0x13
+ 1436 013d 00       		.byte	0
+ 1437 013e 00       		.byte	0
+ 1438 013f 18       		.uleb128 0x18
+ 1439 0140 2E       		.uleb128 0x2e
+ 1440 0141 00       		.byte	0
+ 1441 0142 3F       		.uleb128 0x3f
+ 1442 0143 19       		.uleb128 0x19
+ 1443 0144 03       		.uleb128 0x3
+ 1444 0145 0E       		.uleb128 0xe
+ 1445 0146 3A       		.uleb128 0x3a
+ 1446 0147 0B       		.uleb128 0xb
+ 1447 0148 3B       		.uleb128 0x3b
+ 1448 0149 0B       		.uleb128 0xb
+ 1449 014a 27       		.uleb128 0x27
+ 1450 014b 19       		.uleb128 0x19
+ 1451 014c 3C       		.uleb128 0x3c
+ 1452 014d 19       		.uleb128 0x19
+ 1453 014e 00       		.byte	0
+ 1454 014f 00       		.byte	0
+ 1455 0150 00       		.byte	0
+ 1456              		.section	.debug_loc,"",%progbits
+ 1457              	.Ldebug_loc0:
+ 1458              	.LLST0:
+ 1459 0000 08000000 		.4byte	.LVL1
+ 1460 0004 26000000 		.4byte	.LVL9
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 29
+
+
+ 1461 0008 0600     		.2byte	0x6
+ 1462 000a 74       		.byte	0x74
+ 1463 000b 00       		.sleb128 0
+ 1464 000c 08       		.byte	0x8
+ 1465 000d FF       		.byte	0xff
+ 1466 000e 1A       		.byte	0x1a
+ 1467 000f 9F       		.byte	0x9f
+ 1468 0010 34000000 		.4byte	.LVL11
+ 1469 0014 3C000000 		.4byte	.LVL13
+ 1470 0018 0600     		.2byte	0x6
+ 1471 001a 74       		.byte	0x74
+ 1472 001b 00       		.sleb128 0
+ 1473 001c 08       		.byte	0x8
+ 1474 001d FF       		.byte	0xff
+ 1475 001e 1A       		.byte	0x1a
+ 1476 001f 9F       		.byte	0x9f
+ 1477 0020 00000000 		.4byte	0
+ 1478 0024 00000000 		.4byte	0
+ 1479              	.LLST1:
+ 1480 0028 0E000000 		.4byte	.LVL3
+ 1481 002c 02010000 		.4byte	.LVL40
+ 1482 0030 0600     		.2byte	0x6
+ 1483 0032 77       		.byte	0x77
+ 1484 0033 00       		.sleb128 0
+ 1485 0034 08       		.byte	0x8
+ 1486 0035 FF       		.byte	0xff
+ 1487 0036 1A       		.byte	0x1a
+ 1488 0037 9F       		.byte	0x9f
+ 1489 0038 00000000 		.4byte	0
+ 1490 003c 00000000 		.4byte	0
+ 1491              	.LLST2:
+ 1492 0040 14000000 		.4byte	.LVL5
+ 1493 0044 02010000 		.4byte	.LVL40
+ 1494 0048 0600     		.2byte	0x6
+ 1495 004a 76       		.byte	0x76
+ 1496 004b 00       		.sleb128 0
+ 1497 004c 08       		.byte	0x8
+ 1498 004d FF       		.byte	0xff
+ 1499 004e 1A       		.byte	0x1a
+ 1500 004f 9F       		.byte	0x9f
+ 1501 0050 00000000 		.4byte	0
+ 1502 0054 00000000 		.4byte	0
+ 1503              	.LLST3:
+ 1504 0058 1A000000 		.4byte	.LVL7
+ 1505 005c 02010000 		.4byte	.LVL40
+ 1506 0060 0600     		.2byte	0x6
+ 1507 0062 75       		.byte	0x75
+ 1508 0063 00       		.sleb128 0
+ 1509 0064 08       		.byte	0x8
+ 1510 0065 FF       		.byte	0xff
+ 1511 0066 1A       		.byte	0x1a
+ 1512 0067 9F       		.byte	0x9f
+ 1513 0068 00000000 		.4byte	0
+ 1514 006c 00000000 		.4byte	0
+ 1515              	.LLST4:
+ 1516 0070 00000000 		.4byte	.LVL46
+ 1517 0074 06000000 		.4byte	.LVL47
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 30
+
+
+ 1518 0078 0100     		.2byte	0x1
+ 1519 007a 50       		.byte	0x50
+ 1520 007b 06000000 		.4byte	.LVL47
+ 1521 007f 10000000 		.4byte	.LFE65
+ 1522 0083 0100     		.2byte	0x1
+ 1523 0085 52       		.byte	0x52
+ 1524 0086 00000000 		.4byte	0
+ 1525 008a 00000000 		.4byte	0
+ 1526              		.section	.debug_aranges,"",%progbits
+ 1527 0000 3C000000 		.4byte	0x3c
+ 1528 0004 0200     		.2byte	0x2
+ 1529 0006 00000000 		.4byte	.Ldebug_info0
+ 1530 000a 04       		.byte	0x4
+ 1531 000b 00       		.byte	0
+ 1532 000c 0000     		.2byte	0
+ 1533 000e 0000     		.2byte	0
+ 1534 0010 00000000 		.4byte	.LFB63
+ 1535 0014 08010000 		.4byte	.LFE63-.LFB63
+ 1536 0018 00000000 		.4byte	.LFB64
+ 1537 001c 20000000 		.4byte	.LFE64-.LFB64
+ 1538 0020 00000000 		.4byte	.LFB65
+ 1539 0024 10000000 		.4byte	.LFE65-.LFB65
+ 1540 0028 00000000 		.4byte	.LFB66
+ 1541 002c 6C000000 		.4byte	.LFE66-.LFB66
+ 1542 0030 00000000 		.4byte	.LFB67
+ 1543 0034 18000000 		.4byte	.LFE67-.LFB67
+ 1544 0038 00000000 		.4byte	0
+ 1545 003c 00000000 		.4byte	0
+ 1546              		.section	.debug_ranges,"",%progbits
+ 1547              	.Ldebug_ranges0:
+ 1548 0000 00000000 		.4byte	.LFB63
+ 1549 0004 08010000 		.4byte	.LFE63
+ 1550 0008 00000000 		.4byte	.LFB64
+ 1551 000c 20000000 		.4byte	.LFE64
+ 1552 0010 00000000 		.4byte	.LFB65
+ 1553 0014 10000000 		.4byte	.LFE65
+ 1554 0018 00000000 		.4byte	.LFB66
+ 1555 001c 6C000000 		.4byte	.LFE66
+ 1556 0020 00000000 		.4byte	.LFB67
+ 1557 0024 18000000 		.4byte	.LFE67
+ 1558 0028 00000000 		.4byte	0
+ 1559 002c 00000000 		.4byte	0
+ 1560              		.section	.debug_line,"",%progbits
+ 1561              	.Ldebug_line0:
+ 1562 0000 6B020000 		.section	.debug_str,"MS",%progbits,1
+ 1562      0200DE01 
+ 1562      00000201 
+ 1562      FB0E0D00 
+ 1562      01010101 
+ 1563              	.LASF64:
+ 1564 0000 433A5C55 		.ascii	"C:\\Users\\Nhan Phan\\Desktop\\CProjects\\Zumobot\\"
+ 1564      73657273 
+ 1564      5C4E6861 
+ 1564      6E205068 
+ 1564      616E5C44 
+ 1565 002d 5A756D6F 		.ascii	"ZumoBot.cydsn\000"
+ 1565      426F742E 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 31
+
+
+ 1565      63796473 
+ 1565      6E00
+ 1566              	.LASF59:
+ 1567 003b 54696D65 		.ascii	"Timer_R3_Start\000"
+ 1567      725F5233 
+ 1567      5F537461 
+ 1567      727400
+ 1568              	.LASF53:
+ 1569 004a 4C335F57 		.ascii	"L3_Write\000"
+ 1569      72697465 
+ 1569      00
+ 1570              	.LASF39:
+ 1571 0053 54696D65 		.ascii	"Timer_L1_ReadStatusRegister\000"
+ 1571      725F4C31 
+ 1571      5F526561 
+ 1571      64537461 
+ 1571      74757352 
+ 1572              	.LASF2:
+ 1573 006f 73686F72 		.ascii	"short int\000"
+ 1573      7420696E 
+ 1573      7400
+ 1574              	.LASF21:
+ 1575 0079 73697A65 		.ascii	"sizetype\000"
+ 1575      74797065 
+ 1575      00
+ 1576              	.LASF33:
+ 1577 0082 73656E73 		.ascii	"sensors\000"
+ 1577      6F727300 
+ 1578              	.LASF9:
+ 1579 008a 6C6F6E67 		.ascii	"long long int\000"
+ 1579      206C6F6E 
+ 1579      6720696E 
+ 1579      7400
+ 1580              	.LASF7:
+ 1581 0098 5F5F7569 		.ascii	"__uint32_t\000"
+ 1581      6E743332 
+ 1581      5F7400
+ 1582              	.LASF52:
+ 1583 00a3 4C335F53 		.ascii	"L3_SetDriveMode\000"
+ 1583      65744472 
+ 1583      6976654D 
+ 1583      6F646500 
+ 1584              	.LASF4:
+ 1585 00b3 5F5F7569 		.ascii	"__uint16_t\000"
+ 1585      6E743136 
+ 1585      5F7400
+ 1586              	.LASF16:
+ 1587 00be 75696E74 		.ascii	"uint16\000"
+ 1587      313600
+ 1588              	.LASF22:
+ 1589 00c5 73746174 		.ascii	"statusR1\000"
+ 1589      75735231 
+ 1589      00
+ 1590              	.LASF15:
+ 1591 00ce 75696E74 		.ascii	"uint8\000"
+ 1591      3800
+ 1592              	.LASF23:
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 32
+
+
+ 1593 00d4 73746174 		.ascii	"statusR3\000"
+ 1593      75735233 
+ 1593      00
+ 1594              	.LASF57:
+ 1595 00dd 73656E73 		.ascii	"sensor_isr_StartEx\000"
+ 1595      6F725F69 
+ 1595      73725F53 
+ 1595      74617274 
+ 1595      457800
+ 1596              	.LASF41:
+ 1597 00f0 54696D65 		.ascii	"Timer_R1_ReadCapture\000"
+ 1597      725F5231 
+ 1597      5F526561 
+ 1597      64436170 
+ 1597      74757265 
+ 1598              	.LASF27:
+ 1599 0105 7265666C 		.ascii	"reflectance_start\000"
+ 1599      65637461 
+ 1599      6E63655F 
+ 1599      73746172 
+ 1599      7400
+ 1600              	.LASF17:
+ 1601 0117 666C6F61 		.ascii	"float\000"
+ 1601      7400
+ 1602              	.LASF50:
+ 1603 011d 52335F53 		.ascii	"R3_SetDriveMode\000"
+ 1603      65744472 
+ 1603      6976654D 
+ 1603      6F646500 
+ 1604              	.LASF36:
+ 1605 012d 54696D65 		.ascii	"Timer_R1_ReadStatusRegister\000"
+ 1605      725F5231 
+ 1605      5F526561 
+ 1605      64537461 
+ 1605      74757352 
+ 1606              	.LASF29:
+ 1607 0149 7265666C 		.ascii	"reflectance_digital\000"
+ 1607      65637461 
+ 1607      6E63655F 
+ 1607      64696769 
+ 1607      74616C00 
+ 1608              	.LASF35:
+ 1609 015d 74687265 		.ascii	"threshold\000"
+ 1609      73686F6C 
+ 1609      6400
+ 1610              	.LASF19:
+ 1611 0167 63686172 		.ascii	"char\000"
+ 1611      00
+ 1612              	.LASF42:
+ 1613 016c 54696D65 		.ascii	"Timer_R3_ReadPeriod\000"
+ 1613      725F5233 
+ 1613      5F526561 
+ 1613      64506572 
+ 1613      696F6400 
+ 1614              	.LASF6:
+ 1615 0180 6C6F6E67 		.ascii	"long int\000"
+ 1615      20696E74 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 33
+
+
+ 1615      00
+ 1616              	.LASF30:
+ 1617 0189 76616C75 		.ascii	"values\000"
+ 1617      657300
+ 1618              	.LASF61:
+ 1619 0190 54696D65 		.ascii	"Timer_L1_Start\000"
+ 1619      725F4C31 
+ 1619      5F537461 
+ 1619      727400
+ 1620              	.LASF54:
+ 1621 019f 4C315F53 		.ascii	"L1_SetDriveMode\000"
+ 1621      65744472 
+ 1621      6976654D 
+ 1621      6F646500 
+ 1622              	.LASF1:
+ 1623 01af 756E7369 		.ascii	"unsigned char\000"
+ 1623      676E6564 
+ 1623      20636861 
+ 1623      7200
+ 1624              	.LASF56:
+ 1625 01bd 43794465 		.ascii	"CyDelayUs\000"
+ 1625      6C617955 
+ 1625      7300
+ 1626              	.LASF20:
+ 1627 01c7 63796973 		.ascii	"cyisraddress\000"
+ 1627      72616464 
+ 1627      72657373 
+ 1627      00
+ 1628              	.LASF48:
+ 1629 01d4 52315F53 		.ascii	"R1_SetDriveMode\000"
+ 1629      65744472 
+ 1629      6976654D 
+ 1629      6F646500 
+ 1630              	.LASF32:
+ 1631 01e4 7265666C 		.ascii	"reflectance_set_threshold\000"
+ 1631      65637461 
+ 1631      6E63655F 
+ 1631      7365745F 
+ 1631      74687265 
+ 1632              	.LASF0:
+ 1633 01fe 7369676E 		.ascii	"signed char\000"
+ 1633      65642063 
+ 1633      68617200 
+ 1634              	.LASF10:
+ 1635 020a 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1635      206C6F6E 
+ 1635      6720756E 
+ 1635      7369676E 
+ 1635      65642069 
+ 1636              	.LASF14:
+ 1637 0221 75696E74 		.ascii	"uint32_t\000"
+ 1637      33325F74 
+ 1637      00
+ 1638              	.LASF11:
+ 1639 022a 756E7369 		.ascii	"unsigned int\000"
+ 1639      676E6564 
+ 1639      20696E74 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 34
+
+
+ 1639      00
+ 1640              	.LASF12:
+ 1641 0237 75696E74 		.ascii	"uint16_t\000"
+ 1641      31365F74 
+ 1641      00
+ 1642              	.LASF49:
+ 1643 0240 52315F57 		.ascii	"R1_Write\000"
+ 1643      72697465 
+ 1643      00
+ 1644              	.LASF3:
+ 1645 0249 73686F72 		.ascii	"short unsigned int\000"
+ 1645      7420756E 
+ 1645      7369676E 
+ 1645      65642069 
+ 1645      6E7400
+ 1646              	.LASF47:
+ 1647 025c 54696D65 		.ascii	"Timer_L1_ReadCapture\000"
+ 1647      725F4C31 
+ 1647      5F526561 
+ 1647      64436170 
+ 1647      74757265 
+ 1648              	.LASF34:
+ 1649 0271 64696769 		.ascii	"digital_sensor_value\000"
+ 1649      74616C5F 
+ 1649      73656E73 
+ 1649      6F725F76 
+ 1649      616C7565 
+ 1650              	.LASF51:
+ 1651 0286 52335F57 		.ascii	"R3_Write\000"
+ 1651      72697465 
+ 1651      00
+ 1652              	.LASF24:
+ 1653 028f 73746174 		.ascii	"statusL3\000"
+ 1653      75734C33 
+ 1653      00
+ 1654              	.LASF13:
+ 1655 0298 696E7433 		.ascii	"int32_t\000"
+ 1655      325F7400 
+ 1656              	.LASF45:
+ 1657 02a0 54696D65 		.ascii	"Timer_L3_ReadCapture\000"
+ 1657      725F4C33 
+ 1657      5F526561 
+ 1657      64436170 
+ 1657      74757265 
+ 1658              	.LASF46:
+ 1659 02b5 54696D65 		.ascii	"Timer_L1_ReadPeriod\000"
+ 1659      725F4C31 
+ 1659      5F526561 
+ 1659      64506572 
+ 1659      696F6400 
+ 1660              	.LASF60:
+ 1661 02c9 54696D65 		.ascii	"Timer_L3_Start\000"
+ 1661      725F4C33 
+ 1661      5F537461 
+ 1661      727400
+ 1662              	.LASF65:
+ 1663 02d8 73656E73 		.ascii	"sensors_\000"
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 35
+
+
+ 1663      6F72735F 
+ 1663      00
+ 1664              	.LASF37:
+ 1665 02e1 54696D65 		.ascii	"Timer_R3_ReadStatusRegister\000"
+ 1665      725F5233 
+ 1665      5F526561 
+ 1665      64537461 
+ 1665      74757352 
+ 1666              	.LASF8:
+ 1667 02fd 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1667      20756E73 
+ 1667      69676E65 
+ 1667      6420696E 
+ 1667      7400
+ 1668              	.LASF44:
+ 1669 030f 54696D65 		.ascii	"Timer_L3_ReadPeriod\000"
+ 1669      725F4C33 
+ 1669      5F526561 
+ 1669      64506572 
+ 1669      696F6400 
+ 1670              	.LASF25:
+ 1671 0323 73746174 		.ascii	"statusL1\000"
+ 1671      75734C31 
+ 1671      00
+ 1672              	.LASF31:
+ 1673 032c 64696769 		.ascii	"digital\000"
+ 1673      74616C00 
+ 1674              	.LASF40:
+ 1675 0334 54696D65 		.ascii	"Timer_R1_ReadPeriod\000"
+ 1675      725F5231 
+ 1675      5F526561 
+ 1675      64506572 
+ 1675      696F6400 
+ 1676              	.LASF43:
+ 1677 0348 54696D65 		.ascii	"Timer_R3_ReadCapture\000"
+ 1677      725F5233 
+ 1677      5F526561 
+ 1677      64436170 
+ 1677      74757265 
+ 1678              	.LASF5:
+ 1679 035d 5F5F696E 		.ascii	"__int32_t\000"
+ 1679      7433325F 
+ 1679      7400
+ 1680              	.LASF26:
+ 1681 0367 73656E73 		.ascii	"sensor_isr_handler\000"
+ 1681      6F725F69 
+ 1681      73725F68 
+ 1681      616E646C 
+ 1681      657200
+ 1682              	.LASF62:
+ 1683 037a 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 1683      4320342E 
+ 1683      392E3320 
+ 1683      32303135 
+ 1683      30333033 
+ 1684 03ad 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 1684      20726576 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\ccKt5nHW.s 			page 36
+
+
+ 1684      6973696F 
+ 1684      6E203232 
+ 1684      31323230 
+ 1685 03e0 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1685      66756E63 
+ 1685      74696F6E 
+ 1685      2D736563 
+ 1685      74696F6E 
+ 1686              	.LASF18:
+ 1687 0408 646F7562 		.ascii	"double\000"
+ 1687      6C6500
+ 1688              	.LASF66:
+ 1689 040f 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1689      52784275 
+ 1689      66666572 
+ 1689      00
+ 1690              	.LASF38:
+ 1691 041c 54696D65 		.ascii	"Timer_L3_ReadStatusRegister\000"
+ 1691      725F4C33 
+ 1691      5F526561 
+ 1691      64537461 
+ 1691      74757352 
+ 1692              	.LASF63:
+ 1693 0438 5A756D6F 		.ascii	"ZumoLibrary\\Reflectance.c\000"
+ 1693      4C696272 
+ 1693      6172795C 
+ 1693      5265666C 
+ 1693      65637461 
+ 1694              	.LASF28:
+ 1695 0452 7265666C 		.ascii	"reflectance_read\000"
+ 1695      65637461 
+ 1695      6E63655F 
+ 1695      72656164 
+ 1695      00
+ 1696              	.LASF58:
+ 1697 0463 54696D65 		.ascii	"Timer_R1_Start\000"
+ 1697      725F5231 
+ 1697      5F537461 
+ 1697      727400
+ 1698              	.LASF55:
+ 1699 0472 4C315F57 		.ascii	"L1_Write\000"
+ 1699      72697465 
+ 1699      00
+ 1700              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

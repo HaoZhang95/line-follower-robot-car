@@ -1,0 +1,3452 @@
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"Pathfinding.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text.MyTurn,"ax",%progbits
+  19              		.align	2
+  20              		.global	MyTurn
+  21              		.thumb
+  22              		.thumb_func
+  23              		.type	MyTurn, %function
+  24              	MyTurn:
+  25              	.LFB63:
+  26              		.file 1 "Pathfinding.c"
+   1:Pathfinding.c **** /* ========================================
+   2:Pathfinding.c ****  *
+   3:Pathfinding.c ****  * Copyright YOUR COMPANY, THE YEAR
+   4:Pathfinding.c ****  * All Rights Reserved
+   5:Pathfinding.c ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:Pathfinding.c ****  *
+   7:Pathfinding.c ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:Pathfinding.c ****  * WHICH IS THE PROPERTY OF your company.
+   9:Pathfinding.c ****  *
+  10:Pathfinding.c ****  * ========================================
+  11:Pathfinding.c **** */
+  12:Pathfinding.c **** 
+  13:Pathfinding.c **** /* [] END OF FILE */
+  14:Pathfinding.c **** #include "Reflectance.h"
+  15:Pathfinding.c **** #include <project.h>
+  16:Pathfinding.c **** #include <stdio.h>
+  17:Pathfinding.c **** #include "Motor.h"
+  18:Pathfinding.c **** #include "Pathfinding.h"
+  19:Pathfinding.c **** #include "Playsound.h"
+  20:Pathfinding.c **** 
+  21:Pathfinding.c **** #define MOTOR_SPEED 255
+  22:Pathfinding.c **** #define MOTOR_SL_SPEED 140 // depend on battery
+  23:Pathfinding.c **** #define SENSOR_TH 10000
+  24:Pathfinding.c **** #define TURN_LEFT 0
+  25:Pathfinding.c **** #define TURN_RIGHT 1
+  26:Pathfinding.c **** #define TURN_SHARP_LEFT 2
+  27:Pathfinding.c **** #define TURN_SHARP_RIGHT 3
+  28:Pathfinding.c **** 
+  29:Pathfinding.c **** /**
+  30:Pathfinding.c **** *   Method for easier recognize the turning of the robot
+  31:Pathfinding.c **** *   if it a SHARP turn, then the other wheel speed is 0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 2
+
+
+  32:Pathfinding.c **** *   if it a normal turn, then the other wheel speed is at SL_SPEED
+  33:Pathfinding.c **** * 
+  34:Pathfinding.c **** */
+  35:Pathfinding.c **** void MyTurn(uint8 direction) {
+  27              		.loc 1 35 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              	.LVL0:
+  32 0000 00B5     		push	{lr}
+  33              		.cfi_def_cfa_offset 4
+  34              		.cfi_offset 14, -4
+  35 0002 83B0     		sub	sp, sp, #12
+  36              		.cfi_def_cfa_offset 16
+  36:Pathfinding.c ****     if (direction == TURN_RIGHT) {        
+  37              		.loc 1 36 0
+  38 0004 0128     		cmp	r0, #1
+  39 0006 07D1     		bne	.L2
+  37:Pathfinding.c ****         motor_turn_adv(MOTOR_SPEED, 0, MOTOR_SL_SPEED, 0, 0);
+  40              		.loc 1 37 0
+  41 0008 0023     		movs	r3, #0
+  42 000a 0093     		str	r3, [sp]
+  43 000c FF20     		movs	r0, #255
+  44              	.LVL1:
+  45 000e 1946     		mov	r1, r3
+  46 0010 8C22     		movs	r2, #140
+  47 0012 FFF7FEFF 		bl	motor_turn_adv
+  48              	.LVL2:
+  49 0016 1BE0     		b	.L1
+  50              	.LVL3:
+  51              	.L2:
+  38:Pathfinding.c ****         
+  39:Pathfinding.c ****     } else if (direction == TURN_LEFT) {
+  52              		.loc 1 39 0
+  53 0018 38B9     		cbnz	r0, .L4
+  40:Pathfinding.c ****         motor_turn_adv(MOTOR_SL_SPEED, 0, MOTOR_SPEED, 0, 0);  
+  54              		.loc 1 40 0
+  55 001a 0023     		movs	r3, #0
+  56 001c 0093     		str	r3, [sp]
+  57 001e 8C20     		movs	r0, #140
+  58              	.LVL4:
+  59 0020 1946     		mov	r1, r3
+  60 0022 FF22     		movs	r2, #255
+  61 0024 FFF7FEFF 		bl	motor_turn_adv
+  62              	.LVL5:
+  63 0028 12E0     		b	.L1
+  64              	.LVL6:
+  65              	.L4:
+  41:Pathfinding.c ****         
+  42:Pathfinding.c ****     } else if (direction == TURN_SHARP_RIGHT) {
+  66              		.loc 1 42 0
+  67 002a 0328     		cmp	r0, #3
+  68 002c 07D1     		bne	.L5
+  43:Pathfinding.c ****         motor_turn_adv(MOTOR_SPEED, 0, 0, 0, 0); 
+  69              		.loc 1 43 0
+  70 002e 0023     		movs	r3, #0
+  71 0030 0093     		str	r3, [sp]
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 3
+
+
+  72 0032 FF20     		movs	r0, #255
+  73              	.LVL7:
+  74 0034 1946     		mov	r1, r3
+  75 0036 1A46     		mov	r2, r3
+  76 0038 FFF7FEFF 		bl	motor_turn_adv
+  77              	.LVL8:
+  78 003c 08E0     		b	.L1
+  79              	.LVL9:
+  80              	.L5:
+  44:Pathfinding.c ****         
+  45:Pathfinding.c ****     } else if (direction == TURN_SHARP_LEFT) {
+  81              		.loc 1 45 0
+  82 003e 0228     		cmp	r0, #2
+  83 0040 06D1     		bne	.L1
+  46:Pathfinding.c ****         motor_turn_adv(0, 0, MOTOR_SPEED, 0, 0);   
+  84              		.loc 1 46 0
+  85 0042 0023     		movs	r3, #0
+  86 0044 0093     		str	r3, [sp]
+  87 0046 1846     		mov	r0, r3
+  88              	.LVL10:
+  89 0048 1946     		mov	r1, r3
+  90 004a FF22     		movs	r2, #255
+  91 004c FFF7FEFF 		bl	motor_turn_adv
+  92              	.LVL11:
+  93              	.L1:
+  47:Pathfinding.c ****     }
+  48:Pathfinding.c **** }
+  94              		.loc 1 48 0
+  95 0050 03B0     		add	sp, sp, #12
+  96              		.cfi_def_cfa_offset 4
+  97              		@ sp needed
+  98 0052 5DF804FB 		ldr	pc, [sp], #4
+  99              		.cfi_endproc
+ 100              	.LFE63:
+ 101              		.size	MyTurn, .-MyTurn
+ 102              		.global	__aeabi_i2f
+ 103              		.global	__aeabi_fcmple
+ 104              		.global	__aeabi_fcmpge
+ 105              		.global	__aeabi_f2d
+ 106              		.global	__aeabi_dcmplt
+ 107 0056 00BF     		.section	.text.PathfindingAdvP,"ax",%progbits
+ 108              		.align	2
+ 109              		.global	PathfindingAdvP
+ 110              		.thumb
+ 111              		.thumb_func
+ 112              		.type	PathfindingAdvP, %function
+ 113              	PathfindingAdvP:
+ 114              	.LFB64:
+  49:Pathfinding.c **** 
+  50:Pathfinding.c ****     // For PD, but will not useed in basic & advance
+  51:Pathfinding.c ****     int r3W = 6200;
+  52:Pathfinding.c ****     int r1W = 4300;
+  53:Pathfinding.c ****     int l1W = 3700;
+  54:Pathfinding.c ****     int l3W = 5000;
+  55:Pathfinding.c ****     
+  56:Pathfinding.c ****     int r3B = 23900;
+  57:Pathfinding.c ****     int r1B = 23900;
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 4
+
+
+  58:Pathfinding.c ****     int l1B = 23900;
+  59:Pathfinding.c ****     int l3B = 23900;
+  60:Pathfinding.c **** 
+  61:Pathfinding.c **** 
+  62:Pathfinding.c **** //Using advance logic pathfinding
+  63:Pathfinding.c **** void PathfindingAdvP(uint16_t r1, uint16_t r3, uint16_t l1, uint16_t l3, uint8_t *checkStop, uint8_
+  64:Pathfinding.c **** {        
+ 115              		.loc 1 64 0
+ 116              		.cfi_startproc
+ 117              		@ args = 8, pretend = 0, frame = 0
+ 118              		@ frame_needed = 0, uses_anonymous_args = 0
+ 119              	.LVL12:
+ 120 0000 2DE9F84F 		push	{r3, r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 121              		.cfi_def_cfa_offset 40
+ 122              		.cfi_offset 3, -40
+ 123              		.cfi_offset 4, -36
+ 124              		.cfi_offset 5, -32
+ 125              		.cfi_offset 6, -28
+ 126              		.cfi_offset 7, -24
+ 127              		.cfi_offset 8, -20
+ 128              		.cfi_offset 9, -16
+ 129              		.cfi_offset 10, -12
+ 130              		.cfi_offset 11, -8
+ 131              		.cfi_offset 14, -4
+ 132 0004 8246     		mov	r10, r0
+ 133 0006 8B46     		mov	fp, r1
+ 134 0008 9046     		mov	r8, r2
+ 135 000a 1C46     		mov	r4, r3
+ 136 000c 0A9E     		ldr	r6, [sp, #40]
+ 137 000e DDF82C90 		ldr	r9, [sp, #44]
+ 138              	.LVL13:
+  65:Pathfinding.c ****     //Normalized data
+  66:Pathfinding.c ****     //Start normalized all measured data to [0;1]
+  67:Pathfinding.c ****     float Pl3 = (l3 - l3W)/(l3B - l3W);
+  68:Pathfinding.c ****     float Pl1 = (l1 - l1W)/(l1B - l1W);
+ 139              		.loc 1 68 0
+ 140 0012 BD4D     		ldr	r5, .L59+32
+ 141 0014 2A68     		ldr	r2, [r5]
+ 142              	.LVL14:
+ 143 0016 C2EB0800 		rsb	r0, r2, r8
+ 144              	.LVL15:
+ 145 001a 6B68     		ldr	r3, [r5, #4]
+ 146              	.LVL16:
+ 147 001c 9B1A     		subs	r3, r3, r2
+ 148 001e 90FBF3F0 		sdiv	r0, r0, r3
+ 149 0022 FFF7FEFF 		bl	__aeabi_i2f
+ 150              	.LVL17:
+ 151 0026 0746     		mov	r7, r0
+ 152              	.LVL18:
+  69:Pathfinding.c ****     float Pr3 = (r3 - r3W)/(r3B - r3W);
+  70:Pathfinding.c ****     float Pr1 = (r1 - r1W)/(r1B - r1W);
+ 153              		.loc 1 70 0
+ 154 0028 AA68     		ldr	r2, [r5, #8]
+ 155 002a C2EB0A00 		rsb	r0, r2, r10
+ 156              	.LVL19:
+ 157 002e EB68     		ldr	r3, [r5, #12]
+ 158 0030 9B1A     		subs	r3, r3, r2
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 5
+
+
+ 159 0032 90FBF3F0 		sdiv	r0, r0, r3
+ 160 0036 FFF7FEFF 		bl	__aeabi_i2f
+ 161              	.LVL20:
+ 162 003a 0546     		mov	r5, r0
+ 163              	.LVL21:
+  71:Pathfinding.c ****     
+  72:Pathfinding.c ****     
+  73:Pathfinding.c ****     // 1 is black
+  74:Pathfinding.c ****     if(Pr1<=0.5 || Pl1<=0.5){
+ 164              		.loc 1 74 0
+ 165 003c 4FF07C51 		mov	r1, #1056964608
+ 166 0040 FFF7FEFF 		bl	__aeabi_fcmple
+ 167              	.LVL22:
+ 168 0044 38B9     		cbnz	r0, .L8
+ 169              		.loc 1 74 0 is_stmt 0 discriminator 1
+ 170 0046 3846     		mov	r0, r7
+ 171 0048 4FF07C51 		mov	r1, #1056964608
+ 172 004c FFF7FEFF 		bl	__aeabi_fcmple
+ 173              	.LVL23:
+ 174 0050 0028     		cmp	r0, #0
+ 175 0052 00F01681 		beq	.L57
+ 176              	.L8:
+  75:Pathfinding.c ****        
+  76:Pathfinding.c ****         if(l3>=SENSOR_TH){
+ 177              		.loc 1 76 0 is_stmt 1
+ 178 0056 42F20F73 		movw	r3, #9999
+ 179 005a 9C42     		cmp	r4, r3
+ 180 005c 06D9     		bls	.L11
+  77:Pathfinding.c ****             MyTurn(TURN_SHARP_LEFT);
+ 181              		.loc 1 77 0
+ 182 005e 0220     		movs	r0, #2
+ 183 0060 FFF7FEFF 		bl	MyTurn
+ 184              	.LVL24:
+  78:Pathfinding.c ****             BatteryLed_Write(0);
+ 185              		.loc 1 78 0
+ 186 0064 0020     		movs	r0, #0
+ 187 0066 FFF7FEFF 		bl	BatteryLed_Write
+ 188              	.LVL25:
+ 189 006a 11E1     		b	.L12
+ 190              	.L11:
+  79:Pathfinding.c ****             
+  80:Pathfinding.c ****         }
+  81:Pathfinding.c ****         else if(r3>=SENSOR_TH ){
+ 191              		.loc 1 81 0
+ 192 006c 42F20F73 		movw	r3, #9999
+ 193 0070 9B45     		cmp	fp, r3
+ 194 0072 06D9     		bls	.L13
+  82:Pathfinding.c ****             MyTurn(TURN_SHARP_RIGHT);
+ 195              		.loc 1 82 0
+ 196 0074 0320     		movs	r0, #3
+ 197 0076 FFF7FEFF 		bl	MyTurn
+ 198              	.LVL26:
+  83:Pathfinding.c ****             BatteryLed_Write(0);
+ 199              		.loc 1 83 0
+ 200 007a 0020     		movs	r0, #0
+ 201 007c FFF7FEFF 		bl	BatteryLed_Write
+ 202              	.LVL27:
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 6
+
+
+ 203 0080 06E1     		b	.L12
+ 204              	.L13:
+  84:Pathfinding.c ****         }
+  85:Pathfinding.c ****         
+  86:Pathfinding.c ****         // 0100
+  87:Pathfinding.c ****         else if (l3 < SENSOR_TH && Pl1 >= 0.5 && Pr1 < 0.1 && r3 < SENSOR_TH){
+ 205              		.loc 1 87 0
+ 206 0082 42F20F73 		movw	r3, #9999
+ 207 0086 9C42     		cmp	r4, r3
+ 208 0088 1BD8     		bhi	.L14
+ 209              		.loc 1 87 0 is_stmt 0 discriminator 1
+ 210 008a 3846     		mov	r0, r7
+ 211 008c 4FF07C51 		mov	r1, #1056964608
+ 212 0090 FFF7FEFF 		bl	__aeabi_fcmpge
+ 213              	.LVL28:
+ 214 0094 A8B1     		cbz	r0, .L14
+ 215              		.loc 1 87 0 discriminator 2
+ 216 0096 2846     		mov	r0, r5
+ 217 0098 FFF7FEFF 		bl	__aeabi_f2d
+ 218              	.LVL29:
+ 219 009c 92A3     		adr	r3, .L59
+ 220 009e D3E90023 		ldrd	r2, [r3]
+ 221 00a2 FFF7FEFF 		bl	__aeabi_dcmplt
+ 222              	.LVL30:
+ 223 00a6 60B1     		cbz	r0, .L14
+ 224              		.loc 1 87 0 discriminator 3
+ 225 00a8 42F20F73 		movw	r3, #9999
+ 226 00ac 9B45     		cmp	fp, r3
+ 227 00ae 08D8     		bhi	.L14
+  88:Pathfinding.c ****             motor_turn(110,255,0);
+ 228              		.loc 1 88 0 is_stmt 1
+ 229 00b0 6E20     		movs	r0, #110
+ 230 00b2 FF21     		movs	r1, #255
+ 231 00b4 0022     		movs	r2, #0
+ 232 00b6 FFF7FEFF 		bl	motor_turn
+ 233              	.LVL31:
+  89:Pathfinding.c ****             BatteryLed_Write(0);
+ 234              		.loc 1 89 0
+ 235 00ba 0020     		movs	r0, #0
+ 236 00bc FFF7FEFF 		bl	BatteryLed_Write
+ 237              	.LVL32:
+ 238 00c0 E6E0     		b	.L12
+ 239              	.L14:
+  90:Pathfinding.c ****         }
+  91:Pathfinding.c ****         
+  92:Pathfinding.c ****         else if (l3 < SENSOR_TH && Pl1 >= 0.5 && Pr1 < 0.15 && r3 < SENSOR_TH){
+ 240              		.loc 1 92 0
+ 241 00c2 42F20F73 		movw	r3, #9999
+ 242 00c6 9C42     		cmp	r4, r3
+ 243 00c8 1BD8     		bhi	.L17
+ 244              		.loc 1 92 0 is_stmt 0 discriminator 1
+ 245 00ca 3846     		mov	r0, r7
+ 246 00cc 4FF07C51 		mov	r1, #1056964608
+ 247 00d0 FFF7FEFF 		bl	__aeabi_fcmpge
+ 248              	.LVL33:
+ 249 00d4 A8B1     		cbz	r0, .L17
+ 250              		.loc 1 92 0 discriminator 2
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 7
+
+
+ 251 00d6 2846     		mov	r0, r5
+ 252 00d8 FFF7FEFF 		bl	__aeabi_f2d
+ 253              	.LVL34:
+ 254 00dc 84A3     		adr	r3, .L59+8
+ 255 00de D3E90023 		ldrd	r2, [r3]
+ 256 00e2 FFF7FEFF 		bl	__aeabi_dcmplt
+ 257              	.LVL35:
+ 258 00e6 60B1     		cbz	r0, .L17
+ 259              		.loc 1 92 0 discriminator 3
+ 260 00e8 42F20F73 		movw	r3, #9999
+ 261 00ec 9B45     		cmp	fp, r3
+ 262 00ee 08D8     		bhi	.L17
+  93:Pathfinding.c ****             motor_turn(140,255,0);
+ 263              		.loc 1 93 0 is_stmt 1
+ 264 00f0 8C20     		movs	r0, #140
+ 265 00f2 FF21     		movs	r1, #255
+ 266 00f4 0022     		movs	r2, #0
+ 267 00f6 FFF7FEFF 		bl	motor_turn
+ 268              	.LVL36:
+  94:Pathfinding.c ****             BatteryLed_Write(0);
+ 269              		.loc 1 94 0
+ 270 00fa 0020     		movs	r0, #0
+ 271 00fc FFF7FEFF 		bl	BatteryLed_Write
+ 272              	.LVL37:
+ 273 0100 C6E0     		b	.L12
+ 274              	.L17:
+  95:Pathfinding.c ****         }
+  96:Pathfinding.c ****         
+  97:Pathfinding.c ****         else if (l3 < SENSOR_TH && Pl1 >= 0.5 && Pr1 < 0.2 && r3 < SENSOR_TH){
+ 275              		.loc 1 97 0
+ 276 0102 42F20F73 		movw	r3, #9999
+ 277 0106 9C42     		cmp	r4, r3
+ 278 0108 1BD8     		bhi	.L20
+ 279              		.loc 1 97 0 is_stmt 0 discriminator 1
+ 280 010a 3846     		mov	r0, r7
+ 281 010c 4FF07C51 		mov	r1, #1056964608
+ 282 0110 FFF7FEFF 		bl	__aeabi_fcmpge
+ 283              	.LVL38:
+ 284 0114 A8B1     		cbz	r0, .L20
+ 285              		.loc 1 97 0 discriminator 2
+ 286 0116 2846     		mov	r0, r5
+ 287 0118 FFF7FEFF 		bl	__aeabi_f2d
+ 288              	.LVL39:
+ 289 011c 76A3     		adr	r3, .L59+16
+ 290 011e D3E90023 		ldrd	r2, [r3]
+ 291 0122 FFF7FEFF 		bl	__aeabi_dcmplt
+ 292              	.LVL40:
+ 293 0126 60B1     		cbz	r0, .L20
+ 294              		.loc 1 97 0 discriminator 3
+ 295 0128 42F20F73 		movw	r3, #9999
+ 296 012c 9B45     		cmp	fp, r3
+ 297 012e 08D8     		bhi	.L20
+  98:Pathfinding.c ****             motor_turn(180,255,0);
+ 298              		.loc 1 98 0 is_stmt 1
+ 299 0130 B420     		movs	r0, #180
+ 300 0132 FF21     		movs	r1, #255
+ 301 0134 0022     		movs	r2, #0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 8
+
+
+ 302 0136 FFF7FEFF 		bl	motor_turn
+ 303              	.LVL41:
+  99:Pathfinding.c ****             BatteryLed_Write(1);
+ 304              		.loc 1 99 0
+ 305 013a 0120     		movs	r0, #1
+ 306 013c FFF7FEFF 		bl	BatteryLed_Write
+ 307              	.LVL42:
+ 308 0140 A6E0     		b	.L12
+ 309              	.L20:
+ 100:Pathfinding.c ****         }
+ 101:Pathfinding.c ****         
+ 102:Pathfinding.c ****         else if (l3 < SENSOR_TH && Pl1 >= 0.5 && Pr1 < 0.3 && r3 < SENSOR_TH){
+ 310              		.loc 1 102 0
+ 311 0142 42F20F73 		movw	r3, #9999
+ 312 0146 9C42     		cmp	r4, r3
+ 313 0148 1BD8     		bhi	.L23
+ 314              		.loc 1 102 0 is_stmt 0 discriminator 1
+ 315 014a 3846     		mov	r0, r7
+ 316 014c 4FF07C51 		mov	r1, #1056964608
+ 317 0150 FFF7FEFF 		bl	__aeabi_fcmpge
+ 318              	.LVL43:
+ 319 0154 A8B1     		cbz	r0, .L23
+ 320              		.loc 1 102 0 discriminator 2
+ 321 0156 2846     		mov	r0, r5
+ 322 0158 FFF7FEFF 		bl	__aeabi_f2d
+ 323              	.LVL44:
+ 324 015c 68A3     		adr	r3, .L59+24
+ 325 015e D3E90023 		ldrd	r2, [r3]
+ 326 0162 FFF7FEFF 		bl	__aeabi_dcmplt
+ 327              	.LVL45:
+ 328 0166 60B1     		cbz	r0, .L23
+ 329              		.loc 1 102 0 discriminator 3
+ 330 0168 42F20F73 		movw	r3, #9999
+ 331 016c 9B45     		cmp	fp, r3
+ 332 016e 08D8     		bhi	.L23
+ 103:Pathfinding.c ****             motor_turn(255,255,0);
+ 333              		.loc 1 103 0 is_stmt 1
+ 334 0170 FF20     		movs	r0, #255
+ 335 0172 0146     		mov	r1, r0
+ 336 0174 0022     		movs	r2, #0
+ 337 0176 FFF7FEFF 		bl	motor_turn
+ 338              	.LVL46:
+ 104:Pathfinding.c ****             BatteryLed_Write(0);
+ 339              		.loc 1 104 0
+ 340 017a 0020     		movs	r0, #0
+ 341 017c FFF7FEFF 		bl	BatteryLed_Write
+ 342              	.LVL47:
+ 343 0180 86E0     		b	.L12
+ 344              	.L23:
+ 105:Pathfinding.c ****         }
+ 106:Pathfinding.c ****         
+ 107:Pathfinding.c ****         //0010
+ 108:Pathfinding.c ****         else if (l3 < SENSOR_TH && Pl1 < 0.1 && Pr1 >= 0.5 && r3 < SENSOR_TH){
+ 345              		.loc 1 108 0
+ 346 0182 42F20F73 		movw	r3, #9999
+ 347 0186 9C42     		cmp	r4, r3
+ 348 0188 1BD8     		bhi	.L26
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 9
+
+
+ 349              		.loc 1 108 0 is_stmt 0 discriminator 1
+ 350 018a 3846     		mov	r0, r7
+ 351 018c FFF7FEFF 		bl	__aeabi_f2d
+ 352              	.LVL48:
+ 353 0190 55A3     		adr	r3, .L59
+ 354 0192 D3E90023 		ldrd	r2, [r3]
+ 355 0196 FFF7FEFF 		bl	__aeabi_dcmplt
+ 356              	.LVL49:
+ 357 019a 90B1     		cbz	r0, .L26
+ 358              		.loc 1 108 0 discriminator 2
+ 359 019c 2846     		mov	r0, r5
+ 360 019e 4FF07C51 		mov	r1, #1056964608
+ 361 01a2 FFF7FEFF 		bl	__aeabi_fcmpge
+ 362              	.LVL50:
+ 363 01a6 60B1     		cbz	r0, .L26
+ 364              		.loc 1 108 0 discriminator 3
+ 365 01a8 42F20F73 		movw	r3, #9999
+ 366 01ac 9B45     		cmp	fp, r3
+ 367 01ae 08D8     		bhi	.L26
+ 109:Pathfinding.c ****             motor_turn(255, 110,0);
+ 368              		.loc 1 109 0 is_stmt 1
+ 369 01b0 FF20     		movs	r0, #255
+ 370 01b2 6E21     		movs	r1, #110
+ 371 01b4 0022     		movs	r2, #0
+ 372 01b6 FFF7FEFF 		bl	motor_turn
+ 373              	.LVL51:
+ 110:Pathfinding.c ****             BatteryLed_Write(0);
+ 374              		.loc 1 110 0
+ 375 01ba 0020     		movs	r0, #0
+ 376 01bc FFF7FEFF 		bl	BatteryLed_Write
+ 377              	.LVL52:
+ 378 01c0 66E0     		b	.L12
+ 379              	.L26:
+ 111:Pathfinding.c ****         }
+ 112:Pathfinding.c ****         else if (l3 < SENSOR_TH && Pl1 < 0.15 && Pr1 >= 0.5 && r3 < SENSOR_TH){
+ 380              		.loc 1 112 0
+ 381 01c2 42F20F73 		movw	r3, #9999
+ 382 01c6 9C42     		cmp	r4, r3
+ 383 01c8 1BD8     		bhi	.L29
+ 384              		.loc 1 112 0 is_stmt 0 discriminator 1
+ 385 01ca 3846     		mov	r0, r7
+ 386 01cc FFF7FEFF 		bl	__aeabi_f2d
+ 387              	.LVL53:
+ 388 01d0 47A3     		adr	r3, .L59+8
+ 389 01d2 D3E90023 		ldrd	r2, [r3]
+ 390 01d6 FFF7FEFF 		bl	__aeabi_dcmplt
+ 391              	.LVL54:
+ 392 01da 90B1     		cbz	r0, .L29
+ 393              		.loc 1 112 0 discriminator 2
+ 394 01dc 2846     		mov	r0, r5
+ 395 01de 4FF07C51 		mov	r1, #1056964608
+ 396 01e2 FFF7FEFF 		bl	__aeabi_fcmpge
+ 397              	.LVL55:
+ 398 01e6 60B1     		cbz	r0, .L29
+ 399              		.loc 1 112 0 discriminator 3
+ 400 01e8 42F20F73 		movw	r3, #9999
+ 401 01ec 9B45     		cmp	fp, r3
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 10
+
+
+ 402 01ee 08D8     		bhi	.L29
+ 113:Pathfinding.c ****             motor_turn(255, 140,0);
+ 403              		.loc 1 113 0 is_stmt 1
+ 404 01f0 FF20     		movs	r0, #255
+ 405 01f2 8C21     		movs	r1, #140
+ 406 01f4 0022     		movs	r2, #0
+ 407 01f6 FFF7FEFF 		bl	motor_turn
+ 408              	.LVL56:
+ 114:Pathfinding.c ****             BatteryLed_Write(0);
+ 409              		.loc 1 114 0
+ 410 01fa 0020     		movs	r0, #0
+ 411 01fc FFF7FEFF 		bl	BatteryLed_Write
+ 412              	.LVL57:
+ 413 0200 46E0     		b	.L12
+ 414              	.L29:
+ 115:Pathfinding.c ****         }
+ 116:Pathfinding.c ****         else if (l3 < SENSOR_TH && Pl1 < 0.2 && Pr1 >= 0.5 && r3 < SENSOR_TH){
+ 415              		.loc 1 116 0
+ 416 0202 42F20F73 		movw	r3, #9999
+ 417 0206 9C42     		cmp	r4, r3
+ 418 0208 1BD8     		bhi	.L32
+ 419              		.loc 1 116 0 is_stmt 0 discriminator 1
+ 420 020a 3846     		mov	r0, r7
+ 421 020c FFF7FEFF 		bl	__aeabi_f2d
+ 422              	.LVL58:
+ 423 0210 39A3     		adr	r3, .L59+16
+ 424 0212 D3E90023 		ldrd	r2, [r3]
+ 425 0216 FFF7FEFF 		bl	__aeabi_dcmplt
+ 426              	.LVL59:
+ 427 021a 90B1     		cbz	r0, .L32
+ 428              		.loc 1 116 0 discriminator 2
+ 429 021c 2846     		mov	r0, r5
+ 430 021e 4FF07C51 		mov	r1, #1056964608
+ 431 0222 FFF7FEFF 		bl	__aeabi_fcmpge
+ 432              	.LVL60:
+ 433 0226 60B1     		cbz	r0, .L32
+ 434              		.loc 1 116 0 discriminator 3
+ 435 0228 42F20F73 		movw	r3, #9999
+ 436 022c 9B45     		cmp	fp, r3
+ 437 022e 08D8     		bhi	.L32
+ 117:Pathfinding.c ****             motor_turn(255, 180,0);
+ 438              		.loc 1 117 0 is_stmt 1
+ 439 0230 FF20     		movs	r0, #255
+ 440 0232 B421     		movs	r1, #180
+ 441 0234 0022     		movs	r2, #0
+ 442 0236 FFF7FEFF 		bl	motor_turn
+ 443              	.LVL61:
+ 118:Pathfinding.c ****             BatteryLed_Write(1);
+ 444              		.loc 1 118 0
+ 445 023a 0120     		movs	r0, #1
+ 446 023c FFF7FEFF 		bl	BatteryLed_Write
+ 447              	.LVL62:
+ 448 0240 26E0     		b	.L12
+ 449              	.L32:
+ 119:Pathfinding.c ****         }
+ 120:Pathfinding.c ****         else if (l3 < SENSOR_TH && Pl1 < 0.3 && Pr1 >= 0.5 && r3 < SENSOR_TH){
+ 450              		.loc 1 120 0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 11
+
+
+ 451 0242 42F20F73 		movw	r3, #9999
+ 452 0246 9C42     		cmp	r4, r3
+ 453 0248 22D8     		bhi	.L12
+ 454              		.loc 1 120 0 is_stmt 0 discriminator 1
+ 455 024a 3846     		mov	r0, r7
+ 456 024c FFF7FEFF 		bl	__aeabi_f2d
+ 457              	.LVL63:
+ 458 0250 2BA3     		adr	r3, .L59+24
+ 459 0252 D3E90023 		ldrd	r2, [r3]
+ 460 0256 FFF7FEFF 		bl	__aeabi_dcmplt
+ 461              	.LVL64:
+ 462 025a C8B1     		cbz	r0, .L12
+ 463              		.loc 1 120 0 discriminator 2
+ 464 025c 2846     		mov	r0, r5
+ 465 025e 4FF07C51 		mov	r1, #1056964608
+ 466 0262 FFF7FEFF 		bl	__aeabi_fcmpge
+ 467              	.LVL65:
+ 468 0266 98B1     		cbz	r0, .L12
+ 469              		.loc 1 120 0 discriminator 3
+ 470 0268 42F20F73 		movw	r3, #9999
+ 471 026c 9B45     		cmp	fp, r3
+ 472 026e 0FD8     		bhi	.L12
+ 121:Pathfinding.c ****             motor_turn(255, 255,0);
+ 473              		.loc 1 121 0 is_stmt 1
+ 474 0270 FF20     		movs	r0, #255
+ 475 0272 0146     		mov	r1, r0
+ 476 0274 0022     		movs	r2, #0
+ 477 0276 FFF7FEFF 		bl	motor_turn
+ 478              	.LVL66:
+ 122:Pathfinding.c ****             BatteryLed_Write(0);
+ 479              		.loc 1 122 0
+ 480 027a 0020     		movs	r0, #0
+ 481 027c FFF7FEFF 		bl	BatteryLed_Write
+ 482              	.LVL67:
+ 483 0280 06E0     		b	.L12
+ 484              	.L57:
+ 123:Pathfinding.c ****         }
+ 124:Pathfinding.c ****     } 
+ 125:Pathfinding.c ****     
+ 126:Pathfinding.c ****     else {
+ 127:Pathfinding.c ****         motor_forward(MOTOR_SPEED,0);
+ 485              		.loc 1 127 0
+ 486 0282 FF20     		movs	r0, #255
+ 487 0284 0021     		movs	r1, #0
+ 488 0286 FFF7FEFF 		bl	motor_forward
+ 489              	.LVL68:
+ 128:Pathfinding.c ****         BatteryLed_Write(0);
+ 490              		.loc 1 128 0
+ 491 028a 0020     		movs	r0, #0
+ 492 028c FFF7FEFF 		bl	BatteryLed_Write
+ 493              	.LVL69:
+ 494              	.L12:
+ 129:Pathfinding.c ****     }
+ 130:Pathfinding.c ****     
+ 131:Pathfinding.c ****     
+ 132:Pathfinding.c ****     if (*lastBlack == 1 && (l3 <SENSOR_TH || r3 < SENSOR_TH)) {
+ 495              		.loc 1 132 0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 12
+
+
+ 496 0290 99F80030 		ldrb	r3, [r9]	@ zero_extendqisi2
+ 497 0294 012B     		cmp	r3, #1
+ 498 0296 0BD1     		bne	.L37
+ 499              		.loc 1 132 0 is_stmt 0 discriminator 1
+ 500 0298 42F20F73 		movw	r3, #9999
+ 501 029c 9C42     		cmp	r4, r3
+ 502 029e 01D9     		bls	.L38
+ 503              		.loc 1 132 0 discriminator 2
+ 504 02a0 9B45     		cmp	fp, r3
+ 505 02a2 05D8     		bhi	.L37
+ 506              	.L38:
+ 133:Pathfinding.c ****         *checkStop = *checkStop + 1;        
+ 507              		.loc 1 133 0 is_stmt 1
+ 508 02a4 3378     		ldrb	r3, [r6]	@ zero_extendqisi2
+ 509 02a6 0133     		adds	r3, r3, #1
+ 510 02a8 3370     		strb	r3, [r6]
+ 134:Pathfinding.c ****         *lastBlack = 0;
+ 511              		.loc 1 134 0
+ 512 02aa 0023     		movs	r3, #0
+ 513 02ac 89F80030 		strb	r3, [r9]
+ 514              	.L37:
+ 135:Pathfinding.c ****     }
+ 136:Pathfinding.c ****     
+ 137:Pathfinding.c ****     // STOP AT FINISH LINE
+ 138:Pathfinding.c ****     if(l3>=SENSOR_TH && l1>=SENSOR_TH && r1>=SENSOR_TH && r3>=SENSOR_TH) {
+ 515              		.loc 1 138 0
+ 516 02b0 42F20F73 		movw	r3, #9999
+ 517 02b4 9C42     		cmp	r4, r3
+ 518 02b6 08D9     		bls	.L39
+ 519              		.loc 1 138 0 is_stmt 0 discriminator 1
+ 520 02b8 9845     		cmp	r8, r3
+ 521 02ba 06D9     		bls	.L39
+ 522              		.loc 1 138 0 discriminator 2
+ 523 02bc 9A45     		cmp	r10, r3
+ 524 02be 04D9     		bls	.L39
+ 525              		.loc 1 138 0 discriminator 3
+ 526 02c0 9B45     		cmp	fp, r3
+ 527 02c2 02D9     		bls	.L39
+ 139:Pathfinding.c ****         *lastBlack = 1;
+ 528              		.loc 1 139 0 is_stmt 1
+ 529 02c4 0123     		movs	r3, #1
+ 530 02c6 89F80030 		strb	r3, [r9]
+ 531              	.L39:
+ 140:Pathfinding.c ****     }    
+ 141:Pathfinding.c ****     
+ 142:Pathfinding.c ****     if (*checkStop>=2) {
+ 532              		.loc 1 142 0
+ 533 02ca 3378     		ldrb	r3, [r6]	@ zero_extendqisi2
+ 534 02cc 012B     		cmp	r3, #1
+ 535 02ce 07D9     		bls	.L7
+ 143:Pathfinding.c ****         *checkStop = 2;
+ 536              		.loc 1 143 0
+ 537 02d0 0223     		movs	r3, #2
+ 538 02d2 3370     		strb	r3, [r6]
+ 144:Pathfinding.c ****         motor_stop();
+ 539              		.loc 1 144 0
+ 540 02d4 FFF7FEFF 		bl	motor_stop
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 13
+
+
+ 541              	.LVL70:
+ 145:Pathfinding.c ****         CyDelay(3000);
+ 542              		.loc 1 145 0
+ 543 02d8 40F6B830 		movw	r0, #3000
+ 544 02dc FFF7FEFF 		bl	CyDelay
+ 545              	.LVL71:
+ 546              	.L7:
+ 547 02e0 BDE8F88F 		pop	{r3, r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 548              	.LVL72:
+ 549              	.L60:
+ 550 02e4 AFF30080 		.align	3
+ 551              	.L59:
+ 552 02e8 9A999999 		.word	-1717986918
+ 553 02ec 9999B93F 		.word	1069128089
+ 554 02f0 33333333 		.word	858993459
+ 555 02f4 3333C33F 		.word	1069757235
+ 556 02f8 9A999999 		.word	-1717986918
+ 557 02fc 9999C93F 		.word	1070176665
+ 558 0300 33333333 		.word	858993459
+ 559 0304 3333D33F 		.word	1070805811
+ 560 0308 00000000 		.word	.LANCHOR0
+ 561              		.cfi_endproc
+ 562              	.LFE64:
+ 563              		.size	PathfindingAdvP, .-PathfindingAdvP
+ 564 030c AFF30080 		.section	.text.PathfindingAdv,"ax",%progbits
+ 565              		.align	2
+ 566              		.global	PathfindingAdv
+ 567              		.thumb
+ 568              		.thumb_func
+ 569              		.type	PathfindingAdv, %function
+ 570              	PathfindingAdv:
+ 571              	.LFB65:
+ 146:Pathfinding.c ****         //Playsound();
+ 147:Pathfinding.c ****     }             
+ 148:Pathfinding.c **** }
+ 149:Pathfinding.c **** 
+ 150:Pathfinding.c **** //Using advance logic pathfinding
+ 151:Pathfinding.c **** void PathfindingAdv(uint16_t r1, uint16_t r3, uint16_t l1, uint16_t l3, uint8_t *checkStop, uint8_t
+ 152:Pathfinding.c **** {        
+ 572              		.loc 1 152 0
+ 573              		.cfi_startproc
+ 574              		@ args = 8, pretend = 0, frame = 0
+ 575              		@ frame_needed = 0, uses_anonymous_args = 0
+ 576              	.LVL73:
+ 577 0000 2DE9F843 		push	{r3, r4, r5, r6, r7, r8, r9, lr}
+ 578              		.cfi_def_cfa_offset 32
+ 579              		.cfi_offset 3, -32
+ 580              		.cfi_offset 4, -28
+ 581              		.cfi_offset 5, -24
+ 582              		.cfi_offset 6, -20
+ 583              		.cfi_offset 7, -16
+ 584              		.cfi_offset 8, -12
+ 585              		.cfi_offset 9, -8
+ 586              		.cfi_offset 14, -4
+ 587 0004 0646     		mov	r6, r0
+ 588 0006 8946     		mov	r9, r1
+ 589 0008 1746     		mov	r7, r2
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 14
+
+
+ 590 000a 1C46     		mov	r4, r3
+ 591 000c 089D     		ldr	r5, [sp, #32]
+ 592 000e DDF82480 		ldr	r8, [sp, #36]
+ 153:Pathfinding.c ****     // 1 is black
+ 154:Pathfinding.c ****     if(r1<=SENSOR_TH || l1<=SENSOR_TH){
+ 593              		.loc 1 154 0
+ 594 0012 42F21073 		movw	r3, #10000
+ 595              	.LVL74:
+ 596 0016 9842     		cmp	r0, r3
+ 597 0018 01D9     		bls	.L62
+ 598              		.loc 1 154 0 is_stmt 0 discriminator 1
+ 599 001a 9A42     		cmp	r2, r3
+ 600 001c 2BD8     		bhi	.L63
+ 601              	.L62:
+ 155:Pathfinding.c ****        
+ 156:Pathfinding.c ****         if(l3>=SENSOR_TH){ MyTurn(TURN_SHARP_LEFT);
+ 602              		.loc 1 156 0 is_stmt 1
+ 603 001e 42F20F73 		movw	r3, #9999
+ 604 0022 9C42     		cmp	r4, r3
+ 605 0024 03D9     		bls	.L64
+ 606              		.loc 1 156 0 is_stmt 0 discriminator 1
+ 607 0026 0220     		movs	r0, #2
+ 608              	.LVL75:
+ 609 0028 FFF7FEFF 		bl	MyTurn
+ 610              	.LVL76:
+ 611 002c 27E0     		b	.L65
+ 612              	.LVL77:
+ 613              	.L64:
+ 157:Pathfinding.c ****             
+ 158:Pathfinding.c ****         }
+ 159:Pathfinding.c ****         else if(r3>=SENSOR_TH ){ MyTurn(TURN_SHARP_RIGHT);
+ 614              		.loc 1 159 0 is_stmt 1
+ 615 002e 42F20F73 		movw	r3, #9999
+ 616 0032 9945     		cmp	r9, r3
+ 617 0034 03D9     		bls	.L66
+ 618              		.loc 1 159 0 is_stmt 0 discriminator 1
+ 619 0036 0320     		movs	r0, #3
+ 620              	.LVL78:
+ 621 0038 FFF7FEFF 		bl	MyTurn
+ 622              	.LVL79:
+ 623 003c 1FE0     		b	.L65
+ 624              	.LVL80:
+ 625              	.L66:
+ 160:Pathfinding.c ****         }
+ 161:Pathfinding.c ****         
+ 162:Pathfinding.c ****         // 0100
+ 163:Pathfinding.c ****         else if (l3 < SENSOR_TH && l1 >= SENSOR_TH && r1 < SENSOR_TH && r3 < SENSOR_TH){
+ 626              		.loc 1 163 0 is_stmt 1
+ 627 003e 42F20F73 		movw	r3, #9999
+ 628 0042 9C42     		cmp	r4, r3
+ 629 0044 09D8     		bhi	.L67
+ 630              		.loc 1 163 0 is_stmt 0 discriminator 1
+ 631 0046 9F42     		cmp	r7, r3
+ 632 0048 07D9     		bls	.L67
+ 633              		.loc 1 163 0 discriminator 2
+ 634 004a 9E42     		cmp	r6, r3
+ 635 004c 05D8     		bhi	.L67
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 15
+
+
+ 636              		.loc 1 163 0 discriminator 3
+ 637 004e 9945     		cmp	r9, r3
+ 638 0050 03D8     		bhi	.L67
+ 164:Pathfinding.c ****             MyTurn(TURN_LEFT);
+ 639              		.loc 1 164 0 is_stmt 1
+ 640 0052 0020     		movs	r0, #0
+ 641              	.LVL81:
+ 642 0054 FFF7FEFF 		bl	MyTurn
+ 643              	.LVL82:
+ 644 0058 11E0     		b	.L65
+ 645              	.LVL83:
+ 646              	.L67:
+ 165:Pathfinding.c ****         }
+ 166:Pathfinding.c ****         
+ 167:Pathfinding.c ****          //0010
+ 168:Pathfinding.c ****         else if (l3 < SENSOR_TH && l1 < SENSOR_TH && r1 >= SENSOR_TH && r3 < SENSOR_TH){
+ 647              		.loc 1 168 0
+ 648 005a 42F20F73 		movw	r3, #9999
+ 649 005e 9C42     		cmp	r4, r3
+ 650 0060 0DD8     		bhi	.L65
+ 651              		.loc 1 168 0 is_stmt 0 discriminator 1
+ 652 0062 9F42     		cmp	r7, r3
+ 653 0064 0BD8     		bhi	.L65
+ 654              		.loc 1 168 0 discriminator 2
+ 655 0066 9E42     		cmp	r6, r3
+ 656 0068 09D9     		bls	.L65
+ 657              		.loc 1 168 0 discriminator 3
+ 658 006a 9945     		cmp	r9, r3
+ 659 006c 07D8     		bhi	.L65
+ 169:Pathfinding.c ****             MyTurn(TURN_RIGHT);
+ 660              		.loc 1 169 0 is_stmt 1
+ 661 006e 0120     		movs	r0, #1
+ 662              	.LVL84:
+ 663 0070 FFF7FEFF 		bl	MyTurn
+ 664              	.LVL85:
+ 665 0074 03E0     		b	.L65
+ 666              	.LVL86:
+ 667              	.L63:
+ 170:Pathfinding.c ****         }
+ 171:Pathfinding.c ****     } 
+ 172:Pathfinding.c ****     
+ 173:Pathfinding.c ****     else {
+ 174:Pathfinding.c ****         motor_forward(MOTOR_SPEED,0);    
+ 668              		.loc 1 174 0
+ 669 0076 FF20     		movs	r0, #255
+ 670              	.LVL87:
+ 671 0078 0021     		movs	r1, #0
+ 672              	.LVL88:
+ 673 007a FFF7FEFF 		bl	motor_forward
+ 674              	.LVL89:
+ 675              	.L65:
+ 175:Pathfinding.c ****     }
+ 176:Pathfinding.c ****     
+ 177:Pathfinding.c ****     
+ 178:Pathfinding.c ****     if (*lastBlack == 1 && (l3 <SENSOR_TH || r3 < SENSOR_TH)) {
+ 676              		.loc 1 178 0
+ 677 007e 98F80030 		ldrb	r3, [r8]	@ zero_extendqisi2
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 16
+
+
+ 678 0082 012B     		cmp	r3, #1
+ 679 0084 0ED1     		bne	.L68
+ 680              		.loc 1 178 0 is_stmt 0 discriminator 1
+ 681 0086 42F20F73 		movw	r3, #9999
+ 682 008a 9C42     		cmp	r4, r3
+ 683 008c 01D9     		bls	.L69
+ 684              		.loc 1 178 0 discriminator 2
+ 685 008e 9945     		cmp	r9, r3
+ 686 0090 08D8     		bhi	.L68
+ 687              	.L69:
+ 179:Pathfinding.c ****         *checkStop = *checkStop + 1;
+ 688              		.loc 1 179 0 is_stmt 1
+ 689 0092 2B78     		ldrb	r3, [r5]	@ zero_extendqisi2
+ 690 0094 0133     		adds	r3, r3, #1
+ 691 0096 2B70     		strb	r3, [r5]
+ 180:Pathfinding.c ****         BatteryLed_Write(1);
+ 692              		.loc 1 180 0
+ 693 0098 0120     		movs	r0, #1
+ 694 009a FFF7FEFF 		bl	BatteryLed_Write
+ 695              	.LVL90:
+ 181:Pathfinding.c ****         *lastBlack = 0;
+ 696              		.loc 1 181 0
+ 697 009e 0023     		movs	r3, #0
+ 698 00a0 88F80030 		strb	r3, [r8]
+ 699              	.L68:
+ 182:Pathfinding.c ****     }
+ 183:Pathfinding.c ****     
+ 184:Pathfinding.c ****     // STOP AT FINISH LINE
+ 185:Pathfinding.c ****     if(l3>=SENSOR_TH && l1>=SENSOR_TH && r1>=SENSOR_TH && r3>=SENSOR_TH) {
+ 700              		.loc 1 185 0
+ 701 00a4 42F20F73 		movw	r3, #9999
+ 702 00a8 9C42     		cmp	r4, r3
+ 703 00aa 08D9     		bls	.L70
+ 704              		.loc 1 185 0 is_stmt 0 discriminator 1
+ 705 00ac 9F42     		cmp	r7, r3
+ 706 00ae 06D9     		bls	.L70
+ 707              		.loc 1 185 0 discriminator 2
+ 708 00b0 9E42     		cmp	r6, r3
+ 709 00b2 04D9     		bls	.L70
+ 710              		.loc 1 185 0 discriminator 3
+ 711 00b4 9945     		cmp	r9, r3
+ 712 00b6 02D9     		bls	.L70
+ 186:Pathfinding.c ****         *lastBlack = 1;
+ 713              		.loc 1 186 0 is_stmt 1
+ 714 00b8 0123     		movs	r3, #1
+ 715 00ba 88F80030 		strb	r3, [r8]
+ 716              	.L70:
+ 187:Pathfinding.c ****     }    
+ 188:Pathfinding.c ****     
+ 189:Pathfinding.c ****     if (*checkStop>=2) {
+ 717              		.loc 1 189 0
+ 718 00be 2B78     		ldrb	r3, [r5]	@ zero_extendqisi2
+ 719 00c0 012B     		cmp	r3, #1
+ 720 00c2 07D9     		bls	.L61
+ 190:Pathfinding.c ****         *checkStop = 2;
+ 721              		.loc 1 190 0
+ 722 00c4 0223     		movs	r3, #2
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 17
+
+
+ 723 00c6 2B70     		strb	r3, [r5]
+ 191:Pathfinding.c ****         motor_stop();
+ 724              		.loc 1 191 0
+ 725 00c8 FFF7FEFF 		bl	motor_stop
+ 726              	.LVL91:
+ 192:Pathfinding.c ****         CyDelay(3000);
+ 727              		.loc 1 192 0
+ 728 00cc 40F6B830 		movw	r0, #3000
+ 729 00d0 FFF7FEFF 		bl	CyDelay
+ 730              	.LVL92:
+ 731              	.L61:
+ 732 00d4 BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 733              		.cfi_endproc
+ 734              	.LFE65:
+ 735              		.size	PathfindingAdv, .-PathfindingAdv
+ 736              		.section	.text.PathfindingBasic,"ax",%progbits
+ 737              		.align	2
+ 738              		.global	PathfindingBasic
+ 739              		.thumb
+ 740              		.thumb_func
+ 741              		.type	PathfindingBasic, %function
+ 742              	PathfindingBasic:
+ 743              	.LFB66:
+ 193:Pathfinding.c ****         //Playsound();
+ 194:Pathfinding.c ****     }             
+ 195:Pathfinding.c **** }
+ 196:Pathfinding.c **** 
+ 197:Pathfinding.c **** //Using Manh basic logic pathfinding
+ 198:Pathfinding.c **** void PathfindingBasic(uint16_t r1, uint16_t r3, uint16_t l1, uint16_t l3, uint8_t *checkStop, uint8
+ 199:Pathfinding.c **** {        
+ 744              		.loc 1 199 0
+ 745              		.cfi_startproc
+ 746              		@ args = 8, pretend = 0, frame = 0
+ 747              		@ frame_needed = 0, uses_anonymous_args = 0
+ 748              	.LVL93:
+ 749 0000 2DE9F843 		push	{r3, r4, r5, r6, r7, r8, r9, lr}
+ 750              		.cfi_def_cfa_offset 32
+ 751              		.cfi_offset 3, -32
+ 752              		.cfi_offset 4, -28
+ 753              		.cfi_offset 5, -24
+ 754              		.cfi_offset 6, -20
+ 755              		.cfi_offset 7, -16
+ 756              		.cfi_offset 8, -12
+ 757              		.cfi_offset 9, -8
+ 758              		.cfi_offset 14, -4
+ 759 0004 0646     		mov	r6, r0
+ 760 0006 8946     		mov	r9, r1
+ 761 0008 9046     		mov	r8, r2
+ 762 000a 1C46     		mov	r4, r3
+ 763 000c 089D     		ldr	r5, [sp, #32]
+ 764 000e 099F     		ldr	r7, [sp, #36]
+ 200:Pathfinding.c ****     if(r1<=SENSOR_TH || l1<=SENSOR_TH){
+ 765              		.loc 1 200 0
+ 766 0010 42F21073 		movw	r3, #10000
+ 767              	.LVL94:
+ 768 0014 9842     		cmp	r0, r3
+ 769 0016 01D9     		bls	.L74
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 18
+
+
+ 770              		.loc 1 200 0 is_stmt 0 discriminator 1
+ 771 0018 9A42     		cmp	r2, r3
+ 772 001a 13D8     		bhi	.L75
+ 773              	.L74:
+ 201:Pathfinding.c ****        
+ 202:Pathfinding.c ****         if(l3>=SENSOR_TH){
+ 774              		.loc 1 202 0 is_stmt 1
+ 775 001c 42F20F73 		movw	r3, #9999
+ 776 0020 9C42     		cmp	r4, r3
+ 777 0022 05D9     		bls	.L76
+ 203:Pathfinding.c ****             motor_turn(0,MOTOR_SPEED,0);            
+ 778              		.loc 1 203 0
+ 779 0024 0020     		movs	r0, #0
+ 780              	.LVL95:
+ 781 0026 FF21     		movs	r1, #255
+ 782              	.LVL96:
+ 783 0028 0246     		mov	r2, r0
+ 784              	.LVL97:
+ 785 002a FFF7FEFF 		bl	motor_turn
+ 786              	.LVL98:
+ 787 002e 0DE0     		b	.L77
+ 788              	.LVL99:
+ 789              	.L76:
+ 204:Pathfinding.c ****         }
+ 205:Pathfinding.c ****         else if(r3>=SENSOR_TH ){
+ 790              		.loc 1 205 0
+ 791 0030 42F20F73 		movw	r3, #9999
+ 792 0034 9945     		cmp	r9, r3
+ 793 0036 09D9     		bls	.L77
+ 206:Pathfinding.c ****             motor_turn(MOTOR_SPEED,0,0);
+ 794              		.loc 1 206 0
+ 795 0038 FF20     		movs	r0, #255
+ 796              	.LVL100:
+ 797 003a 0021     		movs	r1, #0
+ 798              	.LVL101:
+ 799 003c 0A46     		mov	r2, r1
+ 800              	.LVL102:
+ 801 003e FFF7FEFF 		bl	motor_turn
+ 802              	.LVL103:
+ 803 0042 03E0     		b	.L77
+ 804              	.LVL104:
+ 805              	.L75:
+ 207:Pathfinding.c ****         }
+ 208:Pathfinding.c ****        
+ 209:Pathfinding.c ****     } else {
+ 210:Pathfinding.c ****          motor_forward(MOTOR_SPEED, 0);    
+ 806              		.loc 1 210 0
+ 807 0044 FF20     		movs	r0, #255
+ 808              	.LVL105:
+ 809 0046 0021     		movs	r1, #0
+ 810              	.LVL106:
+ 811 0048 FFF7FEFF 		bl	motor_forward
+ 812              	.LVL107:
+ 813              	.L77:
+ 211:Pathfinding.c ****     }
+ 212:Pathfinding.c ****     
+ 213:Pathfinding.c ****     
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 19
+
+
+ 214:Pathfinding.c ****     if (*lastBlack == 1 && (l3 <SENSOR_TH || r3 < SENSOR_TH)) {
+ 814              		.loc 1 214 0
+ 815 004c 3B78     		ldrb	r3, [r7]	@ zero_extendqisi2
+ 816 004e 012B     		cmp	r3, #1
+ 817 0050 0DD1     		bne	.L78
+ 818              		.loc 1 214 0 is_stmt 0 discriminator 1
+ 819 0052 42F20F73 		movw	r3, #9999
+ 820 0056 9C42     		cmp	r4, r3
+ 821 0058 01D9     		bls	.L79
+ 822              		.loc 1 214 0 discriminator 2
+ 823 005a 9945     		cmp	r9, r3
+ 824 005c 07D8     		bhi	.L78
+ 825              	.L79:
+ 215:Pathfinding.c ****         *checkStop = *checkStop + 1;
+ 826              		.loc 1 215 0 is_stmt 1
+ 827 005e 2B78     		ldrb	r3, [r5]	@ zero_extendqisi2
+ 828 0060 0133     		adds	r3, r3, #1
+ 829 0062 2B70     		strb	r3, [r5]
+ 216:Pathfinding.c ****         BatteryLed_Write(1);
+ 830              		.loc 1 216 0
+ 831 0064 0120     		movs	r0, #1
+ 832 0066 FFF7FEFF 		bl	BatteryLed_Write
+ 833              	.LVL108:
+ 217:Pathfinding.c ****         *lastBlack = 0;
+ 834              		.loc 1 217 0
+ 835 006a 0023     		movs	r3, #0
+ 836 006c 3B70     		strb	r3, [r7]
+ 837              	.L78:
+ 218:Pathfinding.c ****     }
+ 219:Pathfinding.c ****     
+ 220:Pathfinding.c ****     // STOP AT FINISH LINE
+ 221:Pathfinding.c ****     if(l3>=SENSOR_TH && l1>=SENSOR_TH && r1>=SENSOR_TH && r3>=SENSOR_TH) {
+ 838              		.loc 1 221 0
+ 839 006e 42F20F73 		movw	r3, #9999
+ 840 0072 9C42     		cmp	r4, r3
+ 841 0074 07D9     		bls	.L80
+ 842              		.loc 1 221 0 is_stmt 0 discriminator 1
+ 843 0076 9845     		cmp	r8, r3
+ 844 0078 05D9     		bls	.L80
+ 845              		.loc 1 221 0 discriminator 2
+ 846 007a 9E42     		cmp	r6, r3
+ 847 007c 03D9     		bls	.L80
+ 848              		.loc 1 221 0 discriminator 3
+ 849 007e 9945     		cmp	r9, r3
+ 850 0080 01D9     		bls	.L80
+ 222:Pathfinding.c ****         *lastBlack = 1;
+ 851              		.loc 1 222 0 is_stmt 1
+ 852 0082 0123     		movs	r3, #1
+ 853 0084 3B70     		strb	r3, [r7]
+ 854              	.L80:
+ 223:Pathfinding.c ****     }    
+ 224:Pathfinding.c ****     
+ 225:Pathfinding.c ****     if (*checkStop>=2) {
+ 855              		.loc 1 225 0
+ 856 0086 2B78     		ldrb	r3, [r5]	@ zero_extendqisi2
+ 857 0088 012B     		cmp	r3, #1
+ 858 008a 07D9     		bls	.L73
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 20
+
+
+ 226:Pathfinding.c ****         *checkStop = 2;
+ 859              		.loc 1 226 0
+ 860 008c 0223     		movs	r3, #2
+ 861 008e 2B70     		strb	r3, [r5]
+ 227:Pathfinding.c ****         motor_stop();
+ 862              		.loc 1 227 0
+ 863 0090 FFF7FEFF 		bl	motor_stop
+ 864              	.LVL109:
+ 228:Pathfinding.c ****         CyDelay(3000);
+ 865              		.loc 1 228 0
+ 866 0094 40F6B830 		movw	r0, #3000
+ 867 0098 FFF7FEFF 		bl	CyDelay
+ 868              	.LVL110:
+ 869              	.L73:
+ 870 009c BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 871              		.cfi_endproc
+ 872              	.LFE66:
+ 873              		.size	PathfindingBasic, .-PathfindingBasic
+ 874              		.global	l3B
+ 875              		.global	l1B
+ 876              		.global	r1B
+ 877              		.global	r3B
+ 878              		.global	l3W
+ 879              		.global	l1W
+ 880              		.global	r1W
+ 881              		.global	r3W
+ 882              		.data
+ 883              		.align	2
+ 884              		.set	.LANCHOR0,. + 0
+ 885              		.type	l1W, %object
+ 886              		.size	l1W, 4
+ 887              	l1W:
+ 888 0000 740E0000 		.word	3700
+ 889              		.type	l1B, %object
+ 890              		.size	l1B, 4
+ 891              	l1B:
+ 892 0004 5C5D0000 		.word	23900
+ 893              		.type	r1W, %object
+ 894              		.size	r1W, 4
+ 895              	r1W:
+ 896 0008 CC100000 		.word	4300
+ 897              		.type	r1B, %object
+ 898              		.size	r1B, 4
+ 899              	r1B:
+ 900 000c 5C5D0000 		.word	23900
+ 901              		.type	l3B, %object
+ 902              		.size	l3B, 4
+ 903              	l3B:
+ 904 0010 5C5D0000 		.word	23900
+ 905              		.type	r3B, %object
+ 906              		.size	r3B, 4
+ 907              	r3B:
+ 908 0014 5C5D0000 		.word	23900
+ 909              		.type	l3W, %object
+ 910              		.size	l3W, 4
+ 911              	l3W:
+ 912 0018 88130000 		.word	5000
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 21
+
+
+ 913              		.type	r3W, %object
+ 914              		.size	r3W, 4
+ 915              	r3W:
+ 916 001c 38180000 		.word	6200
+ 917              		.text
+ 918              	.Letext0:
+ 919              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 920              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 921              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 922              		.file 5 ".\\ZumoLibrary/Motor.h"
+ 923              		.file 6 "Generated_Source\\PSoC5/BatteryLed.h"
+ 924              		.file 7 "Generated_Source\\PSoC5/CyLib.h"
+ 925              		.file 8 "Generated_Source\\PSoC5/core_cm3.h"
+ 926              		.section	.debug_info,"",%progbits
+ 927              	.Ldebug_info0:
+ 928 0000 77070000 		.4byte	0x777
+ 929 0004 0400     		.2byte	0x4
+ 930 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 931 000a 04       		.byte	0x4
+ 932 000b 01       		.uleb128 0x1
+ 933 000c 10010000 		.4byte	.LASF35
+ 934 0010 01       		.byte	0x1
+ 935 0011 AD000000 		.4byte	.LASF36
+ 936 0015 18000000 		.4byte	.LASF37
+ 937 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 938 001d 00000000 		.4byte	0
+ 939 0021 00000000 		.4byte	.Ldebug_line0
+ 940 0025 02       		.uleb128 0x2
+ 941 0026 04       		.byte	0x4
+ 942 0027 05       		.byte	0x5
+ 943 0028 696E7400 		.ascii	"int\000"
+ 944 002c 03       		.uleb128 0x3
+ 945 002d 04       		.byte	0x4
+ 946 002e 04       		.byte	0x4
+ 947 002f 7C000000 		.4byte	.LASF0
+ 948 0033 03       		.uleb128 0x3
+ 949 0034 01       		.byte	0x1
+ 950 0035 06       		.byte	0x6
+ 951 0036 82000000 		.4byte	.LASF1
+ 952 003a 04       		.uleb128 0x4
+ 953 003b 0E000000 		.4byte	.LASF4
+ 954 003f 02       		.byte	0x2
+ 955 0040 1D       		.byte	0x1d
+ 956 0041 45000000 		.4byte	0x45
+ 957 0045 03       		.uleb128 0x3
+ 958 0046 01       		.byte	0x1
+ 959 0047 08       		.byte	0x8
+ 960 0048 8E000000 		.4byte	.LASF2
+ 961 004c 03       		.uleb128 0x3
+ 962 004d 02       		.byte	0x2
+ 963 004e 05       		.byte	0x5
+ 964 004f 25020000 		.4byte	.LASF3
+ 965 0053 04       		.uleb128 0x4
+ 966 0054 2F020000 		.4byte	.LASF5
+ 967 0058 02       		.byte	0x2
+ 968 0059 2B       		.byte	0x2b
+ 969 005a 5E000000 		.4byte	0x5e
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 22
+
+
+ 970 005e 03       		.uleb128 0x3
+ 971 005f 02       		.byte	0x2
+ 972 0060 07       		.byte	0x7
+ 973 0061 CD000000 		.4byte	.LASF6
+ 974 0065 04       		.uleb128 0x4
+ 975 0066 5D000000 		.4byte	.LASF7
+ 976 006a 02       		.byte	0x2
+ 977 006b 3F       		.byte	0x3f
+ 978 006c 70000000 		.4byte	0x70
+ 979 0070 03       		.uleb128 0x3
+ 980 0071 04       		.byte	0x4
+ 981 0072 05       		.byte	0x5
+ 982 0073 4D020000 		.4byte	.LASF8
+ 983 0077 03       		.uleb128 0x3
+ 984 0078 04       		.byte	0x4
+ 985 0079 07       		.byte	0x7
+ 986 007a BB000000 		.4byte	.LASF9
+ 987 007e 03       		.uleb128 0x3
+ 988 007f 08       		.byte	0x8
+ 989 0080 05       		.byte	0x5
+ 990 0081 00000000 		.4byte	.LASF10
+ 991 0085 03       		.uleb128 0x3
+ 992 0086 08       		.byte	0x8
+ 993 0087 07       		.byte	0x7
+ 994 0088 AB010000 		.4byte	.LASF11
+ 995 008c 03       		.uleb128 0x3
+ 996 008d 04       		.byte	0x4
+ 997 008e 07       		.byte	0x7
+ 998 008f 9E010000 		.4byte	.LASF12
+ 999 0093 04       		.uleb128 0x4
+ 1000 0094 C2010000 		.4byte	.LASF13
+ 1001 0098 03       		.byte	0x3
+ 1002 0099 15       		.byte	0x15
+ 1003 009a 3A000000 		.4byte	0x3a
+ 1004 009e 04       		.uleb128 0x4
+ 1005 009f 3A020000 		.4byte	.LASF14
+ 1006 00a3 03       		.byte	0x3
+ 1007 00a4 21       		.byte	0x21
+ 1008 00a5 53000000 		.4byte	0x53
+ 1009 00a9 04       		.uleb128 0x4
+ 1010 00aa FE010000 		.4byte	.LASF15
+ 1011 00ae 03       		.byte	0x3
+ 1012 00af 2C       		.byte	0x2c
+ 1013 00b0 65000000 		.4byte	0x65
+ 1014 00b4 05       		.uleb128 0x5
+ 1015 00b5 F8010000 		.4byte	.LASF16
+ 1016 00b9 04       		.byte	0x4
+ 1017 00ba 9201     		.2byte	0x192
+ 1018 00bc 45000000 		.4byte	0x45
+ 1019 00c0 05       		.uleb128 0x5
+ 1020 00c1 09010000 		.4byte	.LASF17
+ 1021 00c5 04       		.byte	0x4
+ 1022 00c6 9401     		.2byte	0x194
+ 1023 00c8 77000000 		.4byte	0x77
+ 1024 00cc 03       		.uleb128 0x3
+ 1025 00cd 08       		.byte	0x8
+ 1026 00ce 04       		.byte	0x4
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 23
+
+
+ 1027 00cf 02010000 		.4byte	.LASF18
+ 1028 00d3 03       		.uleb128 0x3
+ 1029 00d4 01       		.byte	0x1
+ 1030 00d5 08       		.byte	0x8
+ 1031 00d6 20020000 		.4byte	.LASF19
+ 1032 00da 03       		.uleb128 0x3
+ 1033 00db 04       		.byte	0x4
+ 1034 00dc 07       		.byte	0x7
+ 1035 00dd 06020000 		.4byte	.LASF20
+ 1036 00e1 06       		.uleb128 0x6
+ 1037 00e2 FB000000 		.4byte	.LASF21
+ 1038 00e6 01       		.byte	0x1
+ 1039 00e7 23       		.byte	0x23
+ 1040 00e8 00000000 		.4byte	.LFB63
+ 1041 00ec 56000000 		.4byte	.LFE63-.LFB63
+ 1042 00f0 01       		.uleb128 0x1
+ 1043 00f1 9C       		.byte	0x9c
+ 1044 00f2 A8010000 		.4byte	0x1a8
+ 1045 00f6 07       		.uleb128 0x7
+ 1046 00f7 72000000 		.4byte	.LASF23
+ 1047 00fb 01       		.byte	0x1
+ 1048 00fc 23       		.byte	0x23
+ 1049 00fd B4000000 		.4byte	0xb4
+ 1050 0101 00000000 		.4byte	.LLST0
+ 1051 0105 08       		.uleb128 0x8
+ 1052 0106 16000000 		.4byte	.LVL2
+ 1053 010a F9060000 		.4byte	0x6f9
+ 1054 010e 2F010000 		.4byte	0x12f
+ 1055 0112 09       		.uleb128 0x9
+ 1056 0113 01       		.uleb128 0x1
+ 1057 0114 53       		.byte	0x53
+ 1058 0115 01       		.uleb128 0x1
+ 1059 0116 30       		.byte	0x30
+ 1060 0117 09       		.uleb128 0x9
+ 1061 0118 01       		.uleb128 0x1
+ 1062 0119 52       		.byte	0x52
+ 1063 011a 02       		.uleb128 0x2
+ 1064 011b 09       		.byte	0x9
+ 1065 011c 8C       		.byte	0x8c
+ 1066 011d 09       		.uleb128 0x9
+ 1067 011e 01       		.uleb128 0x1
+ 1068 011f 51       		.byte	0x51
+ 1069 0120 01       		.uleb128 0x1
+ 1070 0121 30       		.byte	0x30
+ 1071 0122 09       		.uleb128 0x9
+ 1072 0123 01       		.uleb128 0x1
+ 1073 0124 50       		.byte	0x50
+ 1074 0125 02       		.uleb128 0x2
+ 1075 0126 09       		.byte	0x9
+ 1076 0127 FF       		.byte	0xff
+ 1077 0128 09       		.uleb128 0x9
+ 1078 0129 02       		.uleb128 0x2
+ 1079 012a 7D       		.byte	0x7d
+ 1080 012b 00       		.sleb128 0
+ 1081 012c 01       		.uleb128 0x1
+ 1082 012d 30       		.byte	0x30
+ 1083 012e 00       		.byte	0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 24
+
+
+ 1084 012f 08       		.uleb128 0x8
+ 1085 0130 28000000 		.4byte	.LVL5
+ 1086 0134 F9060000 		.4byte	0x6f9
+ 1087 0138 59010000 		.4byte	0x159
+ 1088 013c 09       		.uleb128 0x9
+ 1089 013d 01       		.uleb128 0x1
+ 1090 013e 53       		.byte	0x53
+ 1091 013f 01       		.uleb128 0x1
+ 1092 0140 30       		.byte	0x30
+ 1093 0141 09       		.uleb128 0x9
+ 1094 0142 01       		.uleb128 0x1
+ 1095 0143 52       		.byte	0x52
+ 1096 0144 02       		.uleb128 0x2
+ 1097 0145 09       		.byte	0x9
+ 1098 0146 FF       		.byte	0xff
+ 1099 0147 09       		.uleb128 0x9
+ 1100 0148 01       		.uleb128 0x1
+ 1101 0149 51       		.byte	0x51
+ 1102 014a 01       		.uleb128 0x1
+ 1103 014b 30       		.byte	0x30
+ 1104 014c 09       		.uleb128 0x9
+ 1105 014d 01       		.uleb128 0x1
+ 1106 014e 50       		.byte	0x50
+ 1107 014f 02       		.uleb128 0x2
+ 1108 0150 09       		.byte	0x9
+ 1109 0151 8C       		.byte	0x8c
+ 1110 0152 09       		.uleb128 0x9
+ 1111 0153 02       		.uleb128 0x2
+ 1112 0154 7D       		.byte	0x7d
+ 1113 0155 00       		.sleb128 0
+ 1114 0156 01       		.uleb128 0x1
+ 1115 0157 30       		.byte	0x30
+ 1116 0158 00       		.byte	0
+ 1117 0159 08       		.uleb128 0x8
+ 1118 015a 3C000000 		.4byte	.LVL8
+ 1119 015e F9060000 		.4byte	0x6f9
+ 1120 0162 82010000 		.4byte	0x182
+ 1121 0166 09       		.uleb128 0x9
+ 1122 0167 01       		.uleb128 0x1
+ 1123 0168 53       		.byte	0x53
+ 1124 0169 01       		.uleb128 0x1
+ 1125 016a 30       		.byte	0x30
+ 1126 016b 09       		.uleb128 0x9
+ 1127 016c 01       		.uleb128 0x1
+ 1128 016d 52       		.byte	0x52
+ 1129 016e 01       		.uleb128 0x1
+ 1130 016f 30       		.byte	0x30
+ 1131 0170 09       		.uleb128 0x9
+ 1132 0171 01       		.uleb128 0x1
+ 1133 0172 51       		.byte	0x51
+ 1134 0173 01       		.uleb128 0x1
+ 1135 0174 30       		.byte	0x30
+ 1136 0175 09       		.uleb128 0x9
+ 1137 0176 01       		.uleb128 0x1
+ 1138 0177 50       		.byte	0x50
+ 1139 0178 02       		.uleb128 0x2
+ 1140 0179 09       		.byte	0x9
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 25
+
+
+ 1141 017a FF       		.byte	0xff
+ 1142 017b 09       		.uleb128 0x9
+ 1143 017c 02       		.uleb128 0x2
+ 1144 017d 7D       		.byte	0x7d
+ 1145 017e 00       		.sleb128 0
+ 1146 017f 01       		.uleb128 0x1
+ 1147 0180 30       		.byte	0x30
+ 1148 0181 00       		.byte	0
+ 1149 0182 0A       		.uleb128 0xa
+ 1150 0183 50000000 		.4byte	.LVL11
+ 1151 0187 F9060000 		.4byte	0x6f9
+ 1152 018b 09       		.uleb128 0x9
+ 1153 018c 01       		.uleb128 0x1
+ 1154 018d 53       		.byte	0x53
+ 1155 018e 01       		.uleb128 0x1
+ 1156 018f 30       		.byte	0x30
+ 1157 0190 09       		.uleb128 0x9
+ 1158 0191 01       		.uleb128 0x1
+ 1159 0192 52       		.byte	0x52
+ 1160 0193 02       		.uleb128 0x2
+ 1161 0194 09       		.byte	0x9
+ 1162 0195 FF       		.byte	0xff
+ 1163 0196 09       		.uleb128 0x9
+ 1164 0197 01       		.uleb128 0x1
+ 1165 0198 51       		.byte	0x51
+ 1166 0199 01       		.uleb128 0x1
+ 1167 019a 30       		.byte	0x30
+ 1168 019b 09       		.uleb128 0x9
+ 1169 019c 01       		.uleb128 0x1
+ 1170 019d 50       		.byte	0x50
+ 1171 019e 01       		.uleb128 0x1
+ 1172 019f 30       		.byte	0x30
+ 1173 01a0 09       		.uleb128 0x9
+ 1174 01a1 02       		.uleb128 0x2
+ 1175 01a2 7D       		.byte	0x7d
+ 1176 01a3 00       		.sleb128 0
+ 1177 01a4 01       		.uleb128 0x1
+ 1178 01a5 30       		.byte	0x30
+ 1179 01a6 00       		.byte	0
+ 1180 01a7 00       		.byte	0
+ 1181 01a8 0B       		.uleb128 0xb
+ 1182 01a9 D9010000 		.4byte	.LASF22
+ 1183 01ad 01       		.byte	0x1
+ 1184 01ae 3F       		.byte	0x3f
+ 1185 01af 00000000 		.4byte	.LFB64
+ 1186 01b3 0C030000 		.4byte	.LFE64-.LFB64
+ 1187 01b7 01       		.uleb128 0x1
+ 1188 01b8 9C       		.byte	0x9c
+ 1189 01b9 72040000 		.4byte	0x472
+ 1190 01bd 0C       		.uleb128 0xc
+ 1191 01be 723100   		.ascii	"r1\000"
+ 1192 01c1 01       		.byte	0x1
+ 1193 01c2 3F       		.byte	0x3f
+ 1194 01c3 9E000000 		.4byte	0x9e
+ 1195 01c7 6C000000 		.4byte	.LLST1
+ 1196 01cb 0C       		.uleb128 0xc
+ 1197 01cc 723300   		.ascii	"r3\000"
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 26
+
+
+ 1198 01cf 01       		.byte	0x1
+ 1199 01d0 3F       		.byte	0x3f
+ 1200 01d1 9E000000 		.4byte	0x9e
+ 1201 01d5 8D000000 		.4byte	.LLST2
+ 1202 01d9 0C       		.uleb128 0xc
+ 1203 01da 6C3100   		.ascii	"l1\000"
+ 1204 01dd 01       		.byte	0x1
+ 1205 01de 3F       		.byte	0x3f
+ 1206 01df 9E000000 		.4byte	0x9e
+ 1207 01e3 AE000000 		.4byte	.LLST3
+ 1208 01e7 0C       		.uleb128 0xc
+ 1209 01e8 6C3300   		.ascii	"l3\000"
+ 1210 01eb 01       		.byte	0x1
+ 1211 01ec 3F       		.byte	0x3f
+ 1212 01ed 9E000000 		.4byte	0x9e
+ 1213 01f1 CF000000 		.4byte	.LLST4
+ 1214 01f5 07       		.uleb128 0x7
+ 1215 01f6 53000000 		.4byte	.LASF24
+ 1216 01fa 01       		.byte	0x1
+ 1217 01fb 3F       		.byte	0x3f
+ 1218 01fc 72040000 		.4byte	0x472
+ 1219 0200 F0000000 		.4byte	.LLST5
+ 1220 0204 07       		.uleb128 0x7
+ 1221 0205 43020000 		.4byte	.LASF25
+ 1222 0209 01       		.byte	0x1
+ 1223 020a 3F       		.byte	0x3f
+ 1224 020b 72040000 		.4byte	0x472
+ 1225 020f 10010000 		.4byte	.LLST6
+ 1226 0213 0D       		.uleb128 0xd
+ 1227 0214 506C3300 		.ascii	"Pl3\000"
+ 1228 0218 01       		.byte	0x1
+ 1229 0219 43       		.byte	0x43
+ 1230 021a 2C000000 		.4byte	0x2c
+ 1231 021e 30010000 		.4byte	.LLST7
+ 1232 0222 0D       		.uleb128 0xd
+ 1233 0223 506C3100 		.ascii	"Pl1\000"
+ 1234 0227 01       		.byte	0x1
+ 1235 0228 44       		.byte	0x44
+ 1236 0229 2C000000 		.4byte	0x2c
+ 1237 022d 62010000 		.4byte	.LLST8
+ 1238 0231 0D       		.uleb128 0xd
+ 1239 0232 50723300 		.ascii	"Pr3\000"
+ 1240 0236 01       		.byte	0x1
+ 1241 0237 45       		.byte	0x45
+ 1242 0238 2C000000 		.4byte	0x2c
+ 1243 023c 80010000 		.4byte	.LLST9
+ 1244 0240 0D       		.uleb128 0xd
+ 1245 0241 50723100 		.ascii	"Pr1\000"
+ 1246 0245 01       		.byte	0x1
+ 1247 0246 46       		.byte	0x46
+ 1248 0247 2C000000 		.4byte	0x2c
+ 1249 024b B2010000 		.4byte	.LLST10
+ 1250 024f 08       		.uleb128 0x8
+ 1251 0250 64000000 		.4byte	.LVL24
+ 1252 0254 E1000000 		.4byte	0xe1
+ 1253 0258 62020000 		.4byte	0x262
+ 1254 025c 09       		.uleb128 0x9
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 27
+
+
+ 1255 025d 01       		.uleb128 0x1
+ 1256 025e 50       		.byte	0x50
+ 1257 025f 01       		.uleb128 0x1
+ 1258 0260 32       		.byte	0x32
+ 1259 0261 00       		.byte	0
+ 1260 0262 08       		.uleb128 0x8
+ 1261 0263 6A000000 		.4byte	.LVL25
+ 1262 0267 1E070000 		.4byte	0x71e
+ 1263 026b 75020000 		.4byte	0x275
+ 1264 026f 09       		.uleb128 0x9
+ 1265 0270 01       		.uleb128 0x1
+ 1266 0271 50       		.byte	0x50
+ 1267 0272 01       		.uleb128 0x1
+ 1268 0273 30       		.byte	0x30
+ 1269 0274 00       		.byte	0
+ 1270 0275 08       		.uleb128 0x8
+ 1271 0276 7A000000 		.4byte	.LVL26
+ 1272 027a E1000000 		.4byte	0xe1
+ 1273 027e 88020000 		.4byte	0x288
+ 1274 0282 09       		.uleb128 0x9
+ 1275 0283 01       		.uleb128 0x1
+ 1276 0284 50       		.byte	0x50
+ 1277 0285 01       		.uleb128 0x1
+ 1278 0286 33       		.byte	0x33
+ 1279 0287 00       		.byte	0
+ 1280 0288 08       		.uleb128 0x8
+ 1281 0289 80000000 		.4byte	.LVL27
+ 1282 028d 1E070000 		.4byte	0x71e
+ 1283 0291 9B020000 		.4byte	0x29b
+ 1284 0295 09       		.uleb128 0x9
+ 1285 0296 01       		.uleb128 0x1
+ 1286 0297 50       		.byte	0x50
+ 1287 0298 01       		.uleb128 0x1
+ 1288 0299 30       		.byte	0x30
+ 1289 029a 00       		.byte	0
+ 1290 029b 08       		.uleb128 0x8
+ 1291 029c BA000000 		.4byte	.LVL31
+ 1292 02a0 2F070000 		.4byte	0x72f
+ 1293 02a4 BA020000 		.4byte	0x2ba
+ 1294 02a8 09       		.uleb128 0x9
+ 1295 02a9 01       		.uleb128 0x1
+ 1296 02aa 52       		.byte	0x52
+ 1297 02ab 01       		.uleb128 0x1
+ 1298 02ac 30       		.byte	0x30
+ 1299 02ad 09       		.uleb128 0x9
+ 1300 02ae 01       		.uleb128 0x1
+ 1301 02af 51       		.byte	0x51
+ 1302 02b0 02       		.uleb128 0x2
+ 1303 02b1 09       		.byte	0x9
+ 1304 02b2 FF       		.byte	0xff
+ 1305 02b3 09       		.uleb128 0x9
+ 1306 02b4 01       		.uleb128 0x1
+ 1307 02b5 50       		.byte	0x50
+ 1308 02b6 02       		.uleb128 0x2
+ 1309 02b7 08       		.byte	0x8
+ 1310 02b8 6E       		.byte	0x6e
+ 1311 02b9 00       		.byte	0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 28
+
+
+ 1312 02ba 08       		.uleb128 0x8
+ 1313 02bb C0000000 		.4byte	.LVL32
+ 1314 02bf 1E070000 		.4byte	0x71e
+ 1315 02c3 CD020000 		.4byte	0x2cd
+ 1316 02c7 09       		.uleb128 0x9
+ 1317 02c8 01       		.uleb128 0x1
+ 1318 02c9 50       		.byte	0x50
+ 1319 02ca 01       		.uleb128 0x1
+ 1320 02cb 30       		.byte	0x30
+ 1321 02cc 00       		.byte	0
+ 1322 02cd 08       		.uleb128 0x8
+ 1323 02ce FA000000 		.4byte	.LVL36
+ 1324 02d2 2F070000 		.4byte	0x72f
+ 1325 02d6 EC020000 		.4byte	0x2ec
+ 1326 02da 09       		.uleb128 0x9
+ 1327 02db 01       		.uleb128 0x1
+ 1328 02dc 52       		.byte	0x52
+ 1329 02dd 01       		.uleb128 0x1
+ 1330 02de 30       		.byte	0x30
+ 1331 02df 09       		.uleb128 0x9
+ 1332 02e0 01       		.uleb128 0x1
+ 1333 02e1 51       		.byte	0x51
+ 1334 02e2 02       		.uleb128 0x2
+ 1335 02e3 09       		.byte	0x9
+ 1336 02e4 FF       		.byte	0xff
+ 1337 02e5 09       		.uleb128 0x9
+ 1338 02e6 01       		.uleb128 0x1
+ 1339 02e7 50       		.byte	0x50
+ 1340 02e8 02       		.uleb128 0x2
+ 1341 02e9 09       		.byte	0x9
+ 1342 02ea 8C       		.byte	0x8c
+ 1343 02eb 00       		.byte	0
+ 1344 02ec 08       		.uleb128 0x8
+ 1345 02ed 00010000 		.4byte	.LVL37
+ 1346 02f1 1E070000 		.4byte	0x71e
+ 1347 02f5 FF020000 		.4byte	0x2ff
+ 1348 02f9 09       		.uleb128 0x9
+ 1349 02fa 01       		.uleb128 0x1
+ 1350 02fb 50       		.byte	0x50
+ 1351 02fc 01       		.uleb128 0x1
+ 1352 02fd 30       		.byte	0x30
+ 1353 02fe 00       		.byte	0
+ 1354 02ff 08       		.uleb128 0x8
+ 1355 0300 3A010000 		.4byte	.LVL41
+ 1356 0304 2F070000 		.4byte	0x72f
+ 1357 0308 1E030000 		.4byte	0x31e
+ 1358 030c 09       		.uleb128 0x9
+ 1359 030d 01       		.uleb128 0x1
+ 1360 030e 52       		.byte	0x52
+ 1361 030f 01       		.uleb128 0x1
+ 1362 0310 30       		.byte	0x30
+ 1363 0311 09       		.uleb128 0x9
+ 1364 0312 01       		.uleb128 0x1
+ 1365 0313 51       		.byte	0x51
+ 1366 0314 02       		.uleb128 0x2
+ 1367 0315 09       		.byte	0x9
+ 1368 0316 FF       		.byte	0xff
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 29
+
+
+ 1369 0317 09       		.uleb128 0x9
+ 1370 0318 01       		.uleb128 0x1
+ 1371 0319 50       		.byte	0x50
+ 1372 031a 02       		.uleb128 0x2
+ 1373 031b 09       		.byte	0x9
+ 1374 031c B4       		.byte	0xb4
+ 1375 031d 00       		.byte	0
+ 1376 031e 08       		.uleb128 0x8
+ 1377 031f 40010000 		.4byte	.LVL42
+ 1378 0323 1E070000 		.4byte	0x71e
+ 1379 0327 31030000 		.4byte	0x331
+ 1380 032b 09       		.uleb128 0x9
+ 1381 032c 01       		.uleb128 0x1
+ 1382 032d 50       		.byte	0x50
+ 1383 032e 01       		.uleb128 0x1
+ 1384 032f 31       		.byte	0x31
+ 1385 0330 00       		.byte	0
+ 1386 0331 08       		.uleb128 0x8
+ 1387 0332 7A010000 		.4byte	.LVL46
+ 1388 0336 2F070000 		.4byte	0x72f
+ 1389 033a 50030000 		.4byte	0x350
+ 1390 033e 09       		.uleb128 0x9
+ 1391 033f 01       		.uleb128 0x1
+ 1392 0340 52       		.byte	0x52
+ 1393 0341 01       		.uleb128 0x1
+ 1394 0342 30       		.byte	0x30
+ 1395 0343 09       		.uleb128 0x9
+ 1396 0344 01       		.uleb128 0x1
+ 1397 0345 51       		.byte	0x51
+ 1398 0346 02       		.uleb128 0x2
+ 1399 0347 09       		.byte	0x9
+ 1400 0348 FF       		.byte	0xff
+ 1401 0349 09       		.uleb128 0x9
+ 1402 034a 01       		.uleb128 0x1
+ 1403 034b 50       		.byte	0x50
+ 1404 034c 02       		.uleb128 0x2
+ 1405 034d 09       		.byte	0x9
+ 1406 034e FF       		.byte	0xff
+ 1407 034f 00       		.byte	0
+ 1408 0350 08       		.uleb128 0x8
+ 1409 0351 80010000 		.4byte	.LVL47
+ 1410 0355 1E070000 		.4byte	0x71e
+ 1411 0359 63030000 		.4byte	0x363
+ 1412 035d 09       		.uleb128 0x9
+ 1413 035e 01       		.uleb128 0x1
+ 1414 035f 50       		.byte	0x50
+ 1415 0360 01       		.uleb128 0x1
+ 1416 0361 30       		.byte	0x30
+ 1417 0362 00       		.byte	0
+ 1418 0363 08       		.uleb128 0x8
+ 1419 0364 BA010000 		.4byte	.LVL51
+ 1420 0368 2F070000 		.4byte	0x72f
+ 1421 036c 82030000 		.4byte	0x382
+ 1422 0370 09       		.uleb128 0x9
+ 1423 0371 01       		.uleb128 0x1
+ 1424 0372 52       		.byte	0x52
+ 1425 0373 01       		.uleb128 0x1
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 30
+
+
+ 1426 0374 30       		.byte	0x30
+ 1427 0375 09       		.uleb128 0x9
+ 1428 0376 01       		.uleb128 0x1
+ 1429 0377 51       		.byte	0x51
+ 1430 0378 02       		.uleb128 0x2
+ 1431 0379 08       		.byte	0x8
+ 1432 037a 6E       		.byte	0x6e
+ 1433 037b 09       		.uleb128 0x9
+ 1434 037c 01       		.uleb128 0x1
+ 1435 037d 50       		.byte	0x50
+ 1436 037e 02       		.uleb128 0x2
+ 1437 037f 09       		.byte	0x9
+ 1438 0380 FF       		.byte	0xff
+ 1439 0381 00       		.byte	0
+ 1440 0382 08       		.uleb128 0x8
+ 1441 0383 C0010000 		.4byte	.LVL52
+ 1442 0387 1E070000 		.4byte	0x71e
+ 1443 038b 95030000 		.4byte	0x395
+ 1444 038f 09       		.uleb128 0x9
+ 1445 0390 01       		.uleb128 0x1
+ 1446 0391 50       		.byte	0x50
+ 1447 0392 01       		.uleb128 0x1
+ 1448 0393 30       		.byte	0x30
+ 1449 0394 00       		.byte	0
+ 1450 0395 08       		.uleb128 0x8
+ 1451 0396 FA010000 		.4byte	.LVL56
+ 1452 039a 2F070000 		.4byte	0x72f
+ 1453 039e B4030000 		.4byte	0x3b4
+ 1454 03a2 09       		.uleb128 0x9
+ 1455 03a3 01       		.uleb128 0x1
+ 1456 03a4 52       		.byte	0x52
+ 1457 03a5 01       		.uleb128 0x1
+ 1458 03a6 30       		.byte	0x30
+ 1459 03a7 09       		.uleb128 0x9
+ 1460 03a8 01       		.uleb128 0x1
+ 1461 03a9 51       		.byte	0x51
+ 1462 03aa 02       		.uleb128 0x2
+ 1463 03ab 09       		.byte	0x9
+ 1464 03ac 8C       		.byte	0x8c
+ 1465 03ad 09       		.uleb128 0x9
+ 1466 03ae 01       		.uleb128 0x1
+ 1467 03af 50       		.byte	0x50
+ 1468 03b0 02       		.uleb128 0x2
+ 1469 03b1 09       		.byte	0x9
+ 1470 03b2 FF       		.byte	0xff
+ 1471 03b3 00       		.byte	0
+ 1472 03b4 08       		.uleb128 0x8
+ 1473 03b5 00020000 		.4byte	.LVL57
+ 1474 03b9 1E070000 		.4byte	0x71e
+ 1475 03bd C7030000 		.4byte	0x3c7
+ 1476 03c1 09       		.uleb128 0x9
+ 1477 03c2 01       		.uleb128 0x1
+ 1478 03c3 50       		.byte	0x50
+ 1479 03c4 01       		.uleb128 0x1
+ 1480 03c5 30       		.byte	0x30
+ 1481 03c6 00       		.byte	0
+ 1482 03c7 08       		.uleb128 0x8
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 31
+
+
+ 1483 03c8 3A020000 		.4byte	.LVL61
+ 1484 03cc 2F070000 		.4byte	0x72f
+ 1485 03d0 E6030000 		.4byte	0x3e6
+ 1486 03d4 09       		.uleb128 0x9
+ 1487 03d5 01       		.uleb128 0x1
+ 1488 03d6 52       		.byte	0x52
+ 1489 03d7 01       		.uleb128 0x1
+ 1490 03d8 30       		.byte	0x30
+ 1491 03d9 09       		.uleb128 0x9
+ 1492 03da 01       		.uleb128 0x1
+ 1493 03db 51       		.byte	0x51
+ 1494 03dc 02       		.uleb128 0x2
+ 1495 03dd 09       		.byte	0x9
+ 1496 03de B4       		.byte	0xb4
+ 1497 03df 09       		.uleb128 0x9
+ 1498 03e0 01       		.uleb128 0x1
+ 1499 03e1 50       		.byte	0x50
+ 1500 03e2 02       		.uleb128 0x2
+ 1501 03e3 09       		.byte	0x9
+ 1502 03e4 FF       		.byte	0xff
+ 1503 03e5 00       		.byte	0
+ 1504 03e6 08       		.uleb128 0x8
+ 1505 03e7 40020000 		.4byte	.LVL62
+ 1506 03eb 1E070000 		.4byte	0x71e
+ 1507 03ef F9030000 		.4byte	0x3f9
+ 1508 03f3 09       		.uleb128 0x9
+ 1509 03f4 01       		.uleb128 0x1
+ 1510 03f5 50       		.byte	0x50
+ 1511 03f6 01       		.uleb128 0x1
+ 1512 03f7 31       		.byte	0x31
+ 1513 03f8 00       		.byte	0
+ 1514 03f9 08       		.uleb128 0x8
+ 1515 03fa 7A020000 		.4byte	.LVL66
+ 1516 03fe 2F070000 		.4byte	0x72f
+ 1517 0402 18040000 		.4byte	0x418
+ 1518 0406 09       		.uleb128 0x9
+ 1519 0407 01       		.uleb128 0x1
+ 1520 0408 52       		.byte	0x52
+ 1521 0409 01       		.uleb128 0x1
+ 1522 040a 30       		.byte	0x30
+ 1523 040b 09       		.uleb128 0x9
+ 1524 040c 01       		.uleb128 0x1
+ 1525 040d 51       		.byte	0x51
+ 1526 040e 02       		.uleb128 0x2
+ 1527 040f 09       		.byte	0x9
+ 1528 0410 FF       		.byte	0xff
+ 1529 0411 09       		.uleb128 0x9
+ 1530 0412 01       		.uleb128 0x1
+ 1531 0413 50       		.byte	0x50
+ 1532 0414 02       		.uleb128 0x2
+ 1533 0415 09       		.byte	0x9
+ 1534 0416 FF       		.byte	0xff
+ 1535 0417 00       		.byte	0
+ 1536 0418 08       		.uleb128 0x8
+ 1537 0419 80020000 		.4byte	.LVL67
+ 1538 041d 1E070000 		.4byte	0x71e
+ 1539 0421 2B040000 		.4byte	0x42b
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 32
+
+
+ 1540 0425 09       		.uleb128 0x9
+ 1541 0426 01       		.uleb128 0x1
+ 1542 0427 50       		.byte	0x50
+ 1543 0428 01       		.uleb128 0x1
+ 1544 0429 30       		.byte	0x30
+ 1545 042a 00       		.byte	0
+ 1546 042b 08       		.uleb128 0x8
+ 1547 042c 8A020000 		.4byte	.LVL68
+ 1548 0430 4A070000 		.4byte	0x74a
+ 1549 0434 44040000 		.4byte	0x444
+ 1550 0438 09       		.uleb128 0x9
+ 1551 0439 01       		.uleb128 0x1
+ 1552 043a 51       		.byte	0x51
+ 1553 043b 01       		.uleb128 0x1
+ 1554 043c 30       		.byte	0x30
+ 1555 043d 09       		.uleb128 0x9
+ 1556 043e 01       		.uleb128 0x1
+ 1557 043f 50       		.byte	0x50
+ 1558 0440 02       		.uleb128 0x2
+ 1559 0441 09       		.byte	0x9
+ 1560 0442 FF       		.byte	0xff
+ 1561 0443 00       		.byte	0
+ 1562 0444 08       		.uleb128 0x8
+ 1563 0445 90020000 		.4byte	.LVL69
+ 1564 0449 1E070000 		.4byte	0x71e
+ 1565 044d 57040000 		.4byte	0x457
+ 1566 0451 09       		.uleb128 0x9
+ 1567 0452 01       		.uleb128 0x1
+ 1568 0453 50       		.byte	0x50
+ 1569 0454 01       		.uleb128 0x1
+ 1570 0455 30       		.byte	0x30
+ 1571 0456 00       		.byte	0
+ 1572 0457 0E       		.uleb128 0xe
+ 1573 0458 D8020000 		.4byte	.LVL70
+ 1574 045c 60070000 		.4byte	0x760
+ 1575 0460 0A       		.uleb128 0xa
+ 1576 0461 E0020000 		.4byte	.LVL71
+ 1577 0465 6D070000 		.4byte	0x76d
+ 1578 0469 09       		.uleb128 0x9
+ 1579 046a 01       		.uleb128 0x1
+ 1580 046b 50       		.byte	0x50
+ 1581 046c 03       		.uleb128 0x3
+ 1582 046d 0A       		.byte	0xa
+ 1583 046e B80B     		.2byte	0xbb8
+ 1584 0470 00       		.byte	0
+ 1585 0471 00       		.byte	0
+ 1586 0472 0F       		.uleb128 0xf
+ 1587 0473 04       		.byte	0x4
+ 1588 0474 93000000 		.4byte	0x93
+ 1589 0478 06       		.uleb128 0x6
+ 1590 0479 E9010000 		.4byte	.LASF26
+ 1591 047d 01       		.byte	0x1
+ 1592 047e 97       		.byte	0x97
+ 1593 047f 00000000 		.4byte	.LFB65
+ 1594 0483 D8000000 		.4byte	.LFE65-.LFB65
+ 1595 0487 01       		.uleb128 0x1
+ 1596 0488 9C       		.byte	0x9c
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 33
+
+
+ 1597 0489 74050000 		.4byte	0x574
+ 1598 048d 0C       		.uleb128 0xc
+ 1599 048e 723100   		.ascii	"r1\000"
+ 1600 0491 01       		.byte	0x1
+ 1601 0492 97       		.byte	0x97
+ 1602 0493 9E000000 		.4byte	0x9e
+ 1603 0497 D0010000 		.4byte	.LLST11
+ 1604 049b 0C       		.uleb128 0xc
+ 1605 049c 723300   		.ascii	"r3\000"
+ 1606 049f 01       		.byte	0x1
+ 1607 04a0 97       		.byte	0x97
+ 1608 04a1 9E000000 		.4byte	0x9e
+ 1609 04a5 55020000 		.4byte	.LLST12
+ 1610 04a9 0C       		.uleb128 0xc
+ 1611 04aa 6C3100   		.ascii	"l1\000"
+ 1612 04ad 01       		.byte	0x1
+ 1613 04ae 97       		.byte	0x97
+ 1614 04af 9E000000 		.4byte	0x9e
+ 1615 04b3 DA020000 		.4byte	.LLST13
+ 1616 04b7 0C       		.uleb128 0xc
+ 1617 04b8 6C3300   		.ascii	"l3\000"
+ 1618 04bb 01       		.byte	0x1
+ 1619 04bc 97       		.byte	0x97
+ 1620 04bd 9E000000 		.4byte	0x9e
+ 1621 04c1 5F030000 		.4byte	.LLST14
+ 1622 04c5 10       		.uleb128 0x10
+ 1623 04c6 53000000 		.4byte	.LASF24
+ 1624 04ca 01       		.byte	0x1
+ 1625 04cb 97       		.byte	0x97
+ 1626 04cc 72040000 		.4byte	0x472
+ 1627 04d0 02       		.uleb128 0x2
+ 1628 04d1 91       		.byte	0x91
+ 1629 04d2 00       		.sleb128 0
+ 1630 04d3 10       		.uleb128 0x10
+ 1631 04d4 43020000 		.4byte	.LASF25
+ 1632 04d8 01       		.byte	0x1
+ 1633 04d9 97       		.byte	0x97
+ 1634 04da 72040000 		.4byte	0x472
+ 1635 04de 02       		.uleb128 0x2
+ 1636 04df 91       		.byte	0x91
+ 1637 04e0 04       		.sleb128 4
+ 1638 04e1 08       		.uleb128 0x8
+ 1639 04e2 2C000000 		.4byte	.LVL76
+ 1640 04e6 E1000000 		.4byte	0xe1
+ 1641 04ea F4040000 		.4byte	0x4f4
+ 1642 04ee 09       		.uleb128 0x9
+ 1643 04ef 01       		.uleb128 0x1
+ 1644 04f0 50       		.byte	0x50
+ 1645 04f1 01       		.uleb128 0x1
+ 1646 04f2 32       		.byte	0x32
+ 1647 04f3 00       		.byte	0
+ 1648 04f4 08       		.uleb128 0x8
+ 1649 04f5 3C000000 		.4byte	.LVL79
+ 1650 04f9 E1000000 		.4byte	0xe1
+ 1651 04fd 07050000 		.4byte	0x507
+ 1652 0501 09       		.uleb128 0x9
+ 1653 0502 01       		.uleb128 0x1
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 34
+
+
+ 1654 0503 50       		.byte	0x50
+ 1655 0504 01       		.uleb128 0x1
+ 1656 0505 33       		.byte	0x33
+ 1657 0506 00       		.byte	0
+ 1658 0507 08       		.uleb128 0x8
+ 1659 0508 58000000 		.4byte	.LVL82
+ 1660 050c E1000000 		.4byte	0xe1
+ 1661 0510 1A050000 		.4byte	0x51a
+ 1662 0514 09       		.uleb128 0x9
+ 1663 0515 01       		.uleb128 0x1
+ 1664 0516 50       		.byte	0x50
+ 1665 0517 01       		.uleb128 0x1
+ 1666 0518 30       		.byte	0x30
+ 1667 0519 00       		.byte	0
+ 1668 051a 08       		.uleb128 0x8
+ 1669 051b 74000000 		.4byte	.LVL85
+ 1670 051f E1000000 		.4byte	0xe1
+ 1671 0523 2D050000 		.4byte	0x52d
+ 1672 0527 09       		.uleb128 0x9
+ 1673 0528 01       		.uleb128 0x1
+ 1674 0529 50       		.byte	0x50
+ 1675 052a 01       		.uleb128 0x1
+ 1676 052b 31       		.byte	0x31
+ 1677 052c 00       		.byte	0
+ 1678 052d 08       		.uleb128 0x8
+ 1679 052e 7E000000 		.4byte	.LVL89
+ 1680 0532 4A070000 		.4byte	0x74a
+ 1681 0536 46050000 		.4byte	0x546
+ 1682 053a 09       		.uleb128 0x9
+ 1683 053b 01       		.uleb128 0x1
+ 1684 053c 51       		.byte	0x51
+ 1685 053d 01       		.uleb128 0x1
+ 1686 053e 30       		.byte	0x30
+ 1687 053f 09       		.uleb128 0x9
+ 1688 0540 01       		.uleb128 0x1
+ 1689 0541 50       		.byte	0x50
+ 1690 0542 02       		.uleb128 0x2
+ 1691 0543 09       		.byte	0x9
+ 1692 0544 FF       		.byte	0xff
+ 1693 0545 00       		.byte	0
+ 1694 0546 08       		.uleb128 0x8
+ 1695 0547 9E000000 		.4byte	.LVL90
+ 1696 054b 1E070000 		.4byte	0x71e
+ 1697 054f 59050000 		.4byte	0x559
+ 1698 0553 09       		.uleb128 0x9
+ 1699 0554 01       		.uleb128 0x1
+ 1700 0555 50       		.byte	0x50
+ 1701 0556 01       		.uleb128 0x1
+ 1702 0557 31       		.byte	0x31
+ 1703 0558 00       		.byte	0
+ 1704 0559 0E       		.uleb128 0xe
+ 1705 055a CC000000 		.4byte	.LVL91
+ 1706 055e 60070000 		.4byte	0x760
+ 1707 0562 0A       		.uleb128 0xa
+ 1708 0563 D4000000 		.4byte	.LVL92
+ 1709 0567 6D070000 		.4byte	0x76d
+ 1710 056b 09       		.uleb128 0x9
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 35
+
+
+ 1711 056c 01       		.uleb128 0x1
+ 1712 056d 50       		.byte	0x50
+ 1713 056e 03       		.uleb128 0x3
+ 1714 056f 0A       		.byte	0xa
+ 1715 0570 B80B     		.2byte	0xbb8
+ 1716 0572 00       		.byte	0
+ 1717 0573 00       		.byte	0
+ 1718 0574 06       		.uleb128 0x6
+ 1719 0575 9C000000 		.4byte	.LASF27
+ 1720 0579 01       		.byte	0x1
+ 1721 057a C6       		.byte	0xc6
+ 1722 057b 00000000 		.4byte	.LFB66
+ 1723 057f A0000000 		.4byte	.LFE66-.LFB66
+ 1724 0583 01       		.uleb128 0x1
+ 1725 0584 9C       		.byte	0x9c
+ 1726 0585 60060000 		.4byte	0x660
+ 1727 0589 0C       		.uleb128 0xc
+ 1728 058a 723100   		.ascii	"r1\000"
+ 1729 058d 01       		.byte	0x1
+ 1730 058e C6       		.byte	0xc6
+ 1731 058f 9E000000 		.4byte	0x9e
+ 1732 0593 80030000 		.4byte	.LLST15
+ 1733 0597 0C       		.uleb128 0xc
+ 1734 0598 723300   		.ascii	"r3\000"
+ 1735 059b 01       		.byte	0x1
+ 1736 059c C6       		.byte	0xc6
+ 1737 059d 9E000000 		.4byte	0x9e
+ 1738 05a1 D3030000 		.4byte	.LLST16
+ 1739 05a5 0C       		.uleb128 0xc
+ 1740 05a6 6C3100   		.ascii	"l1\000"
+ 1741 05a9 01       		.byte	0x1
+ 1742 05aa C6       		.byte	0xc6
+ 1743 05ab 9E000000 		.4byte	0x9e
+ 1744 05af 26040000 		.4byte	.LLST17
+ 1745 05b3 0C       		.uleb128 0xc
+ 1746 05b4 6C3300   		.ascii	"l3\000"
+ 1747 05b7 01       		.byte	0x1
+ 1748 05b8 C6       		.byte	0xc6
+ 1749 05b9 9E000000 		.4byte	0x9e
+ 1750 05bd 79040000 		.4byte	.LLST18
+ 1751 05c1 10       		.uleb128 0x10
+ 1752 05c2 53000000 		.4byte	.LASF24
+ 1753 05c6 01       		.byte	0x1
+ 1754 05c7 C6       		.byte	0xc6
+ 1755 05c8 72040000 		.4byte	0x472
+ 1756 05cc 02       		.uleb128 0x2
+ 1757 05cd 91       		.byte	0x91
+ 1758 05ce 00       		.sleb128 0
+ 1759 05cf 10       		.uleb128 0x10
+ 1760 05d0 43020000 		.4byte	.LASF25
+ 1761 05d4 01       		.byte	0x1
+ 1762 05d5 C6       		.byte	0xc6
+ 1763 05d6 72040000 		.4byte	0x472
+ 1764 05da 02       		.uleb128 0x2
+ 1765 05db 91       		.byte	0x91
+ 1766 05dc 04       		.sleb128 4
+ 1767 05dd 08       		.uleb128 0x8
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 36
+
+
+ 1768 05de 2E000000 		.4byte	.LVL98
+ 1769 05e2 2F070000 		.4byte	0x72f
+ 1770 05e6 FB050000 		.4byte	0x5fb
+ 1771 05ea 09       		.uleb128 0x9
+ 1772 05eb 01       		.uleb128 0x1
+ 1773 05ec 52       		.byte	0x52
+ 1774 05ed 01       		.uleb128 0x1
+ 1775 05ee 30       		.byte	0x30
+ 1776 05ef 09       		.uleb128 0x9
+ 1777 05f0 01       		.uleb128 0x1
+ 1778 05f1 51       		.byte	0x51
+ 1779 05f2 02       		.uleb128 0x2
+ 1780 05f3 09       		.byte	0x9
+ 1781 05f4 FF       		.byte	0xff
+ 1782 05f5 09       		.uleb128 0x9
+ 1783 05f6 01       		.uleb128 0x1
+ 1784 05f7 50       		.byte	0x50
+ 1785 05f8 01       		.uleb128 0x1
+ 1786 05f9 30       		.byte	0x30
+ 1787 05fa 00       		.byte	0
+ 1788 05fb 08       		.uleb128 0x8
+ 1789 05fc 42000000 		.4byte	.LVL103
+ 1790 0600 2F070000 		.4byte	0x72f
+ 1791 0604 19060000 		.4byte	0x619
+ 1792 0608 09       		.uleb128 0x9
+ 1793 0609 01       		.uleb128 0x1
+ 1794 060a 52       		.byte	0x52
+ 1795 060b 01       		.uleb128 0x1
+ 1796 060c 30       		.byte	0x30
+ 1797 060d 09       		.uleb128 0x9
+ 1798 060e 01       		.uleb128 0x1
+ 1799 060f 51       		.byte	0x51
+ 1800 0610 01       		.uleb128 0x1
+ 1801 0611 30       		.byte	0x30
+ 1802 0612 09       		.uleb128 0x9
+ 1803 0613 01       		.uleb128 0x1
+ 1804 0614 50       		.byte	0x50
+ 1805 0615 02       		.uleb128 0x2
+ 1806 0616 09       		.byte	0x9
+ 1807 0617 FF       		.byte	0xff
+ 1808 0618 00       		.byte	0
+ 1809 0619 08       		.uleb128 0x8
+ 1810 061a 4C000000 		.4byte	.LVL107
+ 1811 061e 4A070000 		.4byte	0x74a
+ 1812 0622 32060000 		.4byte	0x632
+ 1813 0626 09       		.uleb128 0x9
+ 1814 0627 01       		.uleb128 0x1
+ 1815 0628 51       		.byte	0x51
+ 1816 0629 01       		.uleb128 0x1
+ 1817 062a 30       		.byte	0x30
+ 1818 062b 09       		.uleb128 0x9
+ 1819 062c 01       		.uleb128 0x1
+ 1820 062d 50       		.byte	0x50
+ 1821 062e 02       		.uleb128 0x2
+ 1822 062f 09       		.byte	0x9
+ 1823 0630 FF       		.byte	0xff
+ 1824 0631 00       		.byte	0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 37
+
+
+ 1825 0632 08       		.uleb128 0x8
+ 1826 0633 6A000000 		.4byte	.LVL108
+ 1827 0637 1E070000 		.4byte	0x71e
+ 1828 063b 45060000 		.4byte	0x645
+ 1829 063f 09       		.uleb128 0x9
+ 1830 0640 01       		.uleb128 0x1
+ 1831 0641 50       		.byte	0x50
+ 1832 0642 01       		.uleb128 0x1
+ 1833 0643 31       		.byte	0x31
+ 1834 0644 00       		.byte	0
+ 1835 0645 0E       		.uleb128 0xe
+ 1836 0646 94000000 		.4byte	.LVL109
+ 1837 064a 60070000 		.4byte	0x760
+ 1838 064e 0A       		.uleb128 0xa
+ 1839 064f 9C000000 		.4byte	.LVL110
+ 1840 0653 6D070000 		.4byte	0x76d
+ 1841 0657 09       		.uleb128 0x9
+ 1842 0658 01       		.uleb128 0x1
+ 1843 0659 50       		.byte	0x50
+ 1844 065a 03       		.uleb128 0x3
+ 1845 065b 0A       		.byte	0xa
+ 1846 065c B80B     		.2byte	0xbb8
+ 1847 065e 00       		.byte	0
+ 1848 065f 00       		.byte	0
+ 1849 0660 11       		.uleb128 0x11
+ 1850 0661 E0000000 		.4byte	.LASF28
+ 1851 0665 08       		.byte	0x8
+ 1852 0666 9606     		.2byte	0x696
+ 1853 0668 6C060000 		.4byte	0x66c
+ 1854 066c 12       		.uleb128 0x12
+ 1855 066d A9000000 		.4byte	0xa9
+ 1856 0671 13       		.uleb128 0x13
+ 1857 0672 72335700 		.ascii	"r3W\000"
+ 1858 0676 01       		.byte	0x1
+ 1859 0677 33       		.byte	0x33
+ 1860 0678 25000000 		.4byte	0x25
+ 1861 067c 05       		.uleb128 0x5
+ 1862 067d 03       		.byte	0x3
+ 1863 067e 00000000 		.4byte	r3W
+ 1864 0682 13       		.uleb128 0x13
+ 1865 0683 72315700 		.ascii	"r1W\000"
+ 1866 0687 01       		.byte	0x1
+ 1867 0688 34       		.byte	0x34
+ 1868 0689 25000000 		.4byte	0x25
+ 1869 068d 05       		.uleb128 0x5
+ 1870 068e 03       		.byte	0x3
+ 1871 068f 00000000 		.4byte	r1W
+ 1872 0693 13       		.uleb128 0x13
+ 1873 0694 6C315700 		.ascii	"l1W\000"
+ 1874 0698 01       		.byte	0x1
+ 1875 0699 35       		.byte	0x35
+ 1876 069a 25000000 		.4byte	0x25
+ 1877 069e 05       		.uleb128 0x5
+ 1878 069f 03       		.byte	0x3
+ 1879 06a0 00000000 		.4byte	l1W
+ 1880 06a4 13       		.uleb128 0x13
+ 1881 06a5 6C335700 		.ascii	"l3W\000"
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 38
+
+
+ 1882 06a9 01       		.byte	0x1
+ 1883 06aa 36       		.byte	0x36
+ 1884 06ab 25000000 		.4byte	0x25
+ 1885 06af 05       		.uleb128 0x5
+ 1886 06b0 03       		.byte	0x3
+ 1887 06b1 00000000 		.4byte	l3W
+ 1888 06b5 13       		.uleb128 0x13
+ 1889 06b6 72334200 		.ascii	"r3B\000"
+ 1890 06ba 01       		.byte	0x1
+ 1891 06bb 38       		.byte	0x38
+ 1892 06bc 25000000 		.4byte	0x25
+ 1893 06c0 05       		.uleb128 0x5
+ 1894 06c1 03       		.byte	0x3
+ 1895 06c2 00000000 		.4byte	r3B
+ 1896 06c6 13       		.uleb128 0x13
+ 1897 06c7 72314200 		.ascii	"r1B\000"
+ 1898 06cb 01       		.byte	0x1
+ 1899 06cc 39       		.byte	0x39
+ 1900 06cd 25000000 		.4byte	0x25
+ 1901 06d1 05       		.uleb128 0x5
+ 1902 06d2 03       		.byte	0x3
+ 1903 06d3 00000000 		.4byte	r1B
+ 1904 06d7 13       		.uleb128 0x13
+ 1905 06d8 6C314200 		.ascii	"l1B\000"
+ 1906 06dc 01       		.byte	0x1
+ 1907 06dd 3A       		.byte	0x3a
+ 1908 06de 25000000 		.4byte	0x25
+ 1909 06e2 05       		.uleb128 0x5
+ 1910 06e3 03       		.byte	0x3
+ 1911 06e4 00000000 		.4byte	l1B
+ 1912 06e8 13       		.uleb128 0x13
+ 1913 06e9 6C334200 		.ascii	"l3B\000"
+ 1914 06ed 01       		.byte	0x1
+ 1915 06ee 3B       		.byte	0x3b
+ 1916 06ef 25000000 		.4byte	0x25
+ 1917 06f3 05       		.uleb128 0x5
+ 1918 06f4 03       		.byte	0x3
+ 1919 06f5 00000000 		.4byte	l3B
+ 1920 06f9 14       		.uleb128 0x14
+ 1921 06fa CA010000 		.4byte	.LASF29
+ 1922 06fe 05       		.byte	0x5
+ 1923 06ff 16       		.byte	0x16
+ 1924 0700 1E070000 		.4byte	0x71e
+ 1925 0704 15       		.uleb128 0x15
+ 1926 0705 B4000000 		.4byte	0xb4
+ 1927 0709 15       		.uleb128 0x15
+ 1928 070a B4000000 		.4byte	0xb4
+ 1929 070e 15       		.uleb128 0x15
+ 1930 070f B4000000 		.4byte	0xb4
+ 1931 0713 15       		.uleb128 0x15
+ 1932 0714 B4000000 		.4byte	0xb4
+ 1933 0718 15       		.uleb128 0x15
+ 1934 0719 C0000000 		.4byte	0xc0
+ 1935 071d 00       		.byte	0
+ 1936 071e 14       		.uleb128 0x14
+ 1937 071f 0F020000 		.4byte	.LASF30
+ 1938 0723 06       		.byte	0x6
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 39
+
+
+ 1939 0724 26       		.byte	0x26
+ 1940 0725 2F070000 		.4byte	0x72f
+ 1941 0729 15       		.uleb128 0x15
+ 1942 072a B4000000 		.4byte	0xb4
+ 1943 072e 00       		.byte	0
+ 1944 072f 14       		.uleb128 0x14
+ 1945 0730 56020000 		.4byte	.LASF31
+ 1946 0734 05       		.byte	0x5
+ 1947 0735 12       		.byte	0x12
+ 1948 0736 4A070000 		.4byte	0x74a
+ 1949 073a 15       		.uleb128 0x15
+ 1950 073b B4000000 		.4byte	0xb4
+ 1951 073f 15       		.uleb128 0x15
+ 1952 0740 B4000000 		.4byte	0xb4
+ 1953 0744 15       		.uleb128 0x15
+ 1954 0745 C0000000 		.4byte	0xc0
+ 1955 0749 00       		.byte	0
+ 1956 074a 14       		.uleb128 0x14
+ 1957 074b ED000000 		.4byte	.LASF32
+ 1958 074f 05       		.byte	0x5
+ 1959 0750 0F       		.byte	0xf
+ 1960 0751 60070000 		.4byte	0x760
+ 1961 0755 15       		.uleb128 0x15
+ 1962 0756 B4000000 		.4byte	0xb4
+ 1963 075a 15       		.uleb128 0x15
+ 1964 075b C0000000 		.4byte	0xc0
+ 1965 075f 00       		.byte	0
+ 1966 0760 16       		.uleb128 0x16
+ 1967 0761 67000000 		.4byte	.LASF33
+ 1968 0765 05       		.byte	0x5
+ 1969 0766 0C       		.byte	0xc
+ 1970 0767 6D070000 		.4byte	0x76d
+ 1971 076b 17       		.uleb128 0x17
+ 1972 076c 00       		.byte	0
+ 1973 076d 18       		.uleb128 0x18
+ 1974 076e 61020000 		.4byte	.LASF34
+ 1975 0772 07       		.byte	0x7
+ 1976 0773 76       		.byte	0x76
+ 1977 0774 15       		.uleb128 0x15
+ 1978 0775 C0000000 		.4byte	0xc0
+ 1979 0779 00       		.byte	0
+ 1980 077a 00       		.byte	0
+ 1981              		.section	.debug_abbrev,"",%progbits
+ 1982              	.Ldebug_abbrev0:
+ 1983 0000 01       		.uleb128 0x1
+ 1984 0001 11       		.uleb128 0x11
+ 1985 0002 01       		.byte	0x1
+ 1986 0003 25       		.uleb128 0x25
+ 1987 0004 0E       		.uleb128 0xe
+ 1988 0005 13       		.uleb128 0x13
+ 1989 0006 0B       		.uleb128 0xb
+ 1990 0007 03       		.uleb128 0x3
+ 1991 0008 0E       		.uleb128 0xe
+ 1992 0009 1B       		.uleb128 0x1b
+ 1993 000a 0E       		.uleb128 0xe
+ 1994 000b 55       		.uleb128 0x55
+ 1995 000c 17       		.uleb128 0x17
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 40
+
+
+ 1996 000d 11       		.uleb128 0x11
+ 1997 000e 01       		.uleb128 0x1
+ 1998 000f 10       		.uleb128 0x10
+ 1999 0010 17       		.uleb128 0x17
+ 2000 0011 00       		.byte	0
+ 2001 0012 00       		.byte	0
+ 2002 0013 02       		.uleb128 0x2
+ 2003 0014 24       		.uleb128 0x24
+ 2004 0015 00       		.byte	0
+ 2005 0016 0B       		.uleb128 0xb
+ 2006 0017 0B       		.uleb128 0xb
+ 2007 0018 3E       		.uleb128 0x3e
+ 2008 0019 0B       		.uleb128 0xb
+ 2009 001a 03       		.uleb128 0x3
+ 2010 001b 08       		.uleb128 0x8
+ 2011 001c 00       		.byte	0
+ 2012 001d 00       		.byte	0
+ 2013 001e 03       		.uleb128 0x3
+ 2014 001f 24       		.uleb128 0x24
+ 2015 0020 00       		.byte	0
+ 2016 0021 0B       		.uleb128 0xb
+ 2017 0022 0B       		.uleb128 0xb
+ 2018 0023 3E       		.uleb128 0x3e
+ 2019 0024 0B       		.uleb128 0xb
+ 2020 0025 03       		.uleb128 0x3
+ 2021 0026 0E       		.uleb128 0xe
+ 2022 0027 00       		.byte	0
+ 2023 0028 00       		.byte	0
+ 2024 0029 04       		.uleb128 0x4
+ 2025 002a 16       		.uleb128 0x16
+ 2026 002b 00       		.byte	0
+ 2027 002c 03       		.uleb128 0x3
+ 2028 002d 0E       		.uleb128 0xe
+ 2029 002e 3A       		.uleb128 0x3a
+ 2030 002f 0B       		.uleb128 0xb
+ 2031 0030 3B       		.uleb128 0x3b
+ 2032 0031 0B       		.uleb128 0xb
+ 2033 0032 49       		.uleb128 0x49
+ 2034 0033 13       		.uleb128 0x13
+ 2035 0034 00       		.byte	0
+ 2036 0035 00       		.byte	0
+ 2037 0036 05       		.uleb128 0x5
+ 2038 0037 16       		.uleb128 0x16
+ 2039 0038 00       		.byte	0
+ 2040 0039 03       		.uleb128 0x3
+ 2041 003a 0E       		.uleb128 0xe
+ 2042 003b 3A       		.uleb128 0x3a
+ 2043 003c 0B       		.uleb128 0xb
+ 2044 003d 3B       		.uleb128 0x3b
+ 2045 003e 05       		.uleb128 0x5
+ 2046 003f 49       		.uleb128 0x49
+ 2047 0040 13       		.uleb128 0x13
+ 2048 0041 00       		.byte	0
+ 2049 0042 00       		.byte	0
+ 2050 0043 06       		.uleb128 0x6
+ 2051 0044 2E       		.uleb128 0x2e
+ 2052 0045 01       		.byte	0x1
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 41
+
+
+ 2053 0046 3F       		.uleb128 0x3f
+ 2054 0047 19       		.uleb128 0x19
+ 2055 0048 03       		.uleb128 0x3
+ 2056 0049 0E       		.uleb128 0xe
+ 2057 004a 3A       		.uleb128 0x3a
+ 2058 004b 0B       		.uleb128 0xb
+ 2059 004c 3B       		.uleb128 0x3b
+ 2060 004d 0B       		.uleb128 0xb
+ 2061 004e 27       		.uleb128 0x27
+ 2062 004f 19       		.uleb128 0x19
+ 2063 0050 11       		.uleb128 0x11
+ 2064 0051 01       		.uleb128 0x1
+ 2065 0052 12       		.uleb128 0x12
+ 2066 0053 06       		.uleb128 0x6
+ 2067 0054 40       		.uleb128 0x40
+ 2068 0055 18       		.uleb128 0x18
+ 2069 0056 9742     		.uleb128 0x2117
+ 2070 0058 19       		.uleb128 0x19
+ 2071 0059 01       		.uleb128 0x1
+ 2072 005a 13       		.uleb128 0x13
+ 2073 005b 00       		.byte	0
+ 2074 005c 00       		.byte	0
+ 2075 005d 07       		.uleb128 0x7
+ 2076 005e 05       		.uleb128 0x5
+ 2077 005f 00       		.byte	0
+ 2078 0060 03       		.uleb128 0x3
+ 2079 0061 0E       		.uleb128 0xe
+ 2080 0062 3A       		.uleb128 0x3a
+ 2081 0063 0B       		.uleb128 0xb
+ 2082 0064 3B       		.uleb128 0x3b
+ 2083 0065 0B       		.uleb128 0xb
+ 2084 0066 49       		.uleb128 0x49
+ 2085 0067 13       		.uleb128 0x13
+ 2086 0068 02       		.uleb128 0x2
+ 2087 0069 17       		.uleb128 0x17
+ 2088 006a 00       		.byte	0
+ 2089 006b 00       		.byte	0
+ 2090 006c 08       		.uleb128 0x8
+ 2091 006d 898201   		.uleb128 0x4109
+ 2092 0070 01       		.byte	0x1
+ 2093 0071 11       		.uleb128 0x11
+ 2094 0072 01       		.uleb128 0x1
+ 2095 0073 31       		.uleb128 0x31
+ 2096 0074 13       		.uleb128 0x13
+ 2097 0075 01       		.uleb128 0x1
+ 2098 0076 13       		.uleb128 0x13
+ 2099 0077 00       		.byte	0
+ 2100 0078 00       		.byte	0
+ 2101 0079 09       		.uleb128 0x9
+ 2102 007a 8A8201   		.uleb128 0x410a
+ 2103 007d 00       		.byte	0
+ 2104 007e 02       		.uleb128 0x2
+ 2105 007f 18       		.uleb128 0x18
+ 2106 0080 9142     		.uleb128 0x2111
+ 2107 0082 18       		.uleb128 0x18
+ 2108 0083 00       		.byte	0
+ 2109 0084 00       		.byte	0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 42
+
+
+ 2110 0085 0A       		.uleb128 0xa
+ 2111 0086 898201   		.uleb128 0x4109
+ 2112 0089 01       		.byte	0x1
+ 2113 008a 11       		.uleb128 0x11
+ 2114 008b 01       		.uleb128 0x1
+ 2115 008c 31       		.uleb128 0x31
+ 2116 008d 13       		.uleb128 0x13
+ 2117 008e 00       		.byte	0
+ 2118 008f 00       		.byte	0
+ 2119 0090 0B       		.uleb128 0xb
+ 2120 0091 2E       		.uleb128 0x2e
+ 2121 0092 01       		.byte	0x1
+ 2122 0093 3F       		.uleb128 0x3f
+ 2123 0094 19       		.uleb128 0x19
+ 2124 0095 03       		.uleb128 0x3
+ 2125 0096 0E       		.uleb128 0xe
+ 2126 0097 3A       		.uleb128 0x3a
+ 2127 0098 0B       		.uleb128 0xb
+ 2128 0099 3B       		.uleb128 0x3b
+ 2129 009a 0B       		.uleb128 0xb
+ 2130 009b 27       		.uleb128 0x27
+ 2131 009c 19       		.uleb128 0x19
+ 2132 009d 11       		.uleb128 0x11
+ 2133 009e 01       		.uleb128 0x1
+ 2134 009f 12       		.uleb128 0x12
+ 2135 00a0 06       		.uleb128 0x6
+ 2136 00a1 40       		.uleb128 0x40
+ 2137 00a2 18       		.uleb128 0x18
+ 2138 00a3 9642     		.uleb128 0x2116
+ 2139 00a5 19       		.uleb128 0x19
+ 2140 00a6 01       		.uleb128 0x1
+ 2141 00a7 13       		.uleb128 0x13
+ 2142 00a8 00       		.byte	0
+ 2143 00a9 00       		.byte	0
+ 2144 00aa 0C       		.uleb128 0xc
+ 2145 00ab 05       		.uleb128 0x5
+ 2146 00ac 00       		.byte	0
+ 2147 00ad 03       		.uleb128 0x3
+ 2148 00ae 08       		.uleb128 0x8
+ 2149 00af 3A       		.uleb128 0x3a
+ 2150 00b0 0B       		.uleb128 0xb
+ 2151 00b1 3B       		.uleb128 0x3b
+ 2152 00b2 0B       		.uleb128 0xb
+ 2153 00b3 49       		.uleb128 0x49
+ 2154 00b4 13       		.uleb128 0x13
+ 2155 00b5 02       		.uleb128 0x2
+ 2156 00b6 17       		.uleb128 0x17
+ 2157 00b7 00       		.byte	0
+ 2158 00b8 00       		.byte	0
+ 2159 00b9 0D       		.uleb128 0xd
+ 2160 00ba 34       		.uleb128 0x34
+ 2161 00bb 00       		.byte	0
+ 2162 00bc 03       		.uleb128 0x3
+ 2163 00bd 08       		.uleb128 0x8
+ 2164 00be 3A       		.uleb128 0x3a
+ 2165 00bf 0B       		.uleb128 0xb
+ 2166 00c0 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 43
+
+
+ 2167 00c1 0B       		.uleb128 0xb
+ 2168 00c2 49       		.uleb128 0x49
+ 2169 00c3 13       		.uleb128 0x13
+ 2170 00c4 02       		.uleb128 0x2
+ 2171 00c5 17       		.uleb128 0x17
+ 2172 00c6 00       		.byte	0
+ 2173 00c7 00       		.byte	0
+ 2174 00c8 0E       		.uleb128 0xe
+ 2175 00c9 898201   		.uleb128 0x4109
+ 2176 00cc 00       		.byte	0
+ 2177 00cd 11       		.uleb128 0x11
+ 2178 00ce 01       		.uleb128 0x1
+ 2179 00cf 31       		.uleb128 0x31
+ 2180 00d0 13       		.uleb128 0x13
+ 2181 00d1 00       		.byte	0
+ 2182 00d2 00       		.byte	0
+ 2183 00d3 0F       		.uleb128 0xf
+ 2184 00d4 0F       		.uleb128 0xf
+ 2185 00d5 00       		.byte	0
+ 2186 00d6 0B       		.uleb128 0xb
+ 2187 00d7 0B       		.uleb128 0xb
+ 2188 00d8 49       		.uleb128 0x49
+ 2189 00d9 13       		.uleb128 0x13
+ 2190 00da 00       		.byte	0
+ 2191 00db 00       		.byte	0
+ 2192 00dc 10       		.uleb128 0x10
+ 2193 00dd 05       		.uleb128 0x5
+ 2194 00de 00       		.byte	0
+ 2195 00df 03       		.uleb128 0x3
+ 2196 00e0 0E       		.uleb128 0xe
+ 2197 00e1 3A       		.uleb128 0x3a
+ 2198 00e2 0B       		.uleb128 0xb
+ 2199 00e3 3B       		.uleb128 0x3b
+ 2200 00e4 0B       		.uleb128 0xb
+ 2201 00e5 49       		.uleb128 0x49
+ 2202 00e6 13       		.uleb128 0x13
+ 2203 00e7 02       		.uleb128 0x2
+ 2204 00e8 18       		.uleb128 0x18
+ 2205 00e9 00       		.byte	0
+ 2206 00ea 00       		.byte	0
+ 2207 00eb 11       		.uleb128 0x11
+ 2208 00ec 34       		.uleb128 0x34
+ 2209 00ed 00       		.byte	0
+ 2210 00ee 03       		.uleb128 0x3
+ 2211 00ef 0E       		.uleb128 0xe
+ 2212 00f0 3A       		.uleb128 0x3a
+ 2213 00f1 0B       		.uleb128 0xb
+ 2214 00f2 3B       		.uleb128 0x3b
+ 2215 00f3 05       		.uleb128 0x5
+ 2216 00f4 49       		.uleb128 0x49
+ 2217 00f5 13       		.uleb128 0x13
+ 2218 00f6 3F       		.uleb128 0x3f
+ 2219 00f7 19       		.uleb128 0x19
+ 2220 00f8 3C       		.uleb128 0x3c
+ 2221 00f9 19       		.uleb128 0x19
+ 2222 00fa 00       		.byte	0
+ 2223 00fb 00       		.byte	0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 44
+
+
+ 2224 00fc 12       		.uleb128 0x12
+ 2225 00fd 35       		.uleb128 0x35
+ 2226 00fe 00       		.byte	0
+ 2227 00ff 49       		.uleb128 0x49
+ 2228 0100 13       		.uleb128 0x13
+ 2229 0101 00       		.byte	0
+ 2230 0102 00       		.byte	0
+ 2231 0103 13       		.uleb128 0x13
+ 2232 0104 34       		.uleb128 0x34
+ 2233 0105 00       		.byte	0
+ 2234 0106 03       		.uleb128 0x3
+ 2235 0107 08       		.uleb128 0x8
+ 2236 0108 3A       		.uleb128 0x3a
+ 2237 0109 0B       		.uleb128 0xb
+ 2238 010a 3B       		.uleb128 0x3b
+ 2239 010b 0B       		.uleb128 0xb
+ 2240 010c 49       		.uleb128 0x49
+ 2241 010d 13       		.uleb128 0x13
+ 2242 010e 3F       		.uleb128 0x3f
+ 2243 010f 19       		.uleb128 0x19
+ 2244 0110 02       		.uleb128 0x2
+ 2245 0111 18       		.uleb128 0x18
+ 2246 0112 00       		.byte	0
+ 2247 0113 00       		.byte	0
+ 2248 0114 14       		.uleb128 0x14
+ 2249 0115 2E       		.uleb128 0x2e
+ 2250 0116 01       		.byte	0x1
+ 2251 0117 3F       		.uleb128 0x3f
+ 2252 0118 19       		.uleb128 0x19
+ 2253 0119 03       		.uleb128 0x3
+ 2254 011a 0E       		.uleb128 0xe
+ 2255 011b 3A       		.uleb128 0x3a
+ 2256 011c 0B       		.uleb128 0xb
+ 2257 011d 3B       		.uleb128 0x3b
+ 2258 011e 0B       		.uleb128 0xb
+ 2259 011f 27       		.uleb128 0x27
+ 2260 0120 19       		.uleb128 0x19
+ 2261 0121 3C       		.uleb128 0x3c
+ 2262 0122 19       		.uleb128 0x19
+ 2263 0123 01       		.uleb128 0x1
+ 2264 0124 13       		.uleb128 0x13
+ 2265 0125 00       		.byte	0
+ 2266 0126 00       		.byte	0
+ 2267 0127 15       		.uleb128 0x15
+ 2268 0128 05       		.uleb128 0x5
+ 2269 0129 00       		.byte	0
+ 2270 012a 49       		.uleb128 0x49
+ 2271 012b 13       		.uleb128 0x13
+ 2272 012c 00       		.byte	0
+ 2273 012d 00       		.byte	0
+ 2274 012e 16       		.uleb128 0x16
+ 2275 012f 2E       		.uleb128 0x2e
+ 2276 0130 01       		.byte	0x1
+ 2277 0131 3F       		.uleb128 0x3f
+ 2278 0132 19       		.uleb128 0x19
+ 2279 0133 03       		.uleb128 0x3
+ 2280 0134 0E       		.uleb128 0xe
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 45
+
+
+ 2281 0135 3A       		.uleb128 0x3a
+ 2282 0136 0B       		.uleb128 0xb
+ 2283 0137 3B       		.uleb128 0x3b
+ 2284 0138 0B       		.uleb128 0xb
+ 2285 0139 3C       		.uleb128 0x3c
+ 2286 013a 19       		.uleb128 0x19
+ 2287 013b 01       		.uleb128 0x1
+ 2288 013c 13       		.uleb128 0x13
+ 2289 013d 00       		.byte	0
+ 2290 013e 00       		.byte	0
+ 2291 013f 17       		.uleb128 0x17
+ 2292 0140 18       		.uleb128 0x18
+ 2293 0141 00       		.byte	0
+ 2294 0142 00       		.byte	0
+ 2295 0143 00       		.byte	0
+ 2296 0144 18       		.uleb128 0x18
+ 2297 0145 2E       		.uleb128 0x2e
+ 2298 0146 01       		.byte	0x1
+ 2299 0147 3F       		.uleb128 0x3f
+ 2300 0148 19       		.uleb128 0x19
+ 2301 0149 03       		.uleb128 0x3
+ 2302 014a 0E       		.uleb128 0xe
+ 2303 014b 3A       		.uleb128 0x3a
+ 2304 014c 0B       		.uleb128 0xb
+ 2305 014d 3B       		.uleb128 0x3b
+ 2306 014e 0B       		.uleb128 0xb
+ 2307 014f 27       		.uleb128 0x27
+ 2308 0150 19       		.uleb128 0x19
+ 2309 0151 3C       		.uleb128 0x3c
+ 2310 0152 19       		.uleb128 0x19
+ 2311 0153 00       		.byte	0
+ 2312 0154 00       		.byte	0
+ 2313 0155 00       		.byte	0
+ 2314              		.section	.debug_loc,"",%progbits
+ 2315              	.Ldebug_loc0:
+ 2316              	.LLST0:
+ 2317 0000 00000000 		.4byte	.LVL0
+ 2318 0004 0E000000 		.4byte	.LVL1
+ 2319 0008 0100     		.2byte	0x1
+ 2320 000a 50       		.byte	0x50
+ 2321 000b 0E000000 		.4byte	.LVL1
+ 2322 000f 18000000 		.4byte	.LVL3
+ 2323 0013 0400     		.2byte	0x4
+ 2324 0015 F3       		.byte	0xf3
+ 2325 0016 01       		.uleb128 0x1
+ 2326 0017 50       		.byte	0x50
+ 2327 0018 9F       		.byte	0x9f
+ 2328 0019 18000000 		.4byte	.LVL3
+ 2329 001d 20000000 		.4byte	.LVL4
+ 2330 0021 0100     		.2byte	0x1
+ 2331 0023 50       		.byte	0x50
+ 2332 0024 20000000 		.4byte	.LVL4
+ 2333 0028 2A000000 		.4byte	.LVL6
+ 2334 002c 0400     		.2byte	0x4
+ 2335 002e F3       		.byte	0xf3
+ 2336 002f 01       		.uleb128 0x1
+ 2337 0030 50       		.byte	0x50
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 46
+
+
+ 2338 0031 9F       		.byte	0x9f
+ 2339 0032 2A000000 		.4byte	.LVL6
+ 2340 0036 34000000 		.4byte	.LVL7
+ 2341 003a 0100     		.2byte	0x1
+ 2342 003c 50       		.byte	0x50
+ 2343 003d 34000000 		.4byte	.LVL7
+ 2344 0041 3E000000 		.4byte	.LVL9
+ 2345 0045 0400     		.2byte	0x4
+ 2346 0047 F3       		.byte	0xf3
+ 2347 0048 01       		.uleb128 0x1
+ 2348 0049 50       		.byte	0x50
+ 2349 004a 9F       		.byte	0x9f
+ 2350 004b 3E000000 		.4byte	.LVL9
+ 2351 004f 48000000 		.4byte	.LVL10
+ 2352 0053 0100     		.2byte	0x1
+ 2353 0055 50       		.byte	0x50
+ 2354 0056 48000000 		.4byte	.LVL10
+ 2355 005a 56000000 		.4byte	.LFE63
+ 2356 005e 0400     		.2byte	0x4
+ 2357 0060 F3       		.byte	0xf3
+ 2358 0061 01       		.uleb128 0x1
+ 2359 0062 50       		.byte	0x50
+ 2360 0063 9F       		.byte	0x9f
+ 2361 0064 00000000 		.4byte	0
+ 2362 0068 00000000 		.4byte	0
+ 2363              	.LLST1:
+ 2364 006c 00000000 		.4byte	.LVL12
+ 2365 0070 1A000000 		.4byte	.LVL15
+ 2366 0074 0100     		.2byte	0x1
+ 2367 0076 50       		.byte	0x50
+ 2368 0077 1A000000 		.4byte	.LVL15
+ 2369 007b 0C030000 		.4byte	.LFE64
+ 2370 007f 0400     		.2byte	0x4
+ 2371 0081 F3       		.byte	0xf3
+ 2372 0082 01       		.uleb128 0x1
+ 2373 0083 50       		.byte	0x50
+ 2374 0084 9F       		.byte	0x9f
+ 2375 0085 00000000 		.4byte	0
+ 2376 0089 00000000 		.4byte	0
+ 2377              	.LLST2:
+ 2378 008d 00000000 		.4byte	.LVL12
+ 2379 0091 25000000 		.4byte	.LVL17-1
+ 2380 0095 0100     		.2byte	0x1
+ 2381 0097 51       		.byte	0x51
+ 2382 0098 25000000 		.4byte	.LVL17-1
+ 2383 009c 0C030000 		.4byte	.LFE64
+ 2384 00a0 0400     		.2byte	0x4
+ 2385 00a2 F3       		.byte	0xf3
+ 2386 00a3 01       		.uleb128 0x1
+ 2387 00a4 51       		.byte	0x51
+ 2388 00a5 9F       		.byte	0x9f
+ 2389 00a6 00000000 		.4byte	0
+ 2390 00aa 00000000 		.4byte	0
+ 2391              	.LLST3:
+ 2392 00ae 00000000 		.4byte	.LVL12
+ 2393 00b2 16000000 		.4byte	.LVL14
+ 2394 00b6 0100     		.2byte	0x1
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 47
+
+
+ 2395 00b8 52       		.byte	0x52
+ 2396 00b9 16000000 		.4byte	.LVL14
+ 2397 00bd 0C030000 		.4byte	.LFE64
+ 2398 00c1 0400     		.2byte	0x4
+ 2399 00c3 F3       		.byte	0xf3
+ 2400 00c4 01       		.uleb128 0x1
+ 2401 00c5 52       		.byte	0x52
+ 2402 00c6 9F       		.byte	0x9f
+ 2403 00c7 00000000 		.4byte	0
+ 2404 00cb 00000000 		.4byte	0
+ 2405              	.LLST4:
+ 2406 00cf 00000000 		.4byte	.LVL12
+ 2407 00d3 1C000000 		.4byte	.LVL16
+ 2408 00d7 0100     		.2byte	0x1
+ 2409 00d9 53       		.byte	0x53
+ 2410 00da 1C000000 		.4byte	.LVL16
+ 2411 00de 0C030000 		.4byte	.LFE64
+ 2412 00e2 0400     		.2byte	0x4
+ 2413 00e4 F3       		.byte	0xf3
+ 2414 00e5 01       		.uleb128 0x1
+ 2415 00e6 53       		.byte	0x53
+ 2416 00e7 9F       		.byte	0x9f
+ 2417 00e8 00000000 		.4byte	0
+ 2418 00ec 00000000 		.4byte	0
+ 2419              	.LLST5:
+ 2420 00f0 00000000 		.4byte	.LVL12
+ 2421 00f4 E4020000 		.4byte	.LVL72
+ 2422 00f8 0200     		.2byte	0x2
+ 2423 00fa 91       		.byte	0x91
+ 2424 00fb 00       		.sleb128 0
+ 2425 00fc E4020000 		.4byte	.LVL72
+ 2426 0100 0C030000 		.4byte	.LFE64
+ 2427 0104 0200     		.2byte	0x2
+ 2428 0106 7D       		.byte	0x7d
+ 2429 0107 00       		.sleb128 0
+ 2430 0108 00000000 		.4byte	0
+ 2431 010c 00000000 		.4byte	0
+ 2432              	.LLST6:
+ 2433 0110 00000000 		.4byte	.LVL12
+ 2434 0114 E4020000 		.4byte	.LVL72
+ 2435 0118 0200     		.2byte	0x2
+ 2436 011a 91       		.byte	0x91
+ 2437 011b 04       		.sleb128 4
+ 2438 011c E4020000 		.4byte	.LVL72
+ 2439 0120 0C030000 		.4byte	.LFE64
+ 2440 0124 0200     		.2byte	0x2
+ 2441 0126 7D       		.byte	0x7d
+ 2442 0127 04       		.sleb128 4
+ 2443 0128 00000000 		.4byte	0
+ 2444 012c 00000000 		.4byte	0
+ 2445              	.LLST7:
+ 2446 0130 12000000 		.4byte	.LVL13
+ 2447 0134 25000000 		.4byte	.LVL17-1
+ 2448 0138 2000     		.2byte	0x20
+ 2449 013a 74       		.byte	0x74
+ 2450 013b 00       		.sleb128 0
+ 2451 013c 0A       		.byte	0xa
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 48
+
+
+ 2452 013d FFFF     		.2byte	0xffff
+ 2453 013f 1A       		.byte	0x1a
+ 2454 0140 03       		.byte	0x3
+ 2455 0141 00000000 		.4byte	l3W
+ 2456 0145 06       		.byte	0x6
+ 2457 0146 1C       		.byte	0x1c
+ 2458 0147 03       		.byte	0x3
+ 2459 0148 00000000 		.4byte	l3B
+ 2460 014c 06       		.byte	0x6
+ 2461 014d 03       		.byte	0x3
+ 2462 014e 00000000 		.4byte	l3W
+ 2463 0152 06       		.byte	0x6
+ 2464 0153 1C       		.byte	0x1c
+ 2465 0154 1B       		.byte	0x1b
+ 2466 0155 F7       		.byte	0xf7
+ 2467 0156 25       		.uleb128 0x25
+ 2468 0157 F7       		.byte	0xf7
+ 2469 0158 2C       		.uleb128 0x2c
+ 2470 0159 9F       		.byte	0x9f
+ 2471 015a 00000000 		.4byte	0
+ 2472 015e 00000000 		.4byte	0
+ 2473              	.LLST8:
+ 2474 0162 28000000 		.4byte	.LVL18
+ 2475 0166 2E000000 		.4byte	.LVL19
+ 2476 016a 0100     		.2byte	0x1
+ 2477 016c 50       		.byte	0x50
+ 2478 016d 2E000000 		.4byte	.LVL19
+ 2479 0171 E4020000 		.4byte	.LVL72
+ 2480 0175 0100     		.2byte	0x1
+ 2481 0177 57       		.byte	0x57
+ 2482 0178 00000000 		.4byte	0
+ 2483 017c 00000000 		.4byte	0
+ 2484              	.LLST9:
+ 2485 0180 28000000 		.4byte	.LVL18
+ 2486 0184 39000000 		.4byte	.LVL20-1
+ 2487 0188 2000     		.2byte	0x20
+ 2488 018a 7B       		.byte	0x7b
+ 2489 018b 00       		.sleb128 0
+ 2490 018c 0A       		.byte	0xa
+ 2491 018d FFFF     		.2byte	0xffff
+ 2492 018f 1A       		.byte	0x1a
+ 2493 0190 03       		.byte	0x3
+ 2494 0191 00000000 		.4byte	r3W
+ 2495 0195 06       		.byte	0x6
+ 2496 0196 1C       		.byte	0x1c
+ 2497 0197 03       		.byte	0x3
+ 2498 0198 00000000 		.4byte	r3B
+ 2499 019c 06       		.byte	0x6
+ 2500 019d 03       		.byte	0x3
+ 2501 019e 00000000 		.4byte	r3W
+ 2502 01a2 06       		.byte	0x6
+ 2503 01a3 1C       		.byte	0x1c
+ 2504 01a4 1B       		.byte	0x1b
+ 2505 01a5 F7       		.byte	0xf7
+ 2506 01a6 25       		.uleb128 0x25
+ 2507 01a7 F7       		.byte	0xf7
+ 2508 01a8 2C       		.uleb128 0x2c
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 49
+
+
+ 2509 01a9 9F       		.byte	0x9f
+ 2510 01aa 00000000 		.4byte	0
+ 2511 01ae 00000000 		.4byte	0
+ 2512              	.LLST10:
+ 2513 01b2 3C000000 		.4byte	.LVL21
+ 2514 01b6 43000000 		.4byte	.LVL22-1
+ 2515 01ba 0100     		.2byte	0x1
+ 2516 01bc 50       		.byte	0x50
+ 2517 01bd 43000000 		.4byte	.LVL22-1
+ 2518 01c1 E4020000 		.4byte	.LVL72
+ 2519 01c5 0100     		.2byte	0x1
+ 2520 01c7 55       		.byte	0x55
+ 2521 01c8 00000000 		.4byte	0
+ 2522 01cc 00000000 		.4byte	0
+ 2523              	.LLST11:
+ 2524 01d0 00000000 		.4byte	.LVL73
+ 2525 01d4 28000000 		.4byte	.LVL75
+ 2526 01d8 0100     		.2byte	0x1
+ 2527 01da 50       		.byte	0x50
+ 2528 01db 28000000 		.4byte	.LVL75
+ 2529 01df 2E000000 		.4byte	.LVL77
+ 2530 01e3 0400     		.2byte	0x4
+ 2531 01e5 F3       		.byte	0xf3
+ 2532 01e6 01       		.uleb128 0x1
+ 2533 01e7 50       		.byte	0x50
+ 2534 01e8 9F       		.byte	0x9f
+ 2535 01e9 2E000000 		.4byte	.LVL77
+ 2536 01ed 38000000 		.4byte	.LVL78
+ 2537 01f1 0100     		.2byte	0x1
+ 2538 01f3 50       		.byte	0x50
+ 2539 01f4 38000000 		.4byte	.LVL78
+ 2540 01f8 3E000000 		.4byte	.LVL80
+ 2541 01fc 0400     		.2byte	0x4
+ 2542 01fe F3       		.byte	0xf3
+ 2543 01ff 01       		.uleb128 0x1
+ 2544 0200 50       		.byte	0x50
+ 2545 0201 9F       		.byte	0x9f
+ 2546 0202 3E000000 		.4byte	.LVL80
+ 2547 0206 54000000 		.4byte	.LVL81
+ 2548 020a 0100     		.2byte	0x1
+ 2549 020c 50       		.byte	0x50
+ 2550 020d 54000000 		.4byte	.LVL81
+ 2551 0211 5A000000 		.4byte	.LVL83
+ 2552 0215 0400     		.2byte	0x4
+ 2553 0217 F3       		.byte	0xf3
+ 2554 0218 01       		.uleb128 0x1
+ 2555 0219 50       		.byte	0x50
+ 2556 021a 9F       		.byte	0x9f
+ 2557 021b 5A000000 		.4byte	.LVL83
+ 2558 021f 70000000 		.4byte	.LVL84
+ 2559 0223 0100     		.2byte	0x1
+ 2560 0225 50       		.byte	0x50
+ 2561 0226 70000000 		.4byte	.LVL84
+ 2562 022a 76000000 		.4byte	.LVL86
+ 2563 022e 0400     		.2byte	0x4
+ 2564 0230 F3       		.byte	0xf3
+ 2565 0231 01       		.uleb128 0x1
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 50
+
+
+ 2566 0232 50       		.byte	0x50
+ 2567 0233 9F       		.byte	0x9f
+ 2568 0234 76000000 		.4byte	.LVL86
+ 2569 0238 78000000 		.4byte	.LVL87
+ 2570 023c 0100     		.2byte	0x1
+ 2571 023e 50       		.byte	0x50
+ 2572 023f 78000000 		.4byte	.LVL87
+ 2573 0243 D8000000 		.4byte	.LFE65
+ 2574 0247 0400     		.2byte	0x4
+ 2575 0249 F3       		.byte	0xf3
+ 2576 024a 01       		.uleb128 0x1
+ 2577 024b 50       		.byte	0x50
+ 2578 024c 9F       		.byte	0x9f
+ 2579 024d 00000000 		.4byte	0
+ 2580 0251 00000000 		.4byte	0
+ 2581              	.LLST12:
+ 2582 0255 00000000 		.4byte	.LVL73
+ 2583 0259 2B000000 		.4byte	.LVL76-1
+ 2584 025d 0100     		.2byte	0x1
+ 2585 025f 51       		.byte	0x51
+ 2586 0260 2B000000 		.4byte	.LVL76-1
+ 2587 0264 2E000000 		.4byte	.LVL77
+ 2588 0268 0400     		.2byte	0x4
+ 2589 026a F3       		.byte	0xf3
+ 2590 026b 01       		.uleb128 0x1
+ 2591 026c 51       		.byte	0x51
+ 2592 026d 9F       		.byte	0x9f
+ 2593 026e 2E000000 		.4byte	.LVL77
+ 2594 0272 3B000000 		.4byte	.LVL79-1
+ 2595 0276 0100     		.2byte	0x1
+ 2596 0278 51       		.byte	0x51
+ 2597 0279 3B000000 		.4byte	.LVL79-1
+ 2598 027d 3E000000 		.4byte	.LVL80
+ 2599 0281 0400     		.2byte	0x4
+ 2600 0283 F3       		.byte	0xf3
+ 2601 0284 01       		.uleb128 0x1
+ 2602 0285 51       		.byte	0x51
+ 2603 0286 9F       		.byte	0x9f
+ 2604 0287 3E000000 		.4byte	.LVL80
+ 2605 028b 57000000 		.4byte	.LVL82-1
+ 2606 028f 0100     		.2byte	0x1
+ 2607 0291 51       		.byte	0x51
+ 2608 0292 57000000 		.4byte	.LVL82-1
+ 2609 0296 5A000000 		.4byte	.LVL83
+ 2610 029a 0400     		.2byte	0x4
+ 2611 029c F3       		.byte	0xf3
+ 2612 029d 01       		.uleb128 0x1
+ 2613 029e 51       		.byte	0x51
+ 2614 029f 9F       		.byte	0x9f
+ 2615 02a0 5A000000 		.4byte	.LVL83
+ 2616 02a4 73000000 		.4byte	.LVL85-1
+ 2617 02a8 0100     		.2byte	0x1
+ 2618 02aa 51       		.byte	0x51
+ 2619 02ab 73000000 		.4byte	.LVL85-1
+ 2620 02af 76000000 		.4byte	.LVL86
+ 2621 02b3 0400     		.2byte	0x4
+ 2622 02b5 F3       		.byte	0xf3
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 51
+
+
+ 2623 02b6 01       		.uleb128 0x1
+ 2624 02b7 51       		.byte	0x51
+ 2625 02b8 9F       		.byte	0x9f
+ 2626 02b9 76000000 		.4byte	.LVL86
+ 2627 02bd 7A000000 		.4byte	.LVL88
+ 2628 02c1 0100     		.2byte	0x1
+ 2629 02c3 51       		.byte	0x51
+ 2630 02c4 7A000000 		.4byte	.LVL88
+ 2631 02c8 D8000000 		.4byte	.LFE65
+ 2632 02cc 0400     		.2byte	0x4
+ 2633 02ce F3       		.byte	0xf3
+ 2634 02cf 01       		.uleb128 0x1
+ 2635 02d0 51       		.byte	0x51
+ 2636 02d1 9F       		.byte	0x9f
+ 2637 02d2 00000000 		.4byte	0
+ 2638 02d6 00000000 		.4byte	0
+ 2639              	.LLST13:
+ 2640 02da 00000000 		.4byte	.LVL73
+ 2641 02de 2B000000 		.4byte	.LVL76-1
+ 2642 02e2 0100     		.2byte	0x1
+ 2643 02e4 52       		.byte	0x52
+ 2644 02e5 2B000000 		.4byte	.LVL76-1
+ 2645 02e9 2E000000 		.4byte	.LVL77
+ 2646 02ed 0400     		.2byte	0x4
+ 2647 02ef F3       		.byte	0xf3
+ 2648 02f0 01       		.uleb128 0x1
+ 2649 02f1 52       		.byte	0x52
+ 2650 02f2 9F       		.byte	0x9f
+ 2651 02f3 2E000000 		.4byte	.LVL77
+ 2652 02f7 3B000000 		.4byte	.LVL79-1
+ 2653 02fb 0100     		.2byte	0x1
+ 2654 02fd 52       		.byte	0x52
+ 2655 02fe 3B000000 		.4byte	.LVL79-1
+ 2656 0302 3E000000 		.4byte	.LVL80
+ 2657 0306 0400     		.2byte	0x4
+ 2658 0308 F3       		.byte	0xf3
+ 2659 0309 01       		.uleb128 0x1
+ 2660 030a 52       		.byte	0x52
+ 2661 030b 9F       		.byte	0x9f
+ 2662 030c 3E000000 		.4byte	.LVL80
+ 2663 0310 57000000 		.4byte	.LVL82-1
+ 2664 0314 0100     		.2byte	0x1
+ 2665 0316 52       		.byte	0x52
+ 2666 0317 57000000 		.4byte	.LVL82-1
+ 2667 031b 5A000000 		.4byte	.LVL83
+ 2668 031f 0400     		.2byte	0x4
+ 2669 0321 F3       		.byte	0xf3
+ 2670 0322 01       		.uleb128 0x1
+ 2671 0323 52       		.byte	0x52
+ 2672 0324 9F       		.byte	0x9f
+ 2673 0325 5A000000 		.4byte	.LVL83
+ 2674 0329 73000000 		.4byte	.LVL85-1
+ 2675 032d 0100     		.2byte	0x1
+ 2676 032f 52       		.byte	0x52
+ 2677 0330 73000000 		.4byte	.LVL85-1
+ 2678 0334 76000000 		.4byte	.LVL86
+ 2679 0338 0400     		.2byte	0x4
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 52
+
+
+ 2680 033a F3       		.byte	0xf3
+ 2681 033b 01       		.uleb128 0x1
+ 2682 033c 52       		.byte	0x52
+ 2683 033d 9F       		.byte	0x9f
+ 2684 033e 76000000 		.4byte	.LVL86
+ 2685 0342 7D000000 		.4byte	.LVL89-1
+ 2686 0346 0100     		.2byte	0x1
+ 2687 0348 52       		.byte	0x52
+ 2688 0349 7D000000 		.4byte	.LVL89-1
+ 2689 034d D8000000 		.4byte	.LFE65
+ 2690 0351 0400     		.2byte	0x4
+ 2691 0353 F3       		.byte	0xf3
+ 2692 0354 01       		.uleb128 0x1
+ 2693 0355 52       		.byte	0x52
+ 2694 0356 9F       		.byte	0x9f
+ 2695 0357 00000000 		.4byte	0
+ 2696 035b 00000000 		.4byte	0
+ 2697              	.LLST14:
+ 2698 035f 00000000 		.4byte	.LVL73
+ 2699 0363 16000000 		.4byte	.LVL74
+ 2700 0367 0100     		.2byte	0x1
+ 2701 0369 53       		.byte	0x53
+ 2702 036a 16000000 		.4byte	.LVL74
+ 2703 036e D8000000 		.4byte	.LFE65
+ 2704 0372 0400     		.2byte	0x4
+ 2705 0374 F3       		.byte	0xf3
+ 2706 0375 01       		.uleb128 0x1
+ 2707 0376 53       		.byte	0x53
+ 2708 0377 9F       		.byte	0x9f
+ 2709 0378 00000000 		.4byte	0
+ 2710 037c 00000000 		.4byte	0
+ 2711              	.LLST15:
+ 2712 0380 00000000 		.4byte	.LVL93
+ 2713 0384 26000000 		.4byte	.LVL95
+ 2714 0388 0100     		.2byte	0x1
+ 2715 038a 50       		.byte	0x50
+ 2716 038b 26000000 		.4byte	.LVL95
+ 2717 038f 30000000 		.4byte	.LVL99
+ 2718 0393 0400     		.2byte	0x4
+ 2719 0395 F3       		.byte	0xf3
+ 2720 0396 01       		.uleb128 0x1
+ 2721 0397 50       		.byte	0x50
+ 2722 0398 9F       		.byte	0x9f
+ 2723 0399 30000000 		.4byte	.LVL99
+ 2724 039d 3A000000 		.4byte	.LVL100
+ 2725 03a1 0100     		.2byte	0x1
+ 2726 03a3 50       		.byte	0x50
+ 2727 03a4 3A000000 		.4byte	.LVL100
+ 2728 03a8 44000000 		.4byte	.LVL104
+ 2729 03ac 0400     		.2byte	0x4
+ 2730 03ae F3       		.byte	0xf3
+ 2731 03af 01       		.uleb128 0x1
+ 2732 03b0 50       		.byte	0x50
+ 2733 03b1 9F       		.byte	0x9f
+ 2734 03b2 44000000 		.4byte	.LVL104
+ 2735 03b6 46000000 		.4byte	.LVL105
+ 2736 03ba 0100     		.2byte	0x1
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 53
+
+
+ 2737 03bc 50       		.byte	0x50
+ 2738 03bd 46000000 		.4byte	.LVL105
+ 2739 03c1 A0000000 		.4byte	.LFE66
+ 2740 03c5 0400     		.2byte	0x4
+ 2741 03c7 F3       		.byte	0xf3
+ 2742 03c8 01       		.uleb128 0x1
+ 2743 03c9 50       		.byte	0x50
+ 2744 03ca 9F       		.byte	0x9f
+ 2745 03cb 00000000 		.4byte	0
+ 2746 03cf 00000000 		.4byte	0
+ 2747              	.LLST16:
+ 2748 03d3 00000000 		.4byte	.LVL93
+ 2749 03d7 28000000 		.4byte	.LVL96
+ 2750 03db 0100     		.2byte	0x1
+ 2751 03dd 51       		.byte	0x51
+ 2752 03de 28000000 		.4byte	.LVL96
+ 2753 03e2 30000000 		.4byte	.LVL99
+ 2754 03e6 0400     		.2byte	0x4
+ 2755 03e8 F3       		.byte	0xf3
+ 2756 03e9 01       		.uleb128 0x1
+ 2757 03ea 51       		.byte	0x51
+ 2758 03eb 9F       		.byte	0x9f
+ 2759 03ec 30000000 		.4byte	.LVL99
+ 2760 03f0 3C000000 		.4byte	.LVL101
+ 2761 03f4 0100     		.2byte	0x1
+ 2762 03f6 51       		.byte	0x51
+ 2763 03f7 3C000000 		.4byte	.LVL101
+ 2764 03fb 44000000 		.4byte	.LVL104
+ 2765 03ff 0400     		.2byte	0x4
+ 2766 0401 F3       		.byte	0xf3
+ 2767 0402 01       		.uleb128 0x1
+ 2768 0403 51       		.byte	0x51
+ 2769 0404 9F       		.byte	0x9f
+ 2770 0405 44000000 		.4byte	.LVL104
+ 2771 0409 48000000 		.4byte	.LVL106
+ 2772 040d 0100     		.2byte	0x1
+ 2773 040f 51       		.byte	0x51
+ 2774 0410 48000000 		.4byte	.LVL106
+ 2775 0414 A0000000 		.4byte	.LFE66
+ 2776 0418 0400     		.2byte	0x4
+ 2777 041a F3       		.byte	0xf3
+ 2778 041b 01       		.uleb128 0x1
+ 2779 041c 51       		.byte	0x51
+ 2780 041d 9F       		.byte	0x9f
+ 2781 041e 00000000 		.4byte	0
+ 2782 0422 00000000 		.4byte	0
+ 2783              	.LLST17:
+ 2784 0426 00000000 		.4byte	.LVL93
+ 2785 042a 2A000000 		.4byte	.LVL97
+ 2786 042e 0100     		.2byte	0x1
+ 2787 0430 52       		.byte	0x52
+ 2788 0431 2A000000 		.4byte	.LVL97
+ 2789 0435 30000000 		.4byte	.LVL99
+ 2790 0439 0400     		.2byte	0x4
+ 2791 043b F3       		.byte	0xf3
+ 2792 043c 01       		.uleb128 0x1
+ 2793 043d 52       		.byte	0x52
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 54
+
+
+ 2794 043e 9F       		.byte	0x9f
+ 2795 043f 30000000 		.4byte	.LVL99
+ 2796 0443 3E000000 		.4byte	.LVL102
+ 2797 0447 0100     		.2byte	0x1
+ 2798 0449 52       		.byte	0x52
+ 2799 044a 3E000000 		.4byte	.LVL102
+ 2800 044e 44000000 		.4byte	.LVL104
+ 2801 0452 0400     		.2byte	0x4
+ 2802 0454 F3       		.byte	0xf3
+ 2803 0455 01       		.uleb128 0x1
+ 2804 0456 52       		.byte	0x52
+ 2805 0457 9F       		.byte	0x9f
+ 2806 0458 44000000 		.4byte	.LVL104
+ 2807 045c 4B000000 		.4byte	.LVL107-1
+ 2808 0460 0100     		.2byte	0x1
+ 2809 0462 52       		.byte	0x52
+ 2810 0463 4B000000 		.4byte	.LVL107-1
+ 2811 0467 A0000000 		.4byte	.LFE66
+ 2812 046b 0400     		.2byte	0x4
+ 2813 046d F3       		.byte	0xf3
+ 2814 046e 01       		.uleb128 0x1
+ 2815 046f 52       		.byte	0x52
+ 2816 0470 9F       		.byte	0x9f
+ 2817 0471 00000000 		.4byte	0
+ 2818 0475 00000000 		.4byte	0
+ 2819              	.LLST18:
+ 2820 0479 00000000 		.4byte	.LVL93
+ 2821 047d 14000000 		.4byte	.LVL94
+ 2822 0481 0100     		.2byte	0x1
+ 2823 0483 53       		.byte	0x53
+ 2824 0484 14000000 		.4byte	.LVL94
+ 2825 0488 A0000000 		.4byte	.LFE66
+ 2826 048c 0400     		.2byte	0x4
+ 2827 048e F3       		.byte	0xf3
+ 2828 048f 01       		.uleb128 0x1
+ 2829 0490 53       		.byte	0x53
+ 2830 0491 9F       		.byte	0x9f
+ 2831 0492 00000000 		.4byte	0
+ 2832 0496 00000000 		.4byte	0
+ 2833              		.section	.debug_aranges,"",%progbits
+ 2834 0000 34000000 		.4byte	0x34
+ 2835 0004 0200     		.2byte	0x2
+ 2836 0006 00000000 		.4byte	.Ldebug_info0
+ 2837 000a 04       		.byte	0x4
+ 2838 000b 00       		.byte	0
+ 2839 000c 0000     		.2byte	0
+ 2840 000e 0000     		.2byte	0
+ 2841 0010 00000000 		.4byte	.LFB63
+ 2842 0014 56000000 		.4byte	.LFE63-.LFB63
+ 2843 0018 00000000 		.4byte	.LFB64
+ 2844 001c 0C030000 		.4byte	.LFE64-.LFB64
+ 2845 0020 00000000 		.4byte	.LFB65
+ 2846 0024 D8000000 		.4byte	.LFE65-.LFB65
+ 2847 0028 00000000 		.4byte	.LFB66
+ 2848 002c A0000000 		.4byte	.LFE66-.LFB66
+ 2849 0030 00000000 		.4byte	0
+ 2850 0034 00000000 		.4byte	0
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 55
+
+
+ 2851              		.section	.debug_ranges,"",%progbits
+ 2852              	.Ldebug_ranges0:
+ 2853 0000 00000000 		.4byte	.LFB63
+ 2854 0004 56000000 		.4byte	.LFE63
+ 2855 0008 00000000 		.4byte	.LFB64
+ 2856 000c 0C030000 		.4byte	.LFE64
+ 2857 0010 00000000 		.4byte	.LFB65
+ 2858 0014 D8000000 		.4byte	.LFE65
+ 2859 0018 00000000 		.4byte	.LFB66
+ 2860 001c A0000000 		.4byte	.LFE66
+ 2861 0020 00000000 		.4byte	0
+ 2862 0024 00000000 		.4byte	0
+ 2863              		.section	.debug_line,"",%progbits
+ 2864              	.Ldebug_line0:
+ 2865 0000 41030000 		.section	.debug_str,"MS",%progbits,1
+ 2865      02008201 
+ 2865      00000201 
+ 2865      FB0E0D00 
+ 2865      01010101 
+ 2866              	.LASF10:
+ 2867 0000 6C6F6E67 		.ascii	"long long int\000"
+ 2867      206C6F6E 
+ 2867      6720696E 
+ 2867      7400
+ 2868              	.LASF4:
+ 2869 000e 5F5F7569 		.ascii	"__uint8_t\000"
+ 2869      6E74385F 
+ 2869      7400
+ 2870              	.LASF37:
+ 2871 0018 433A5C55 		.ascii	"C:\\Users\\Nhan Phan\\Desktop\\CProjects\\Zumobot\\"
+ 2871      73657273 
+ 2871      5C4E6861 
+ 2871      6E205068 
+ 2871      616E5C44 
+ 2872 0045 5A756D6F 		.ascii	"ZumoBot.cydsn\000"
+ 2872      426F742E 
+ 2872      63796473 
+ 2872      6E00
+ 2873              	.LASF24:
+ 2874 0053 63686563 		.ascii	"checkStop\000"
+ 2874      6B53746F 
+ 2874      7000
+ 2875              	.LASF7:
+ 2876 005d 5F5F696E 		.ascii	"__int32_t\000"
+ 2876      7433325F 
+ 2876      7400
+ 2877              	.LASF33:
+ 2878 0067 6D6F746F 		.ascii	"motor_stop\000"
+ 2878      725F7374 
+ 2878      6F7000
+ 2879              	.LASF23:
+ 2880 0072 64697265 		.ascii	"direction\000"
+ 2880      6374696F 
+ 2880      6E00
+ 2881              	.LASF0:
+ 2882 007c 666C6F61 		.ascii	"float\000"
+ 2882      7400
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 56
+
+
+ 2883              	.LASF1:
+ 2884 0082 7369676E 		.ascii	"signed char\000"
+ 2884      65642063 
+ 2884      68617200 
+ 2885              	.LASF2:
+ 2886 008e 756E7369 		.ascii	"unsigned char\000"
+ 2886      676E6564 
+ 2886      20636861 
+ 2886      7200
+ 2887              	.LASF27:
+ 2888 009c 50617468 		.ascii	"PathfindingBasic\000"
+ 2888      66696E64 
+ 2888      696E6742 
+ 2888      61736963 
+ 2888      00
+ 2889              	.LASF36:
+ 2890 00ad 50617468 		.ascii	"Pathfinding.c\000"
+ 2890      66696E64 
+ 2890      696E672E 
+ 2890      6300
+ 2891              	.LASF9:
+ 2892 00bb 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2892      20756E73 
+ 2892      69676E65 
+ 2892      6420696E 
+ 2892      7400
+ 2893              	.LASF6:
+ 2894 00cd 73686F72 		.ascii	"short unsigned int\000"
+ 2894      7420756E 
+ 2894      7369676E 
+ 2894      65642069 
+ 2894      6E7400
+ 2895              	.LASF28:
+ 2896 00e0 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 2896      52784275 
+ 2896      66666572 
+ 2896      00
+ 2897              	.LASF32:
+ 2898 00ed 6D6F746F 		.ascii	"motor_forward\000"
+ 2898      725F666F 
+ 2898      72776172 
+ 2898      6400
+ 2899              	.LASF21:
+ 2900 00fb 4D795475 		.ascii	"MyTurn\000"
+ 2900      726E00
+ 2901              	.LASF18:
+ 2902 0102 646F7562 		.ascii	"double\000"
+ 2902      6C6500
+ 2903              	.LASF17:
+ 2904 0109 75696E74 		.ascii	"uint32\000"
+ 2904      333200
+ 2905              	.LASF35:
+ 2906 0110 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 2906      4320342E 
+ 2906      392E3320 
+ 2906      32303135 
+ 2906      30333033 
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 57
+
+
+ 2907 0143 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 2907      20726576 
+ 2907      6973696F 
+ 2907      6E203232 
+ 2907      31323230 
+ 2908 0176 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 2908      66756E63 
+ 2908      74696F6E 
+ 2908      2D736563 
+ 2908      74696F6E 
+ 2909              	.LASF12:
+ 2910 019e 756E7369 		.ascii	"unsigned int\000"
+ 2910      676E6564 
+ 2910      20696E74 
+ 2910      00
+ 2911              	.LASF11:
+ 2912 01ab 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2912      206C6F6E 
+ 2912      6720756E 
+ 2912      7369676E 
+ 2912      65642069 
+ 2913              	.LASF13:
+ 2914 01c2 75696E74 		.ascii	"uint8_t\000"
+ 2914      385F7400 
+ 2915              	.LASF29:
+ 2916 01ca 6D6F746F 		.ascii	"motor_turn_adv\000"
+ 2916      725F7475 
+ 2916      726E5F61 
+ 2916      647600
+ 2917              	.LASF22:
+ 2918 01d9 50617468 		.ascii	"PathfindingAdvP\000"
+ 2918      66696E64 
+ 2918      696E6741 
+ 2918      64765000 
+ 2919              	.LASF26:
+ 2920 01e9 50617468 		.ascii	"PathfindingAdv\000"
+ 2920      66696E64 
+ 2920      696E6741 
+ 2920      647600
+ 2921              	.LASF16:
+ 2922 01f8 75696E74 		.ascii	"uint8\000"
+ 2922      3800
+ 2923              	.LASF15:
+ 2924 01fe 696E7433 		.ascii	"int32_t\000"
+ 2924      325F7400 
+ 2925              	.LASF20:
+ 2926 0206 73697A65 		.ascii	"sizetype\000"
+ 2926      74797065 
+ 2926      00
+ 2927              	.LASF30:
+ 2928 020f 42617474 		.ascii	"BatteryLed_Write\000"
+ 2928      6572794C 
+ 2928      65645F57 
+ 2928      72697465 
+ 2928      00
+ 2929              	.LASF19:
+ 2930 0220 63686172 		.ascii	"char\000"
+ARM GAS  C:\Users\NHANPH~1\AppData\Local\Temp\cck2yOPT.s 			page 58
+
+
+ 2930      00
+ 2931              	.LASF3:
+ 2932 0225 73686F72 		.ascii	"short int\000"
+ 2932      7420696E 
+ 2932      7400
+ 2933              	.LASF5:
+ 2934 022f 5F5F7569 		.ascii	"__uint16_t\000"
+ 2934      6E743136 
+ 2934      5F7400
+ 2935              	.LASF14:
+ 2936 023a 75696E74 		.ascii	"uint16_t\000"
+ 2936      31365F74 
+ 2936      00
+ 2937              	.LASF25:
+ 2938 0243 6C617374 		.ascii	"lastBlack\000"
+ 2938      426C6163 
+ 2938      6B00
+ 2939              	.LASF8:
+ 2940 024d 6C6F6E67 		.ascii	"long int\000"
+ 2940      20696E74 
+ 2940      00
+ 2941              	.LASF31:
+ 2942 0256 6D6F746F 		.ascii	"motor_turn\000"
+ 2942      725F7475 
+ 2942      726E00
+ 2943              	.LASF34:
+ 2944 0261 43794465 		.ascii	"CyDelay\000"
+ 2944      6C617900 
+ 2945              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br
