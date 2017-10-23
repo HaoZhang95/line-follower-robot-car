@@ -1,20 +1,10 @@
-# Zumobot
-Metropolia UAS 2017 Zumo robot project
+# line follower robot project(PID)
 <p>
-Team members: Hao Zhang, Manh Tran, Nhan Phan.
+Using single chip and sensor to follow the blank-white line
 <p>
-For Hao's PID method, please refer to 
-<a href="https://github.com/Usin2705/Zumobot/blob/master/ZumoBot.cydsn/PIDmain.c">PIDmain.c</a> 
-<p>
-Rename the file to main.c and rename the old main.c to something esle. Remove the comment signs and it will work.
-<p>
-<p>
-For basic logic method, please refer to <a href="https://github.com/Usin2705/Zumobot/blob/master/ZumoBot.cydsn/pathfinding.c">pathfinding.c</a> method name: <b>PathfindingBasic();</b>
-<p>
-<p>
-For advanced logic method, please refer to <a href="https://github.com/Usin2705/Zumobot/blob/master/ZumoBot.cydsn/pathfinding.c">pathfinding.c</a> method name: <b>PathfindingAdv();</b>
-<p>
-<p>
-For sumo fighting method, please refer to <a href="https://github.com/Usin2705/Zumobot/blob/master/ZumoBot.cydsn/Sumoing.c">Sumoing.c</a> method name: <b>Sumoing();</b>
+It uses PID algorism,Test vedio can be found here:
+<a href="https://www.youtube.com/watch?v=jQsZMEo_5Fg">play vedio in youtube</a> 
+
+![25](https://user-images.githubusercontent.com/26892284/31901299-b4e7675e-b829-11e7-9b58-ac10f31a2d12.png)
 
 
